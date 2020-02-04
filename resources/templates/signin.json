@@ -1,0 +1,56 @@
+{
+  "name": "Signin",
+  "slug": "/signin",
+  "body": {
+    "app": {
+      "title": "Signin Page Title"
+    },
+    "content": {
+      "component": "lpp-template-signin",
+      "props": {
+        "title": "Signin Title",
+        "submit": {
+          "label": "Signin",
+          "action": "/api/signin",
+          "method": "POST",
+          "redirect": "/admin/users"
+        },
+        "fields": [
+          {
+            "input": "text",
+            "label": "Username",
+            "name": "username",
+            "id": "username"
+          },
+          {
+            "input": "text",
+            "label": "Password",
+            "name": "password",
+            "id": "password"
+          }
+        ],
+        "social-login": {
+          "google": {
+            "label": "Signin with Google"
+          },
+          "tweeter": {
+            "label": "Signin with Tweeter"
+          },
+          "facebook": {
+            "label": "Signin with Facebook"
+          }
+        },
+        "reset-password": {
+          "label": "Reset Password"
+        },
+        "signup": {
+          "label": "Signup"
+        },
+        "footer": "copyright larapress"
+      }
+    }
+  },
+  "options": {
+    "page_schema": "vuetify-green"
+  }
+}
