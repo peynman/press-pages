@@ -4,7 +4,7 @@ namespace Larapress\Pages\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Larapress\Pages\Commands\PageCommands;
-use Larapress\Pages\Services\CommonPageProvider;
+use Larapress\Pages\Services\DomainPageProvider;
 use Larapress\Pages\Services\IPageProvider;
 use Larapress\Pages\Services\IPageRenderService;
 use Larapress\Pages\Services\PageRenderService;
@@ -19,7 +19,7 @@ class PackageServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(IPageRenderService::class, PageRenderService::class);
-        $this->app->bind(IPageProvider::class, CommonPageProvider::class);
+        $this->app->bind(IPageProvider::class, DomainPageProvider::class);
     }
 
     /**
@@ -36,6 +36,9 @@ class PackageServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../../resources/dist' => storage_path('app/public/vendor/larapress-pages'),
+        ], ['assets', 'larapress', 'larapress-pages']);
+        $this->publishes([
+            __DIR__.'/../../resources/templates' => resource_path('vendor/larapress-pages/templates'),
         ], ['assets', 'larapress', 'larapress-pages']);
 
         $this->publishes(

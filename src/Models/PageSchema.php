@@ -29,6 +29,10 @@ class PageSchema extends Model
         'author_id'
     ];
 
+    public $casts = [
+        'schema' => 'array',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

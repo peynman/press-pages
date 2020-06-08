@@ -2,9 +2,9 @@
 
 namespace Larapress\Pages\CRUD;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Larapress\Core\Extend\Helpers;
 use Larapress\CRUD\Base\BaseCRUDProvider;
 use Larapress\CRUD\Base\ICRUDProvider;
 use Larapress\Pages\Models\Page;
@@ -15,70 +15,100 @@ class PageCRUDProvider implements ICRUDProvider
 
     public $model = Page::class;
     public $createValidations = [
-        'title' => 'required|string|max:190',
-        'slug' => 'required|string|max:190',
-        'domain_id' => 'nullable|numeric|exists:domains,id',
-        'template' => 'nullable|string',
-        'content' => 'nullable|string|json',
-        'publish_at' => 'nullable|datetime_jalali',
-        'unpublish_at' => 'nullable|datetime_jalali',
-        'schema_id' => 'nullable|exists:page_schemas,id',
+        'name' => 'required|string|unique:pages,name',
+        'slug' => 'required|string',
+        'body' => 'nullable',
+        'options.title' => 'required|string',
+        'options.template' => 'required|string',
+        'flags' => 'nullable|numeric',
+        'publish_at' => 'nullable|datetime_zoned',
+        'unpublish_at' => 'nullable|datetime_zoned',
     ];
     public $updateValidations = [
-        'title' => 'required|string|max:190',
-        'template' => 'nullable|string',
-        'domain_id' => 'nullable|numeric|exists:domains,id',
-        'content' => 'nullable|string|json',
-        'schema_id' => 'nullable|exists:page_schemas,id',
-        'publish_at' => 'nullable|datetime_jalali',
-        'unpublish_at' => 'nullable|datetime_jalali',
+        'name' => 'nullable|string|unique:pages,name',
+        'slug' => 'required|string',
+        'body' => 'nullable',
+        'options.title' => 'required|string',
+        'options.template' => 'required|string',
+        'flags' => 'nullable|numeric',
+        'publish_at' => 'nullable|datetime_zoned',
+        'unpublish_at' => 'nullable|datetime_zoned',
     ];
     public $autoSyncRelations = [];
-    public $validSortColumns = ['id', 'slug', 'title', 'created_at'];
-    public $validRelations = ['author', 'sub_domain'];
+    public $validSortColumns = [
+        'slug',
+        'name',
+        'author_id',
+        'publish_at',
+        'unpublish_at',
+        'flags'
+    ];
+    public $validRelations = ['author'];
     public $validFilters = [];
-    public $defaultShowRelations = ['author', 'sub_domain'];
+    public $defaultShowRelations = ['author'];
     public $excludeFromUpdate = [];
-    public $searchColumns = ['title', 'slug', 'content', 'slug'];
+    public $searchColumns = ['slug', 'body'];
     public $filterFields = [];
     public $filterDefaults = [];
 
+    /**
+     * Exclude current id in name unique request
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getUpdateRules(Request $request) {
+        $this->updateValidations['name'] .= ',' . $request->route('id');
+        return $this->updateValidations;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $args
+     * @return void
+     */
     public function onBeforeCreate( $args )
     {
-        $args = Helpers::processDateTime($args, 'publish_at');
-        $args = Helpers::processDateTime($args, 'unpublish_at');
-
         $args['author_id'] = Auth::user()->id;
-
-        if (!isset($args['flags'])) {
-            $args['flags'] = 0;
-        }
 
         if (!Str::startsWith($args['slug'], '/')) {
             $args['slug'] = '/'.$args['slug'];
         }
 
-        if (isset($args['content'])) {
-            $args['content'] = json_decode($args['content']);
+        return $args;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $args
+     * @return void
+     */
+    public function onBeforeUpdate( $args )
+    {
+        if (!Str::startsWith($args['slug'], '/')) {
+            $args['slug'] = '/'.$args['slug'];
         }
+
 
         return $args;
     }
 
-    public function onBeforeUpdate( $args )
+    /**
+     * @param Builder $query
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function onBeforeQuery($query)
     {
-        $args = Helpers::processDateTime($args, 'publish_at');
-        $args = Helpers::processDateTime($args, 'unpublish_at');
-
-        if (isset($args['content'])) {
-            $args['content'] = json_decode($args['content']);
+        /** @var ICRUDUser $user */
+        $user = Auth::user();
+        if ($user->hasRole(config('larapress.profiles.security.roles.affiliate'))) {
+            $query->where('author_id', $user->id);
         }
 
-        if (isset($args['slug'])) {
-            unset($args['slug']);
-        }
-
-        return $args;
+        return $query;
     }
 
     /**
@@ -86,11 +116,11 @@ class PageCRUDProvider implements ICRUDProvider
      *
      * @return bool
      */
-    public function onBeforeAccess( $object )
+    public function onBeforeAccess($object)
     {
-        /** @var \Larapress\CRUD\ICRUDUser $user */
+        /** @var ICRUDUser|IProfileUser $user */
         $user = Auth::user();
-        if ($user->hasRole(config('bet.affiliate.role_name'))) {
+        if ($user->hasRole(config('larapress.profiles.security.roles.affiliate'))) {
             return $user->id === $object->author_id;
         }
 

@@ -1,0 +1,13 @@
+<template>
+    <v-chip dense>{{ item[column.id].name }}</v-chip>
+</template>
+
+<script>
+export default {
+    name: 'vf-datatable-column-expandable-links',
+    props: {
+        item: Object,
+        column: Object,
+    }
+}
+</script>

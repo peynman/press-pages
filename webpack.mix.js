@@ -1,5 +1,7 @@
 const mix = require('laravel-mix');
 let exec = require('child_process').exec;
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -10,24 +12,41 @@ let exec = require('child_process').exec;
  | file for the application as well as bundling up all the JS files.
  |
  */
-mix.config.webpackConfig.output = {
-    chunkFilename: '[name].bundle.js',
-    publicPath: 'resources/dis',
-};
-
-mix.js('resources/js/app.js', '/js')
+mix
+    .options({
+        extractVueStyles: true,
+    })
+    .webpackConfig({
+        output: {
+            chunkFilename: '[name].bundle.js',
+            publicPath: 'resources/dis/js',
+        },
+        plugins: [new VuetifyLoaderPlugin({
+            match (originalTag, { kebabTag, camelTag, path, component }) {
+                if (kebabTag.startsWith('vuetify-formjson')) {
+                    return ['VuetifyFormJSON', `import VuetifyFormJSON from '@peynman/vuetify-formjson/src/VuetifyFormJSON.vue'`]
+                }
+            }
+        })]
+    })
+    .js('resources/js/app.js', '/js')
     .extract([
-        'axios',
         'vue',
         'vue-router',
+        'axios',
         'vue-axios',
         'vue-template-compiler',
         'vuex',
-    ]).setPublicPath('resources/dist/');
-
-
-
-mix.sass('resources/sass/app.scss', 'resources/dist/css')
+        'vuetify',
+        '@peynman/vuetify-formjson',
+        'blockly',
+        'markdown-it',
+        'mathlive',
+        'mermaid',
+        'jsoneditor'
+    ])
+    .setPublicPath('resources/dist/')
+    .sass('resources/sass/app.scss', 'resources/dist/css')
     .setResourceRoot('../')
     .then(() => {
         exec('node_modules/rtlcss/bin/rtlcss.js resources/dist/css/app.css resources/dist/css/app-rtl.css');
