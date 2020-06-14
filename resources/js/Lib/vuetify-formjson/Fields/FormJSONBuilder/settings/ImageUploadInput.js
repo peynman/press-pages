@@ -34,7 +34,7 @@ export default class ImageUploadInputSettings extends BaseInputSettings {
                     readonly: TextSettings('Readonly'),
                     debounce: TextSettings('Debounce'),
                     flipHorizontallyIcon: TextSettings('Flip Horizontally Icon'),
-                    flipVerticallyIconStyle: TextSettings('Flip Vertically Icon Style'),
+                    flipVerticallyIcon: TextSettings('Flip Vertically Icon Style'),
                     imageQuality: TextSettings('Image Quality'),
                     imageFormat: TextSettings('Image Format'),
                     imageWidth: TextSettings('Image Width'),

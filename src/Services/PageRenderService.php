@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Larapress\Core\Exceptions\AppException;
+use Larapress\CRUD\Exceptions\AppException;
 use Larapress\CRUD\Translation\TranslationHelper;
 use Larapress\Pages\Models\Page;
 use Larapress\CRUD\ICRUDUser;
@@ -16,6 +16,7 @@ use Larapress\CRUD\Models\Role;
 use Larapress\Pages\Models\PageSchema;
 use Larapress\Profiles\Repository\Domain\IDomainRepository;
 use Illuminate\Routing\Route;
+use Larapress\CRUD\Base\ICRUDService;
 
 class PageRenderService implements IPageRenderService
 {
@@ -59,9 +60,14 @@ class PageRenderService implements IPageRenderService
      */
     public function renderPageHTML(Request $request, Route $route, Page $page, $schema)
     {
-        return view('larapress-pages::vue.app', [
-            'config' => $this->renderPageJSON($request, $route, $page, $schema)
-        ]);
+        $json = $this->renderPageJSON($request, $route, $page, $schema);
+        if (is_array($json)) {
+            return view('larapress-pages::vue.app', [
+                'config' => $json
+            ]);
+        }
+
+        return $json;
     }
 
     /**
@@ -79,25 +85,35 @@ class PageRenderService implements IPageRenderService
         if (!is_null($user)) {
             $jwtToken = auth()->guard('api')->tokenById($user->id);
         }
-        if (isset($page->options['roles'])) {
-            if (is_null($user) || !$user->hasRole($page->options['roles'])) {
-                throw new AppException(AppException::ERR_ACCESS_DENIED);
+        if (isset($page->options['roles']) && isset($page->options['roles'][0]['id'])) {
+            $roles = collect($page->options['roles'])->pluck('id')->toArray();
+            if (count($roles) > 0) {
+                if (is_null($user) || !$user->hasRole($roles)) {
+                    return redirect('/signin')->with('endpoint', $request->path());
+                }
             }
         }
 
         $sources = [];
         if (isset($page->options['sources']) && is_array($page->options['sources'])) {
+            /** @var ICRUDService */
+            $crudService = app(ICRUDService::class);
             foreach ($page->options['sources'] as $source) {
                 $res = [];
                 switch ($source['resource']) {
                     case 'object':
-                        $model = $source['class'];
-                        $res = call_user_func([$model, 'find'], $route->parameter($source['param']));
+                        $provider = new $source['class'];
+                        $crudService->useProvider($provider);
+                        $res = $crudService->show($request, $route->parameter($source['param']));
                     break;
                     case 'repository':
-                        $repo = new $source['class'];
-                        $params =  isset($source['params']) ? $source['params']: [];
-                        $res = call_user_func([$repo, $source['method']], $user, ...$params);
+                        $repo = $source['class'];
+                        $safeRepos = config('larapress.pages.safe-sources');
+                        if (in_array($repo, $safeRepos)) {
+                            $params =  isset($source['params']) ? $source['params']: [];
+                            $repoRef = app()->make($repo);
+                            $res = call_user_func([$repoRef,  $source['method']], $user, ...$params);
+                        }
                     break;
                 }
 

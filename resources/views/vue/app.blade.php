@@ -18,6 +18,47 @@
         .larapress-app {
             font-family: "IRANSans", "Tahoma" !important;
         }
+
+        .big-badge span.v-badge__badge {
+            font-size: 15px;
+            padding: 9px;
+            height: 35px;
+        }
+
+        .small-badge span.v-badge__badge {
+            font-size: 13px;
+            padding: 4px;
+            height: 23px;
+        }
+
+        .rounded-product-card {
+            border-radius: 30px !important;
+        }
+
+        .rounded-login-card {
+            border-radius: 10px !important;
+        }
+
+        .v-btn--contained.xsbtn {
+            height: 25px !important;
+            width: 25px !important;
+        }
+
+        .v-btn--contained.xsBtnCart {
+            height: 30px !important;
+            width: 30px !important;
+        }
+
+        .v-btn--contained.super-big-circle {
+            height: 90px !important;
+            width: 90px !important;
+        }
+
+        .v-btn--contained.super-circle {
+            height: 50px !important;
+            width: 50px !important;
+        }
+
     </style>
 
     <title></title>
@@ -31,5 +72,6 @@
     <script src="{{ asset('/storage/vendor/larapress-pages/js/manifest.js') }}"></script>
     <script src="{{ asset('/storage/vendor/larapress-pages/js/vendor.bundle.js') }}"></script>
     <script src="{{ asset('/storage/vendor/larapress-pages/js/app.bundle.js') }}"></script>
+
 </body>
 </html>

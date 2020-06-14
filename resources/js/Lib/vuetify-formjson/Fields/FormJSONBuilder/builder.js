@@ -77,9 +77,8 @@ export default {
             column: new DatatableColumnSettings(),
             'Centered': new CenteredTemplateSettings(),
             'AdminBar': new AdminBarTemplateSettings(),
-            'AppBar': new AppBarTemplateSettings()
+            'AppBar': new AppBarTemplateSettings(),
         }
-
 
         const FormBuilderInputsList = []
         if (this.availableInputs) {
@@ -93,24 +92,42 @@ export default {
                     FormBuilderInputsList.push({
                         id: key,
                         title: title.join(' '),
+                        group: 'form',
                     })
                 }
             }
+            for (const key in window.ExtraFormJSONSettings) {
+                const parts = key.split('-')
+                if (parts[0] === 'vf') {
+                    const title = parts.splice(1)
+                    title[0] = title[0].slice(0, 1).toUpperCase() + title[0].slice(1)
+                    FormBuilderInputsList.push({
+                        id: key,
+                        title: title.join(' '),
+                        group: 'website',
+                    })
+                }
+            }
+
             FormBuilderInputsList.push({
                 id: 'group',
-                title: 'Group'
+                title: 'Group',
+                group: 'form',
             })
             FormBuilderInputsList.push({
                 id: 'column',
-                title: 'DataTable Column'
+                title: 'DataTable Column',
+                group: 'form',
             })
             FormBuilderInputsList.push({
                 id: 'component',
-                title: 'Custom Component'
+                title: 'Custom Component',
+                group: 'form',
             })
             FormBuilderInputsList.sort((a, b) => ('' + a.title).localeCompare(b.title))
         }
         inputTypeSettings['vf-datatable-input'].inputs = FormBuilderInputsList
+
         return {
             inputs: FormBuilderInputsList,
             inputTypeSettings
@@ -304,8 +321,18 @@ export default {
                     type: {
                         type: 'input',
                         input: 'buttons-list',
-                        label: 'Field type',
+                        label: 'Add a new field to Form Builder',
                         class: 'mt-3',
+                        groups: [
+                            {
+                                id: 'form',
+                                title: 'FormJSON'
+                            },
+                            {
+                                id: 'website',
+                                title: 'Website',
+                            },
+                        ],
                         decorator: {
                             id: 'id',
                             title: 'title',
@@ -527,7 +554,7 @@ export default {
                     }
 
                     // append template properties if target item has one
-                    if (item.value.__template) {
+                    if (item.value && item.value.__template) {
                         ref[item.model.id] = {
                             ...ref[item.model.id],
                             __template: { ...item.value.__template }
@@ -612,7 +639,7 @@ export default {
                         children = getTree(data[prop].groups, 'group')
                     }
 
-                    const eventsVals = {}
+                    let eventsVals = {}
                     let settingsVals = {}
                     // keep property names which contain inner slots and content from ending up in settingsVals
                     const notDataKeys = [
@@ -680,7 +707,9 @@ export default {
                         newModel.addChild(child)
                     })
 
+
                     // apply settings on item value again to break children update chain
+                    eventsVals = {}
                     settingsVals = {}
                     for (const inner in data[prop]) {
                         if (notDataKeys.indexOf(inner) < 0) {
@@ -714,7 +743,7 @@ export default {
                         settings: {
                             tabs: {
                                 fieldProperties: settingsVals,
-                                eventHandlers: eventsVals
+                                eventHandlers: JSON.parse(JSON.stringify(eventsVals))
                             }
                         },
                         slots: {

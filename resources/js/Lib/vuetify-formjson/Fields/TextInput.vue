@@ -22,7 +22,7 @@ export default {
     props: {
         id: String,
         field: Object,
-        value: [Object, String]
+        value: [Object, String, Array]
     },
     methods: {
         updateInput: function (ev) {

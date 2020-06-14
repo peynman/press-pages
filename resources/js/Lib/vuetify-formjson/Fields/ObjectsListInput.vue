@@ -5,10 +5,11 @@
       <v-checkbox
         v-for="item in field.objects"
         :key="`${id}-checkbox-${item[decorator.id]}`"
-        v-model="devalue[item[decorator.id]]"
         :class="`ma-0 pa-0 me-4 ${item.props ? item.props.class:null}`"
         :label="getDecorableLabel(item)"
+        v-model="checkedIds[item[decorator.id]]"
         v-bind="getProps(item)"
+        @change="onChanged"
         v-on="getEvents(item)"
       ></v-checkbox>
     </div>
@@ -36,8 +37,26 @@ export default {
         id: String,
         field: Object,
         value: {
-            type: Object,
+            type: [Object, Array],
             default: () => ({})
+        }
+    },
+    data () {
+        const checkedIds = {};
+        if (this.value) {
+            if (Array.isArray(this.value)) {
+                this.value.forEach((v) => {
+                    checkedIds[v.id] = true;
+                })
+            } else {
+                for (const p in this.value) {
+                    const v = this.value[p]
+                    checkedIds[v.id] = true;
+                }
+            }
+        }
+        return {
+            checkedIds
         }
     },
     methods: {
@@ -50,6 +69,17 @@ export default {
             return {
                 ...(item.props && item.props['v-on'] ? item.props['v-on'] : {})
             }
+        },
+        onChanged () {
+            const values = [];
+            this.field.objects.forEach((o) => {
+                if (this.checkedIds[o[this.decorator.id]]) {
+                    values.push({
+                        [this.decorator.id]: o[this.decorator.id]
+                    })
+                }
+            })
+            this.devalue = values;
         }
     },
     watch: {

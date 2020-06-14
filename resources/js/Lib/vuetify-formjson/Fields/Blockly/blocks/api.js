@@ -61,8 +61,8 @@ export default function (Blockly, crudList) {
         if (valueHeaders !== '') {
             headersCode = `let askedHeaders = ${valueHeaders}\nif (!headers) { headers = {}}\nheaders['Content-Type'] = '${dropdownContentType}'\n`
         }
-        const headers = `const headers = this.getWebRequestHeaders(askedHeaders)\n`
-        var code = `${headers}this.webRequest({\nvalidateStatus: (status) => (true),\nurl: ${valueUrl},\nmethod: '${dropdownMethod}',\nheaders,\ndata: ${valueData},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
+        const headers = `${headersCode}\nconst headers = this.getWebAuthHeaders(askedHeaders)\n`
+        var code = `${headers}this.webRequest({\nurl: ${valueUrl},\nmethod: '${dropdownMethod}',\nheaders,\ndata: ${valueData},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
         return code
     }
 
@@ -221,7 +221,7 @@ export default function (Blockly, crudList) {
         const method = 'POST'
         let headersCode = `let askedHeaders = { 'Content-Type': 'application/json' }\n`
         const headers = `${headersCode}const headers = this.getWebAuthHeaders(askedHeaders)\n`
-        var code = `${headers}this.webRequest({\nvalidateStatus: (status) => (true),\nurl: '/api/' + ${valueCrud},\nmethod: '${method}',\nheaders,\ndata: ${valueData},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
+        var code = `${headers}this.webRequest({\nurl: '/api/' + ${valueCrud},\nmethod: '${method}',\nheaders,\ndata: ${valueData},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
         return code
     }
 
@@ -270,7 +270,7 @@ export default function (Blockly, crudList) {
         const method = 'PUT'
         let headersCode = `let askedHeaders = { 'Content-Type': 'application/json' }\n`
         const headers = `${headersCode}const headers = this.getWebAuthHeaders(askedHeaders)\n`
-        var code = `${headers}this.webRequest({\nvalidateStatus: (status) => (true),\nurl: '/api/' + ${valueCrud} + '/' + ${valueID},\nmethod: '${method}',\nheaders,\ndata: ${valueData},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
+        var code = `${headers}this.webRequest({\nurl: '/api/' + ${valueCrud} + '/' + ${valueID},\nmethod: '${method}',\nheaders,\ndata: ${valueData},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
         return code
     }
 
@@ -314,7 +314,7 @@ export default function (Blockly, crudList) {
         const method = 'DELETE'
         let headersCode = `let askedHeaders = { 'Content-Type': 'application/json' }\n`
         const headers = `${headersCode}const headers = this.getWebAuthHeaders(askedHeaders)\n`
-        var code = `${headers}this.webRequest({\nvalidateStatus: (status) => (true),\nurl: '/api/' + ${valueCrud} + '/' + ${valueID},\nmethod: '${method}',\nheaders,\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
+        var code = `${headers}this.webRequest({\nurl: '/api/' + ${valueCrud} + '/' + ${valueID},\nmethod: '${method}',\nheaders,\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
         return code
     }
 
@@ -374,7 +374,7 @@ export default function (Blockly, crudList) {
         let headersCode = `let askedHeaders = { 'Content-Type': 'application/json' }\n`
         const headers = `${headersCode}const headers = this.getWebAuthHeaders(askedHeaders)\n`
         const dataCode = `const reqData = { page: ${valuePage}, limit: ${valueLimit}, filter: ${valueFilters}, relations: ${valueRels} }\n`
-        var code = `${headers}${dataCode}this.webRequest({\nvalidateStatus: (status) => (true),\nurl: '/api/' + ${valueCrud} + '/query',\nmethod: '${method}',\nheaders,\ndata: reqData,\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
+        var code = `${headers}${dataCode}this.webRequest({\nurl: '/api/' + ${valueCrud} + '/query',\nmethod: '${method}',\nheaders,\ndata: reqData,\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
         return code
     }
 

@@ -10,11 +10,16 @@
 <script>
 import VuetifyImageInput from 'vuetify-image-input'
 import BaseComponent from './mixins'
+import { VDivider, VBtn, VIcon, VSlider } from 'vuetify/lib'
 
 export default {
     mixins: [BaseComponent],
     components: {
-        [VuetifyImageInput.name]: VuetifyImageInput
+        [VuetifyImageInput.name]: VuetifyImageInput,
+        VDivider,
+        VBtn,
+        VIcon,
+        VSlider,
     },
     name: 'vf-image-upload-input',
     props: {

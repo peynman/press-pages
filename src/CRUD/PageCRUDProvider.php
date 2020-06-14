@@ -7,12 +7,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Larapress\CRUD\Base\BaseCRUDProvider;
 use Larapress\CRUD\Base\ICRUDProvider;
+use Larapress\CRUD\Base\IPermissionsMetadata;
 use Larapress\Pages\Models\Page;
 
-class PageCRUDProvider implements ICRUDProvider
+class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
 {
     use BaseCRUDProvider;
 
+    public $name_in_config = 'larapress.pages.routes.pages.name';
+    public $verbs = [
+        self::VIEW,
+        self::CREATE,
+        self::EDIT,
+        self::DELETE,
+    ];
     public $model = Page::class;
     public $createValidations = [
         'name' => 'required|string|unique:pages,name',
@@ -26,7 +34,7 @@ class PageCRUDProvider implements ICRUDProvider
     ];
     public $updateValidations = [
         'name' => 'nullable|string|unique:pages,name',
-        'slug' => 'required|string',
+        'slug' => 'nullable|string',
         'body' => 'nullable',
         'options.title' => 'required|string',
         'options.template' => 'required|string',
@@ -36,6 +44,7 @@ class PageCRUDProvider implements ICRUDProvider
     ];
     public $autoSyncRelations = [];
     public $validSortColumns = [
+        'id',
         'slug',
         'name',
         'author_id',
@@ -87,8 +96,10 @@ class PageCRUDProvider implements ICRUDProvider
      */
     public function onBeforeUpdate( $args )
     {
-        if (!Str::startsWith($args['slug'], '/')) {
-            $args['slug'] = '/'.$args['slug'];
+        if (isset($slug)) {
+            if (!Str::startsWith($args['slug'], '/')) {
+                $args['slug'] = '/'.$args['slug'];
+            }
         }
 
 
@@ -104,7 +115,7 @@ class PageCRUDProvider implements ICRUDProvider
     {
         /** @var ICRUDUser $user */
         $user = Auth::user();
-        if ($user->hasRole(config('larapress.profiles.security.roles.affiliate'))) {
+        if (! $user->hasRole(config('larapress.profiles.security.roles.super-role'))) {
             $query->where('author_id', $user->id);
         }
 
@@ -120,7 +131,7 @@ class PageCRUDProvider implements ICRUDProvider
     {
         /** @var ICRUDUser|IProfileUser $user */
         $user = Auth::user();
-        if ($user->hasRole(config('larapress.profiles.security.roles.affiliate'))) {
+        if (! $user->hasRole(config('larapress.profiles.security.roles.super-role'))) {
             return $user->id === $object->author_id;
         }
 

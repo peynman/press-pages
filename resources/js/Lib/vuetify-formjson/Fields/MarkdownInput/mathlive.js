@@ -1,4 +1,4 @@
-import MathLive from 'dist/mathlive.mjs'
+import MathLive from 'mathlive'
 
 const MathLivePlugin = (md, pluginOptions) => {
     const temp = md.renderer.rules.fence.bind(md.renderer.rules)

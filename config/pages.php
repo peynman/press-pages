@@ -1,5 +1,8 @@
 <?php
 
+use Larapress\CRUD\Repository\IPermissionsRepository;
+use Larapress\CRUD\Repository\IRoleRepository;
+
 return [
     /** middlewares for page routes */
     'middleware' => [
@@ -24,4 +27,10 @@ return [
             'name' => 'page-schemas'
         ]
     ],
+
+    'safe-sources' => [
+        IPermissionsRepository::class,
+        IRoleRepository::class,
+        IFilterRepository::class,
+    ]
 ];

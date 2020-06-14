@@ -2,14 +2,8 @@
   <v-content :id="id">
     <v-app-bar color="deep-purple accent-4" dense dark>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <v-toolbar-title></v-toolbar-title>
+      <v-toolbar-title>آکامی آنلاین</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
       <v-menu left bottom>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
@@ -17,8 +11,8 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-item v-for="n in 5" :key="n" @click="() => {}">
-            <v-list-item-title>Option {{ n }}</v-list-item-title>
+          <v-list-item v-for="crud in cruds" :key="`action-${crud.id}`" :href="`/admin/${crud.id}`">
+            <v-list-item-title>{{ crud.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -42,7 +36,7 @@ export default {
   props: {
     id: String,
     options: {
-      type: Object,
+      type: [Object, Array],
       default: () => ({})
     },
     sources: {
@@ -57,6 +51,64 @@ export default {
         values: {}
       })
     },
+  },
+  data () {
+      return {
+          cruds: [
+              {
+                  id: 'users',
+                  title: 'کاربران'
+              },
+              {
+                  id: 'roles',
+                  title: 'نقش ها'
+              },
+              {
+                  id: 'domains',
+                  title: 'دامنه ها'
+              },
+              {
+                  id: 'forms',
+                  title: 'فرم ها'
+              },
+              {
+                  id: 'products',
+                  title: 'محصولات'
+              },
+              {
+                  id: 'product-types',
+                  title: 'نوع محصولات'
+              },
+              {
+                  id: 'product-categories',
+                  title: 'دسته بندی محصولات'
+              },
+              {
+                  id: 'sms-gateways',
+                  title: 'درگاه پیامک'
+              },
+              {
+                  id: 'sms-messages',
+                  title: 'پیامک ها'
+              },
+              {
+                  id: 'bank-gateways',
+                  title: 'درگاه بانک'
+              },
+              {
+                  id: 'bank-gateway-transactions',
+                  title: 'تراکنش های بانک'
+              },
+              {
+                  id: 'carts',
+                  title: 'سبد های خرید'
+              },
+              {
+                  id: 'wallet-transactions',
+                  title: 'تراکنش های کیف پول'
+              },
+          ]
+      }
   },
   mounted () {
       if (this.body) {

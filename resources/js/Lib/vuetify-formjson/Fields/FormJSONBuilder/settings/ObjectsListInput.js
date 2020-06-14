@@ -77,6 +77,26 @@ export default class ObjectsListInputSettings extends BaseInputSettings {
                 edit: {},
                 remove: {}
             },
+            decorator: {
+                options: {
+                    formClass: 'ma-0 pa-0'
+                },
+                fields: {
+                    label: {
+                        type: 'input',
+                        input: 'text',
+                        label: 'Decorator Label',
+                    },
+                    labels: {
+                        type: 'input',
+                        input: 'text',
+                        label: 'Decorator Property Names',
+                        props: {
+                            hint: 'comma separated property names'
+                        }
+                    },
+                }
+            },
             props: {
                 options: {
                     type: 'row',

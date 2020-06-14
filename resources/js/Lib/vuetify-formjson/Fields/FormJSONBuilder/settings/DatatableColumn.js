@@ -53,16 +53,26 @@ export default class DatatableColumnSettings extends BaseInputSettings {
         const extras = {}
         if (this.dic && this.dic[item.model.id]) {
             const values = this.dic[item.model.id]
-            if (values.type === 'custom') {
+            const type = values.tabs && values.tabs.fieldProperties ? values.tabs.fieldProperties.type : null;
+            if (type === 'custom') {
                 extras.component = {
                     type: 'input',
                     input: 'text',
                     label: 'Component',
+                    class: 'col-12 ma-0 pa-0',
                 }
                 extras.slot = {
                     type: 'input',
                     input: 'text',
-                    label: 'Slot'
+                    label: 'Slot',
+                    class: 'col-12 ma-0 pa-0',
+                }
+            } else if (type === 'nested-object') {
+                extras['nested-path'] = {
+                    type: 'input',
+                    input: 'text',
+                    label: 'Nested Path',
+                    class: 'col-12 ma-0 pa-0',
                 }
             }
         }
@@ -110,6 +120,10 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     {
                         id: 'simple',
                         title: 'Simple'
+                    },
+                    {
+                        id: 'nested-object',
+                        title: 'Nested Object'
                     },
                     {
                         id: 'datetime',

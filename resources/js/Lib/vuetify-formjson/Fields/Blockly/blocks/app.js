@@ -384,7 +384,7 @@ export default function (Blockly) {
         }
     }
     Blockly.JavaScript.app_console_log = function (block) {
-        var argument0 = Blockly.JavaScript.valueToCode(block, 'LOG', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'LOG', Blockly.JavaScript.ORDER_ASSIGNMENT) || 'this'
         return `console.log(${argument0})\n`
     }
 }

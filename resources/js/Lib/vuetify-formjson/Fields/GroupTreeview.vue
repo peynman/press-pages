@@ -1,7 +1,7 @@
 <template>
   <v-sheet
     :class="`vf-input overflow-hidden d-flex flex-column flex-grow-1 ${field.class ? field.class:''}`"
-    style="position: relative;"
+    :style="`position: relative; min-height: ${field.height ? field.height: '300px'}`"
   >
     <confirm ref="confirm"></confirm>
     <v-menu v-model="menu" :position-x="menuX" :position-y="menuY">
@@ -51,7 +51,7 @@
           </div>
         </template>
       </v-treeview>
-      <v-navigation-drawer v-model="drawer" absolute temporary v-bind="drawerProps">
+      <v-navigation-drawer v-model="drawer" absolute permanent v-bind="drawerProps">
         <vf-fields-renderer
           v-if="currentAction"
           :on-updated="currentAction.onUpdated"

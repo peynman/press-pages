@@ -35,7 +35,6 @@
         "webpack": "^4.43.0"
     },
     "dependencies": {
-        "@peynman/vuetify-formjson": "file:../vuetify-formjson",
         "lodash.clonedeep": "^4.5.0",
         "vue": "^2.6.11",
         "vue-router": "^3.2.0",

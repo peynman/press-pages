@@ -9,12 +9,7 @@
         <v-icon small>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
-    <component
-      v-if="template"
-      :is="template"
-      v-bind="templateProps"
-      @goto-page="onGotoPage"
-    ></component>
+    <component v-if="template" :is="template" v-bind="templateProps" @goto-page="onGotoPage" @update-user="onUpdateUser"></component>
   </v-app>
 </template>
 
@@ -38,7 +33,7 @@ export default {
       template: null,
       templateProps: null,
       loading: false,
-      snacks: [],
+      snacks: []
     };
   },
   computed: {},
@@ -77,29 +72,23 @@ export default {
     },
 
     onUpdateUser(user, tokens) {
+        console.log('user set', user);
       this.$store.state.user = user;
       this.$store.state.tokens = tokens;
     },
 
     updatePageWithData(data) {
       window.document.title = data.title;
-      if (typeof data.template === 'string') {
-      this.template = data.template;
-      this.templateProps = {
-        body: data.body,
-        options: {},
-        sources: data.sources,
-      };
-      } else {
-      this.template = data.template.name;
+      const template =
+        data.body && data.body.template ? data.options.template : data.template;
       this.templateProps = {
         body: data.body,
         options: data.template.props,
-        sources: data.sources,
+        sources: data.sources
       };
-      }
-      this.loading = false;
+      this.template = template;
 
+      this.loading = false;
     },
 
     showSnack(message) {
@@ -116,6 +105,9 @@ export default {
       // set existing auth tokens from HTML datat
       if (window.PageConfig.tokens.api) {
         this.$store.state.tokens.api = window.PageConfig.tokens.api;
+      }
+      if (window.PageConfig.user) {
+        this.$store.state.user = window.PageConfig.user;
       }
     }
   }

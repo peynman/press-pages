@@ -21,13 +21,7 @@ mix
             chunkFilename: '[name].bundle.js',
             publicPath: 'resources/dis/js',
         },
-        plugins: [new VuetifyLoaderPlugin({
-            match (originalTag, { kebabTag, camelTag, path, component }) {
-                if (kebabTag.startsWith('vuetify-formjson')) {
-                    return ['VuetifyFormJSON', `import VuetifyFormJSON from '@peynman/vuetify-formjson/src/VuetifyFormJSON.vue'`]
-                }
-            }
-        })]
+        plugins: [new VuetifyLoaderPlugin({})]
     })
     .js('resources/js/app.js', '/js')
     .extract([
@@ -38,7 +32,6 @@ mix
         'vue-template-compiler',
         'vuex',
         'vuetify',
-        '@peynman/vuetify-formjson',
         'blockly',
         'markdown-it',
         'mathlive',

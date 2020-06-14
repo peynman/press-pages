@@ -12,11 +12,12 @@ export default {
     methods: {
         UpdatePageContent(body, options, sources) {
             const compiled = this.CompileFormJSONSchemaWithCode(this, body.schema, body.code);
+            console.log(compiled);
             this[this.getFormSchemaPropName()] = {
                 fields: compiled.fields,
                 options: compiled.options,
             }
-            this[this.getFormValuePropName()] = body.values ? body.values : {}
+            this[this.getFormValuePropName()] = body.values && !Array.isArray(body.values) ? body.values : {}
 
             if (sources) {
                 sources.forEach((src) => {
@@ -69,17 +70,25 @@ export default {
         },
         getAlertForResponse (response) {
             let data = response
-            if (response.data) {
-                data = response.data
+            if (response.response) {
+                data = response.response
+            }
+            if (data.data) {
+                data = data.data
             }
             let validations = data.errors;
             if (data.validations) {
                 validations = data.validations
             }
 
-            return {
+            let message = data.message
+            if ((!message || message === '') && data.exception) {
+                message = data.exception
+            }
+
+            const alert = {
                 label: '',
-                message: data.message,
+                message,
                 validations: validations,
                 props: {
                     color: data.validations ? 'warning' : response.status === 200 ? 'success' : 'red',
@@ -87,6 +96,7 @@ export default {
                 },
                 hidden: false,
             }
+            return alert;
         },
         setFormValidations (errors) {
             let valErrors = errors
@@ -117,7 +127,7 @@ export default {
             const form = this[this.getFormSchemaPropName()].fields
             const iterateAndRemoveErrors = function(ref) {
                 for (const prop in ref) {
-                    if (ref[prop].props && ref[prop].props['error-messages']) {
+                    if (ref[prop] && ref[prop].props && ref[prop].props['error-messages']) {
                         ref[prop].props['error-messages'] = []
                         ref[prop].props['error'] = false
                     } else if (typeof ref[prop] === 'object') {
@@ -184,20 +194,28 @@ export default {
                             }
                         }
                     } else if (typeof root[prop] === 'object') { // arrays are objects too
-                        if (Array.isArray(root[prop])) { // handle arrays, element by element
-                            outter[prop] = []
+                        if (root[prop] === null) {
+                            outter[prop] = null
                         } else {
-                            outter[prop] = {}
+                            if (Array.isArray(root[prop])) { // handle arrays, element by element
+                                outter[prop] = []
+                            } else {
+                                outter[prop] = {}
+                            }
+                            iterateForVOn(root[prop], outter[prop])
                         }
-                        iterateForVOn(root[prop], outter[prop])
                     } else {
                         outter[prop] = root[prop]
                     }
                 }
             }
             iterateForVOn(schema, output)
-            if (evalObj.onFormInit) {
-                output.onFormInit = evalObj.onFormInit.bind(component)
+
+            // bind functions in blockly code
+            for (const func in evalObj) {
+                if (typeof evalObj[func] === 'function') {
+                    component[func] = evalObj[func].bind(component)
+                }
             }
             if (evalObj.blockly) {
                 component.blockly = evalObj.blockly
@@ -211,12 +229,16 @@ export default {
                     if (typeof root[prop] === 'function') {
                         outter[prop] = root[prop].name.substr('bound '.length)
                     } else if (typeof root[prop] === 'object') { // arrays are objects too
-                        if (Array.isArray(root[prop])) { // handle arrays, element by element
-                            outter[prop] = []
+                        if (root[prop] === null) {
+                            outter[prop] = null
                         } else {
-                            outter[prop] = {}
+                            if (Array.isArray(root[prop])) { // handle arrays, element by element
+                                outter[prop] = []
+                            } else {
+                                outter[prop] = {}
+                            }
+                            iterateForVOn(root[prop], outter[prop])
                         }
-                        iterateForVOn(root[prop], outter[prop])
                     } else {
                         outter[prop] = root[prop]
                     }

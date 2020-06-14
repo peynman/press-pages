@@ -2,7 +2,7 @@
 
 namespace Larapress\Pages\Commands;
 
-use Larapress\Core\Commands\ActionCommandBase;
+use Larapress\CRUD\Commands\ActionCommandBase;
 use Larapress\Pages\Models\Page;
 
 class PageCommands extends ActionCommandBase

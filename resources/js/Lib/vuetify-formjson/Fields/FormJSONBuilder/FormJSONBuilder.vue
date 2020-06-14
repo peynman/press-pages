@@ -60,6 +60,12 @@
     </div>
     <v-card light v-show="mode === 'blockly'" flat class="fill-height">
       <v-system-bar dark :color="blocklyError ? 'red' : 'primary' ">
+        <v-btn class="right" icon small @click="blocklyPasteContent()">
+          <v-icon small>mdi-content-paste</v-icon>
+        </v-btn>
+        <v-btn class="right" icon small @click="blocklyCopyContent()">
+          <v-icon small>mdi-content-copy</v-icon>
+        </v-btn>
         <v-btn class="right" icon small @click="showCode = !showCode">
           <v-icon small>{{ showCode ? 'mdi-eye':'mdi-code-braces-box' }}</v-icon>
         </v-btn>Define functions and callbacks
@@ -85,6 +91,7 @@
           v-if="! showCode"
           :field="blocklyField"
           v-model="codeModel"
+          @selection="onBlocklySelectionChanged"
         ></vf-blockly-input>
         <vf-code-input v-if="showCode" v-model="blocklyJSCode" :field="{}"></vf-code-input>
       </v-card-text>
@@ -189,7 +196,8 @@ export default {
           },
           drawerProps: {
             width: 400,
-            right: true
+            dark: false,
+            'center-active': true,
           },
           formProps: {
             class: "pa-4",
@@ -213,7 +221,11 @@ export default {
             "item-text": "title",
             shaped: true,
             hoverable: true,
-            "return-object": true
+            rounded: true,
+            "return-object": true,
+            'selection-type': 'independent',
+            'multiple-active': false,
+            transition: true,
           }
         }
       },
@@ -224,6 +236,7 @@ export default {
       blocklyField: {
         class: "fill-height"
       },
+      currentSelectedBlocksCode: '',
       blocklyError: null,
       fullscreenCodeEditor: false,
       showCode: false,
@@ -276,7 +289,7 @@ export default {
 
       const inputValue = {
         schema: this[this.getFormSchemaPropName()],
-        values: this[this.getFormValuePropName()],
+        values: this.formModel,
         code: this.codeModel,
         template: {
             name: this.template,
@@ -296,7 +309,7 @@ export default {
     resetManualEditor () {
       const inputValue = {
         schema: this[this.getFormSchemaPropName()],
-        values: this[this.getFormValuePropName()],
+        values: this.formModel,
         code: this.codeModel,
         template: {
             name: this.template,
@@ -304,12 +317,22 @@ export default {
         }
       };
       this.jsonString = JSON.stringify(inputValue, null, 2);
-    }
+    },
+    onBlocklySelectionChanged(code) {
+        this.currentSelectedBlocksCode = code;
+    },
+    blocklyCopyContent() {
+        this.onCopyToClipBoard(this.currentSelectedBlocksCode);
+    },
+    blocklyPasteContent() {
+        this.onPasteFromClipboard((text) => {
+            this.$refs.blocklyEditor.pasteToWorkspace(text);
+        })
+    },
   },
 
   mounted() {
     if (this.devalue && this.devalue.code && this.devalue.schema) {
-        console.log(this.devalue);
       this.onUploaded(this.devalue);
     } else {
       /**
@@ -364,6 +387,10 @@ export default {
     },
 
     template () {
+        this.updateFormJSONInput();
+    },
+
+    formModel () {
         this.updateFormJSONInput();
     },
   }

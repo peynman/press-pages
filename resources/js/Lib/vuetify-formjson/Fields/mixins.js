@@ -27,10 +27,18 @@ export default {
 export const DecoratableComponent = {
     computed: {
         decorator: function () {
+            const props = {}
+            if (this.field.decorator && this.field.decorator.labels) {
+                const labels = this.field.decorator.labels.split(',');
+                for (const l in labels) {
+                    props[labels[l]] = labels[l]
+                }
+            }
             return {
                 id: 'id',
                 title: 'title',
                 label: ':id#:title',
+                ...props,
                 ...this.field.decorator
             }
         }

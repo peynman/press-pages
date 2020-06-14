@@ -1,15 +1,16 @@
 <template>
-    <div :class="`vf-input d-flex flex-row flex-grow-1 ${field.class ? field.class : ''}`">
-        <div v-show="mode === 'view' || field.readonly" ref="editorView" class="fill-height" style="width: 100%;"></div>
-        <v-card v-show="mode === 'editor' && !field.readonly" style="position: relative; width: 100%; min-height: 24px;" class="fill-hight mx-2">
-            <div class="" :style="`position: absolute; width: 100%; left: 0; right: 0; top: 0; bottom: 0; ${field.height ? 'height: ' + field.height : ''}`" ref="editorCode">
-            </div>
-        </v-card>
+    <div :class="`vf-input d-flex flex-column flex-grow-1 ${field.class ? field.class : ''}`">
+        <label v-if="mode !== 'view'">{{ field.label }}</label>
         <div v-show="!field.readonly">
             <v-btn fab small icon @click="() => { mode = mode === 'editor' ? 'view' : 'editor'; toggleVirtualMathKeyboard(dialog && mode === 'editor') }">
                 <v-icon small>{{ modeIcon }}</v-icon>
             </v-btn>
         </div>
+        <div v-show="mode === 'view' || field.readonly" ref="editorView" class="fill-height" style="width: 100%;"></div>
+        <v-card v-show="mode === 'editor' && !field.readonly" style="position: relative; width: 100%; min-height: 24px;" class="fill-hight mx-2">
+            <div class="" :style="`position: absolute; width: 100%; left: 0; right: 0; top: 0; bottom: 0; ${field.height ? 'height: ' + field.height : ''}`" ref="editorCode">
+            </div>
+        </v-card>
     </div>
 </template>
 
@@ -23,8 +24,8 @@ import './MarkdownInput/AceEditor/theme-eclipse'
 import markdownit from 'markdown-it'
 import MarkdownItColor from './MarkdownInput/MarkdownItColor/index'
 import MermaidPlugin from './MarkdownInput/mermaid'
-// import MathLivePlugin from './MarkdownInput/mathlive'
 import FromJSONPlugin from './MarkdownInput/formjson'
+import MathLivePlugin from './MarkdownInput/mathlive'
 
 import { VBtn, VIcon, VCard } from 'vuetify/lib'
 export default {
@@ -114,6 +115,9 @@ export default {
         })
         this.markdownEditor.use(FromJSONPlugin, {
             host: this
+        })
+        this.markdownEditor.use(MathLivePlugin, {
+
         })
         // init ace editor before calling update
         this.updateMarkdownText()

@@ -49,7 +49,7 @@ export default function (Blockly) {
                 .setCheck('String')
                 .setAlign(Blockly.ALIGN_RIGHT)
                 .appendField('at path')
-            this.setOutput(true, 'Object')
+            this.setOutput(true, ['Object', 'String', 'Number', 'Array', 'Boolean'])
             this.setColour(105)
             this.setTooltip('')
             this.setHelpUrl('')
@@ -60,6 +60,7 @@ export default function (Blockly) {
         var argument1 = Blockly.JavaScript.valueToCode(block, 'PATH', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         return [`this.getNestedPathValue(${argument0}, ${argument1})\n`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
     }
+
 
     // set nested
     Blockly.Blocks.obj_set_nested = {

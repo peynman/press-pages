@@ -5,12 +5,20 @@ namespace Larapress\Pages\CRUD;
 use Illuminate\Support\Facades\Auth;
 use Larapress\CRUD\Base\BaseCRUDProvider;
 use Larapress\CRUD\Base\ICRUDProvider;
+use Larapress\CRUD\Base\IPermissionsMetadata;
 use Larapress\Pages\Models\PageSchema;
 
-class PageSchemaCRUDProvider implements ICRUDProvider
+class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
 {
     use BaseCRUDProvider;
 
+    public $name_in_config = 'larapress.pages.routes.page-schemas.name';
+    public $verbs = [
+        self::VIEW,
+        self::CREATE,
+        self::EDIT,
+        self::DELETE,
+    ];
     public $model = PageSchema::class;
     public $createValidations = [
         'name' => 'required|string|unique:page_schemas,name',

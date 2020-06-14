@@ -30,13 +30,33 @@
         @on-cancel="onCancelNew"
         @on-update="onUpdateNew"
       ></vf-datatable-dialog-create>
-      <label>{{field.label}}</label>
-      <v-spacer></v-spacer>
+      <v-btn
+        icon
+        small
+        :color="showSearch ? 'warning' : 'secondary'"
+        @click="showSearch = !showSearch"
+        v-if="!field['hide-search']"
+      >
+        <v-icon small>{{ showSearch ? 'mdi-close' : 'mdi-card-search' }}</v-icon>
+      </v-btn>
+      <v-btn
+        icon
+        small
+        color="secondary"
+        :loading="loading"
+        v-if="!showSearch && field.table && field.table.query"
+        @click="updateTable()"
+      >
+        <v-icon small>mdi-refresh</v-icon>
+      </v-btn>
+      <label v-if="!showSearch">{{field.label}}</label>
       <v-text-field
-        v-if="field.search && !field['hide-search']"
+        v-show="showSearch && !field['hide-search']"
         dense
+        ref="searchField"
         v-model="search"
         clearable
+        hide-details
         placeholder="Search..."
       ></v-text-field>
       <vf-datatable-dialog-delete
@@ -65,7 +85,13 @@
     >
       <template v-slot:item.data-table-select="{item, isSelected, select}">
         <v-simple-checkbox class="d-inline" :value="isSelected" @input="select($event)"></v-simple-checkbox>
-        <v-btn v-if="!field['hide-remove']" icon x-small color="red" @click="onRemoveSelected(item)">
+        <v-btn
+          v-if="!field['hide-remove']"
+          icon
+          x-small
+          color="red"
+          @click="onRemoveSelected(item)"
+        >
           <v-icon x-small>mdi-playlist-remove</v-icon>
         </v-btn>
         <v-btn v-if="!field['hide-edit']" icon x-small @click="onOpenEditDialog(item)">
@@ -78,8 +104,7 @@
           :key="`${id}-${template.column.id}`"
           :item="item"
           :column="template.column"
-        >
-        </component>
+        ></component>
       </template>
       <template v-for="header in headers" v-slot:[getHeaderSlot(header)]="{}">{{ header.text }}</template>
     </v-data-table>
@@ -101,9 +126,10 @@ import {
   VAlert
 } from "vuetify/lib";
 
-import ColumnSimple from './Datatable/ColumnSimple.vue'
-import ColumnActions from './Datatable/ColumnActions.vue'
-import ColumnExpandableLinks from './Datatable/ColumnExpandableLinks.vue'
+import ColumnSimple from "./Datatable/ColumnSimple.vue";
+import ColumnActions from "./Datatable/ColumnActions.vue";
+import ColumnNestedObject from "./Datatable/ColumnNestedObject.vue";
+import ColumnExpandableLinks from "./Datatable/ColumnExpandableLinks.vue";
 
 export default {
   mixins: [BaseComponent],
@@ -120,7 +146,7 @@ export default {
     [VFCreateDialog.name]: VFCreateDialog,
     ColumnSimple,
     ColumnActions,
-    ColumnExpandableLinks,
+    ColumnExpandableLinks
   },
   name: "vf-datatable-input",
   props: {
@@ -177,14 +203,17 @@ export default {
           const h = this.field.columns[indexer];
           const template = {
             component: ColumnSimple,
-            column: h,
+            column: h
           };
           switch (h.type) {
-            case 'actions':
-                template.component = ColumnActions
+            case "actions":
+              template.component = ColumnActions;
               break;
-            case 'expan-list':
-                template.component = ColumnExpandableLinks
+            case 'nested-object':
+              template.component = ColumnNestedObject;
+              break;
+            case "expan-list":
+              template.component = ColumnExpandableLinks;
               break;
             default:
               break;
@@ -222,6 +251,12 @@ export default {
           direction: this.options.sortDesc[index] ? "desc" : "asc"
         });
       });
+      if (sort.length === 0 && this.field.columns.id) {
+          sort.push({
+          column: 'id',
+          direction: "desc"
+        });
+      }
 
       if (this.field.table && this.field.table.query) {
         const headers = {
@@ -248,7 +283,9 @@ export default {
             limit: this.options.itemsPerPage,
             search: this.search,
             sort: sort,
-            with: this.field.table.query.relations ? this.field.table.query.relations : [],
+            with: this.field.table.query.relations
+              ? this.field.table.query.relations
+              : []
           }
         })
           .then(response => {
@@ -264,6 +301,14 @@ export default {
           .finally(() => {
             this.loading = false;
           });
+      } else {
+        this.total = this.devalue.length;
+        for (let item in this.devalue) {
+          if (!this.devalue[item].id) {
+            this.devalue[item].id =  "id#" + Math.random() * Number.MAX_SAFE_INTEGER
+              "id#" + Math.random() * Number.MAX_SAFE_INTEGER;
+          }
+        }
       }
     },
     getTemplateSlot(template) {
@@ -339,12 +384,12 @@ export default {
       deep: true,
       handler() {
         this.$emit("input", this.devalue);
-        this.total = this.devalue.length;
+        if (!this.field.table || !this.field.table.query) {
+          this.total = this.devalue.length;
+        }
       }
     },
-    showCreate: function() {
-      console.log("showcreate d", this.showCreate);
-    },
+    showCreate: function() {},
     search: function(o, n) {
       this.updateTable();
     },
@@ -357,6 +402,13 @@ export default {
     selected: {
       deep: true,
       handler() {}
+    },
+    showSearch() {
+      if (this.showSearch) {
+        this.$nextTick(() => {
+          this.$refs.searchField.focus();
+        });
+      }
     }
   },
   mounted() {

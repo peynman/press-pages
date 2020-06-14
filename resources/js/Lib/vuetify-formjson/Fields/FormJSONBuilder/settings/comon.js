@@ -120,32 +120,12 @@ export function createSettingsFrom (fields, events, slots) {
                     fields: {
                         ...eventFields
                     }
-                },
-                mappedSources: {
-                    label: 'Sources',
-                    options: {
-                        type: 'col',
-                        formClass: 'ma-0 pa-0'
-                    },
-                    fields: {
-                        value: {
-                            type: 'input',
-                            input: 'text',
-                            label: 'Component value $path',
-                            props: {
-                                hint: 'Map Value for the component to an object in host component'
-                            }
-                        },
-                        props: {
-                            type: 'input',
-                            input: 'text',
-                            label: 'Component Properties $path',
-                            props: {
-                                hint: 'Map Properties for the component to an object in host componenth'
-                            }
-                        }
-                    }
                 }
+            },
+            props: {
+                color: 'primary',
+                centered: true,
+                flat: true,
             }
         }
     }
