@@ -2,7 +2,7 @@
     <v-content :id="id">
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
-          <v-col cols="12" v-bind="options">
+          <v-col class="pa-0" cols="12" v-bind="options">
             <vuetify-formjson v-bind="this[this.getFormSchemaPropName()]" v-model="formModel"></vuetify-formjson>
           </v-col>
         </v-row>

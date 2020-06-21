@@ -3,7 +3,7 @@
     :class="`vf-input d-flex flex-column ${field.class ? field.class:''}`"
   >
     <label class="ma-1">{{field.label}}</label>
-    <v-image-input v-model="devalue" :image-quality="0.85" v-bind="fieldProps" v-on="eventHandlers" />
+    <v-image-input style="direction: ltr;" v-model="devalue" :image-quality="0.1" v-bind="fixedFieldProps" v-on="eventHandlers" />
   </div>
 </template>
 
@@ -27,6 +27,21 @@ export default {
         field: Object,
         value: String
     },
+    computed: {
+        fixedFieldProps () {
+            const props = this.field.props;
+            if (this.field.props?.imageWidth) {
+                props.imageWidth = parseInt(this.field.props?.imageWidth)
+            }
+            if (this.field.props?.imageMaxScaling) {
+                props.imageMaxScaling = parseInt(this.field.props?.imageMaxScaling)
+            }
+            if (this.field.props?.imageHeight) {
+                props.imageHeight = parseInt(this.field.props?.imageHeight)
+            }
+            return props;
+        }
+    },
     watch: {
         devalue: {
             deep: true,
@@ -34,6 +49,6 @@ export default {
                 this.$emit('input', this.devalue)
             }
         }
-    }
+    },
 }
 </script>

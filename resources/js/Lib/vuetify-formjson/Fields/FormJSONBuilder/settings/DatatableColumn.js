@@ -74,6 +74,27 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     label: 'Nested Path',
                     class: 'col-12 ma-0 pa-0',
                 }
+            } else if (type === 'hover-list') {
+                extras['decorator'] = {
+                    options: {
+                        formClass: 'ma-0 pa-0'
+                    },
+                    fields: {
+                        label: {
+                            type: 'input',
+                            input: 'text',
+                            label: 'Decorator Label',
+                        },
+                        labels: {
+                            type: 'input',
+                            input: 'text',
+                            label: 'Decorator Property Names',
+                            props: {
+                                hint: 'comma separated property names'
+                            }
+                        },
+                    }
+                }
             }
         }
 

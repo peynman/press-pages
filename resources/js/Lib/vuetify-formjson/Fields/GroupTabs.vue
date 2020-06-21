@@ -9,7 +9,7 @@
       :color="`${(field.slider.class ? field.slider.class : '')}`"
     ></v-tabs-slider>
     <v-tab
-      v-for="(item, key) in field.groups"
+      v-for="(item, key) in visibleGroups"
       :key="`${id}-tab-label-${key}`"
       :href="`#${id}-tab-${key}`"
       v-on="getTabEvents(item)"
@@ -17,7 +17,7 @@
       <label>{{item.label}}</label>
     </v-tab>
     <v-tab-item
-      v-for="(item, key) in field.groups"
+      v-for="(item, key) in visibleGroups"
       :key="`${id}-tab-item-${key}`"
       :value="`${id}-tab-${key}`"
       v-on="getTabItemEvents(item)"
@@ -44,6 +44,17 @@ export default {
         value: {
             type: Object,
             default: () => ({})
+        }
+    },
+    computed: {
+        visibleGroups () {
+            const groups = {};
+            for (let group in this.field.groups) {
+                if (!this.field.groups[group].hidden) {
+                    groups[group] = this.field.groups[group];
+                }
+            }
+            return groups;
         }
     },
     methods: {

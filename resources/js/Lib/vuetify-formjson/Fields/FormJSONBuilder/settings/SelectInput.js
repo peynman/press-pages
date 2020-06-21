@@ -1,7 +1,8 @@
 import {
     CommonInputEssentials,
     MessagesTab,
-    BaseInputSettings
+    BaseInputSettings,
+    CheckboxSettings
 } from './comon'
 
 import api from './../api'
@@ -62,6 +63,27 @@ export default class SwitchInputSettings extends BaseInputSettings {
                     }
                 },
                 'hide-search': true,
+            },
+            multiple: CheckboxSettings('Multiple'),
+            decorator: {
+                options: {
+                    formClass: 'ma-0 pa-0'
+                },
+                fields: {
+                    label: {
+                        type: 'input',
+                        input: 'text',
+                        label: 'Decorator Label',
+                    },
+                    labels: {
+                        type: 'input',
+                        input: 'text',
+                        label: 'Decorator Property Names',
+                        props: {
+                            hint: 'comma separated property names'
+                        }
+                    },
+                }
             },
             props: {
                 options: {

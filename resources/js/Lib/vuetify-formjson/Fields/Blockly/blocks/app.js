@@ -1,5 +1,68 @@
-
 export default function (Blockly) {
+    // get app state at a path
+    Blockly.Blocks.app_register_channel = {
+        init: function () {
+            this.appendValueInput('EVENT')
+                .setCheck('String')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('Listen for event ')
+            this.appendValueInput('CHANNEL')
+                .setCheck('String')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('on channel')
+            this.appendStatementInput('onEvent')
+                .setCheck(null)
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('on trigger')
+                .appendField(new Blockly.FieldVariable('event'), 'event')
+                .appendField('do')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_register_channel = function (block) {
+        const argument0 = Blockly.JavaScript.valueToCode(block, 'CHANNEL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        const argument1 = Blockly.JavaScript.valueToCode(block, 'EVENT', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        const innerCode = Blockly.JavaScript.statementToCode(block, 'onEvent')
+        const variableEvent = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('event'), Blockly.Variables.NAME_TYPE)
+
+        return `this.registerChannelListener(${argument1}, ${argument0}, (e) => { this.blockly.${variableEvent} = e; ${innerCode}\n})\n`
+    }
+
+    // get app state at a path
+    Blockly.Blocks.app_new_filtered_from_state = {
+        init: function () {
+            this.appendValueInput('PATH')
+                .setCheck('String')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('Duplicate object')
+            this.appendStatementInput('onEach')
+                .setCheck(null)
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('on each')
+                .appendField(new Blockly.FieldVariable('key'), 'key')
+                .appendField(new Blockly.FieldVariable('value'), 'value')
+                .appendField('include if')
+                .appendField(new Blockly.FieldVariable('include'), 'include')
+            this.setOutput(true, 'String')
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_new_filtered_from_state = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'PATH', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        const innerCode = Blockly.JavaScript.statementToCode(block, 'onEach')
+        const vKey = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('key'), Blockly.Variables.NAME_TYPE)
+        const vValue = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('value'), Blockly.Variables.NAME_TYPE)
+        const vInclude = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('include'), Blockly.Variables.NAME_TYPE)
+
+        return [`this.duplicateObjectAndFilter(${argument0}, (k, v) => {\nthis.blockly.${vKey} = k; this.blockly.${vValue} = v; ${innerCode}\n return this.blockly.${vInclude}\n})`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    }
+
     // get app state at a path
     Blockly.Blocks.app_get_from_state = {
         init: function () {
@@ -280,6 +343,54 @@ export default function (Blockly) {
         return `this.setNestedPathValue(this[this.getFormSchemaPropName()], ${argument0}, ${argument1})\n`
     }
 
+    // make template for schema at path
+    Blockly.Blocks.app_make_template_form_schema_at_path = {
+        init: function () {
+            this.appendValueInput('PATH')
+                .setCheck('String')
+                .appendField('make template for schema at path')
+            this.appendValueInput('OBJ')
+                .setCheck(['Object'])
+                .appendField('from template object')
+            this.appendValueInput('ITEMS')
+                .setCheck(['String'])
+                .appendField('with items at component state path')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_make_template_form_schema_at_path = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'PATH', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument1 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || '{}'
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'ITEMS', Blockly.JavaScript.ORDER_ASSIGNMENT) || '[]'
+        return `this.makeTemplate(${argument0}, ${argument1}, ${argument2})\n`
+    }
+
+    // clear template for schema at path
+    Blockly.Blocks.app_clear_template_form_schema_at_path = {
+        init: function () {
+            this.appendValueInput('PATH')
+                .setCheck('String')
+                .appendField('clear template for schema at path')
+            this.appendValueInput('IDS')
+                .setCheck('String')
+                .appendField('and keep ids (, separated list)')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_clear_template_form_schema_at_path = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'PATH', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument1 = Blockly.JavaScript.valueToCode(block, 'IDS', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.clearTemplate(${argument0}, ${argument1})\n`
+    }
+
     // append to form schema at path
     Blockly.Blocks.app_append_form_schema_at_path = {
         init: function () {
@@ -390,22 +501,26 @@ export default function (Blockly) {
 }
 
 export const CategoryApp =
-`
+    `
 <category id="catApp" colour="110" name="App">
+    <block type="app_register_channel"></block>
+    <block type="app_new_filtered_from_state"></block>
     <block type="app_get_route_path_parts"></block>
     <block type="app_get_from_state"></block>
     <block type="app_form_value_at_path"></block>
     <block type="app_form_response_alert"></block>
     <block type="app_form_values"></block>
     <block type="app_form_schema_at_path"></block>
+    <block type="app_append_form_schema_at_path"></block>
     <block type="app_form_validations"></block>
     <block type="app_form_remove_validations"></block>
     <block type="app_set_form_schema_at_path"></block>
-    <block type="app_append_form_schema_at_path"></block>
+    <block type="app_set_form_value_at_path"></block>
+    <block type="app_append_form_value_at_path"></block>
+    <block type="app_make_template_form_schema_at_path"></block>
+    <block type="app_clear_template_form_schema_at_path"></block>
     <block type="app_change_state"></block>
     <block type="app_commit_mutation"></block>
-    <block type="app_append_form_value_at_path"></block>
-    <block type="app_set_form_value_at_path"></block>
     <block type="app_go_to_page"></block>
     <block type="app_load_schema"></block>
     <block type="app_auth_user"></block>

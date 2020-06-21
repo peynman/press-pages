@@ -27,6 +27,8 @@ import VFCalendarInput from './Fields/CalendarInput.vue'
 import VFDatetimeInput from './Fields/DateTimeInput.vue'
 import VFMultiUploadInput from './Fields/MultiUploadInput.vue'
 import VFAlertInput from './Fields/AlertInput.vue'
+import VFPaginationInput from './Fields/PaginationInput.vue'
+import VFSimpleCaptcha from './Fields/SimpleCaptcha.vue'
 
 import VFGroupSingleExpansion from './Fields/GroupSingleExpansion.vue'
 import VFGroupExpansion from './Fields/GroupExpansion.vue'
@@ -63,6 +65,8 @@ export const customComponents = {
     [VFDatetimeInput.name]: VFDatetimeInput,
     [VFCalendarInput.name]: VFCalendarInput,
     [VFAlertInput.name]: VFAlertInput,
+    [VFPaginationInput.name]: VFPaginationInput,
+    [VFSimpleCaptcha.name]: VFSimpleCaptcha,
 
     [VFGroupExpansion.name]: VFGroupExpansion,
     [VFGroupSingleExpansion.name]: VFGroupSingleExpansion,
@@ -98,6 +102,7 @@ export {
     VFDatetimeInput,
     VFCalendarInput,
     VFAlertInput,
+    VFSimpleCaptcha,
 
     VFGroupSingleExpansion,
     VFGroupExpansion,

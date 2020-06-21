@@ -296,6 +296,7 @@ export const CategoryLists =
     <mutation items="0"></mutation>
     </block>
     <block type="lists_create_with"></block>
+    <block type="arr_push"></block>
     <block type="lists_repeat">
     <value name="NUM">
         <shadow type="math_number">

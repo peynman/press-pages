@@ -22,6 +22,8 @@ import MarkdownInputSettings from './settings/MarkdownInput'
 import ParagraphInputSettings from './settings/ParagraphInput'
 import AlertInputSettings from './settings/AlertInput'
 import FormJSONSettings from './settings/FormJSONInput'
+import PaginationSettings from './settings/PaginationInput'
+import SimpleCaptchaSettings from './settings/SimpleCaptcha'
 
 import AdminBarTemplateSettings from './settings/AdminBar'
 import AppBarTemplateSettings from './settings/AppBar'
@@ -73,11 +75,13 @@ export default {
             'vf-markdown-input': new MarkdownInputSettings(),
             'vf-alert-input': new AlertInputSettings(),
             'vf-formjson-input': new FormJSONSettings(),
+            'vf-simple-captcha-input': new SimpleCaptchaSettings(),
             group: new GroupSettings(),
             column: new DatatableColumnSettings(),
             'Centered': new CenteredTemplateSettings(),
             'AdminBar': new AdminBarTemplateSettings(),
             'AppBar': new AppBarTemplateSettings(),
+            'vf-pagination-input': new PaginationSettings(),
         }
 
         const FormBuilderInputsList = []
@@ -101,6 +105,7 @@ export default {
                 if (parts[0] === 'vf') {
                     const title = parts.splice(1)
                     title[0] = title[0].slice(0, 1).toUpperCase() + title[0].slice(1)
+                    inputTypeSettings[key] = window.ExtraFormJSONSettings[key]
                     FormBuilderInputsList.push({
                         id: key,
                         title: title.join(' '),

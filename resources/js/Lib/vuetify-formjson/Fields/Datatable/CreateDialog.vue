@@ -1,18 +1,26 @@
 <template>
   <v-dialog v-model="showCreate" persisted max-width="800px" @click:outside="$emit('on-cancel')">
     <template v-slot:activator="{ on }">
-      <v-btn :color="showCreate ? 'warning':'success'" :href="url" icon x-small text v-on="on" @click.stop.prevent="">
+      <v-btn
+        :color="showCreate ? 'warning':'success'"
+        :href="url"
+        icon
+        x-small
+        text
+        v-on="on"
+        @click.stop.prevent
+      >
         <v-icon small>{{ showCreate ? 'mdi-close':'mdi-plus-box' }}</v-icon>
       </v-btn>
     </template>
     <v-card>
+      <v-progress-linear :active="loading" :indeterminate="loading" absolute bottom></v-progress-linear>
       <v-card-text>
         <vf-fields-renderer
-          v-if="field"
           ref="renderer"
           class="pa-2"
-          :fields="field.fields"
-          :options="field.options"
+          :fields="formFields"
+          :options="formOptions"
           v-model="devalue"
         ></vf-fields-renderer>
       </v-card-text>
@@ -32,7 +40,10 @@ import {
   VCardText,
   VContainer
 } from "vuetify/lib";
+import FormJSONRenderer from "../FormJSONBuilder/generator";
+
 export default {
+  mixins: [FormJSONRenderer],
   components: {
     VDialog,
     VBtn,
@@ -55,10 +66,27 @@ export default {
   data() {
     return {
       showCreate: false,
-      devalue: this.value
+      devalue: this.value,
+      loading: false,
+      dField: {},
+      dOptions: {},
     };
   },
   computed: {
+    formFields() {
+      if (this.field && this.field.fields) {
+        return this.field.fields;
+      }
+
+      return this.dField;
+    },
+    formOptions() {
+      if (this.field && this.field.options) {
+        return this.field.options;
+      }
+
+      return this.dOptions;
+    },
     formActionFields: function() {
       return !this.editMode
         ? {
@@ -176,6 +204,37 @@ export default {
   },
   mounted() {
     this.showCreate = this.forceShow;
+    if (
+      this.url &&
+      (!this.field ||
+        !this.field.fields ||
+        Object.keys(this.field.fields).length === 0)
+    ) {
+      this.loading = true;
+      const host = this.$store.state.host;
+      host
+        .webRequest({
+          method: "GET",
+          url: this.url,
+          headers: host.getWebAuthHeaders({
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          })
+        })
+        .then(response => {
+          this.loading = false;
+            this.UpdatePageContent(response.data.body, response.data.options, response.data.sources);
+            this.dField = this.formSchema.fields;
+            this.dOptions = this.formSchema.options;
+            this.devalue = this.formModel;
+            console.log(this.dField, this.dOptions, this.devalue);
+        })
+        .catch(err => {
+          host.showSnack(err.message);
+          console.log(err);
+          this.loading = false;
+        });
+    }
   }
 };
 </script>

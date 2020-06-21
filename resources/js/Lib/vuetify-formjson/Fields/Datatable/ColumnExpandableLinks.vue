@@ -1,5 +1,5 @@
 <template>
-    <v-chip dense>{{ item[column.id].name }}</v-chip>
+    <v-chip dense small >{{ item[column.id].name }}</v-chip>
 </template>
 
 <script>

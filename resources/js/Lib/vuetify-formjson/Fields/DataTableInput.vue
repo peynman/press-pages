@@ -130,6 +130,8 @@ import ColumnSimple from "./Datatable/ColumnSimple.vue";
 import ColumnActions from "./Datatable/ColumnActions.vue";
 import ColumnNestedObject from "./Datatable/ColumnNestedObject.vue";
 import ColumnExpandableLinks from "./Datatable/ColumnExpandableLinks.vue";
+import ColumnHoverList from "./Datatable/ColumnHoverList.vue";
+import ColumnDatetime from "./Datatable/ColumnDatetime.vue";
 
 export default {
   mixins: [BaseComponent],
@@ -209,11 +211,17 @@ export default {
             case "actions":
               template.component = ColumnActions;
               break;
-            case 'nested-object':
+            case "nested-object":
               template.component = ColumnNestedObject;
               break;
             case "expan-list":
               template.component = ColumnExpandableLinks;
+              break;
+            case "hover-list":
+              template.component = ColumnHoverList;
+              break;
+            case "datetime":
+              template.component = ColumnDatetime;
               break;
             default:
               break;
@@ -252,8 +260,8 @@ export default {
         });
       });
       if (sort.length === 0 && this.field.columns.id) {
-          sort.push({
-          column: 'id',
+        sort.push({
+          column: "id",
           direction: "desc"
         });
       }
@@ -305,8 +313,9 @@ export default {
         this.total = this.devalue.length;
         for (let item in this.devalue) {
           if (!this.devalue[item].id) {
-            this.devalue[item].id =  "id#" + Math.random() * Number.MAX_SAFE_INTEGER
+            this.devalue[item].id =
               "id#" + Math.random() * Number.MAX_SAFE_INTEGER;
+            "id#" + Math.random() * Number.MAX_SAFE_INTEGER;
           }
         }
       }

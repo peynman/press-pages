@@ -286,7 +286,6 @@ export default {
       } catch (e) {
         this.blocklyError = e;
       }
-
       const inputValue = {
         schema: this[this.getFormSchemaPropName()],
         values: this.formModel,
@@ -390,8 +389,12 @@ export default {
         this.updateFormJSONInput();
     },
 
-    formModel () {
+    formModel: {
+        deep: true,
+        handler () {
+            console.log(this.formModel);
         this.updateFormJSONInput();
+    }
     },
   }
 };

@@ -7,7 +7,7 @@
     <component
       v-if="options && options.wrap && options.wrap.enabled !== false"
       :is="options.wrap.component"
-      v-bind="options.wrap.props"
+      v-bind="wrapProps"
       :class="options.wrap.class"
     >
       <component
@@ -38,11 +38,11 @@
 </template>
 
 <script>
-import { VRow, VCol, VCard, VCardActions, VCardText, VCardTitle, VList, VListItem, VListItemTitle, VListItemContent } from 'vuetify/lib'
+import { VRow, VCol, VCard, VCardActions, VCardText, VCardTitle, VList, VListItem, VListItemTitle, VListItemContent, VCarousel, VCarouselItem, VSlideGroup, VSlideItem } from 'vuetify/lib'
 
 export default {
     components: {
-        VRow, VCol, VCard, VCardActions, VCardText, VCardTitle, VList, VListItem, VListItemTitle, VListItemContent
+        VRow, VCol, VCard, VCardActions, VCardText, VCardTitle, VList, VListItem, VListItemTitle, VListItemContent, VCarousel, VCarouselItem, VSlideGroup, VSlideItem
     },
     name: 'vf-fields-renderer',
     props: {
@@ -56,8 +56,20 @@ export default {
         onUpdated: Function
     },
     data () {
+        let wrapProps = this.options && this.options.wrap && this.options.wrap.props ? this.options.wrap.props : {}
+        const wrapInnerProps = {};
+        if (typeof wrapProps === 'string') {
+            try {
+                wrapProps = JSON.parse(wrapProps);
+            } catch (e) {
+                wrapProps = {};
+            }
+        }
+
         return {
-            devalue: this.value
+            devalue: this.value,
+            wrapProps,
+            wrapInnerProps
         }
     },
     computed: {

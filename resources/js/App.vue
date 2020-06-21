@@ -9,7 +9,13 @@
         <v-icon small>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
-    <component v-if="template" :is="template" v-bind="templateProps" @goto-page="onGotoPage" @update-user="onUpdateUser"></component>
+    <component
+      v-if="template"
+      :is="template"
+      v-bind="templateProps"
+      @goto-page="onGotoPage"
+      @update-user="onUpdateUser"
+    ></component>
   </v-app>
 </template>
 
@@ -33,7 +39,7 @@ export default {
       template: null,
       templateProps: null,
       loading: false,
-      snacks: []
+      snacks: [],
     };
   },
   computed: {},
@@ -72,23 +78,30 @@ export default {
     },
 
     onUpdateUser(user, tokens) {
-        console.log('user set', user);
       this.$store.state.user = user;
       this.$store.state.tokens = tokens;
     },
 
     updatePageWithData(data) {
       window.document.title = data.title;
-      const template =
-        data.body && data.body.template ? data.options.template : data.template;
+      const template = data.body?.template?.name
+        ? data.body?.template?.name
+        : data.template;
       this.templateProps = {
         body: data.body,
         options: data.template.props,
         sources: data.sources
       };
       this.template = template;
-
       this.loading = false;
+
+      this.onUpdateUser(data.user, data.tokens);
+      if (data.currencies) {
+        this.$store.state.currencies = data.currencies;
+      }
+      if (data.channels) {
+        this.$store.state.channels = data.channels;
+      }
     },
 
     showSnack(message) {
@@ -102,14 +115,9 @@ export default {
     if (window.PageConfig) {
       const params = new URLSearchParams(window.location.search);
       this.updatePageWithData(window.PageConfig);
-      // set existing auth tokens from HTML datat
-      if (window.PageConfig.tokens.api) {
-        this.$store.state.tokens.api = window.PageConfig.tokens.api;
-      }
-      if (window.PageConfig.user) {
-        this.$store.state.user = window.PageConfig.user;
-      }
     }
+
+    this.$store.state.host = this;
   }
 };
 </script>

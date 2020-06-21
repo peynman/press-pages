@@ -1,5 +1,5 @@
 <template>
-  <div :class="`vf-input d-flex flex-column ${field.class ? field.class : ''}`">
+  <div :class="`vf-input vf-blockly-input d-flex flex-column ${field.class ? field.class : ''}`">
     <label>{{ field.label }}</label>
     <div ref="blockArea" style="width: 100%; min-height: 500px; height: 100%" class="fill-height">
       <div ref="blockEditor"></div>

@@ -36,7 +36,9 @@ mix
         'markdown-it',
         'mathlive',
         'mermaid',
-        'jsoneditor'
+        'jsoneditor',
+        'moment-jalaali',
+        'moment',
     ])
     .setPublicPath('resources/dist/')
     .sass('resources/sass/app.scss', 'resources/dist/css')

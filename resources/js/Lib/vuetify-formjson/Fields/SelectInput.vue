@@ -16,6 +16,10 @@
         <v-label>{{ getDecorableLabel(item) }}</v-label>
         <v-subheader v-if="decorator.subheader">{{ getDecorableProperty(item, 'subheader') }}</v-subheader>
     </template>
+    <template v-slot:selection="{item}">
+        <v-label>{{ getDecorableLabel(item) }}</v-label>
+        <v-subheader v-if="decorator.subheader">{{ getDecorableProperty(item, 'subheader') }}</v-subheader>
+    </template>
   </v-select>
 </template>
 

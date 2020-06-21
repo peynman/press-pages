@@ -15,8 +15,15 @@
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset('/storage/vendor/larapress-pages/css/app.css') }}">
     <style>
+        .rtl_ace .ace_line {
+            direction: rtl;
+        }
         .larapress-app {
             font-family: "IRANSans", "Tahoma" !important;
+        }
+
+        .vf-blockly-input {
+            letter-spacing: 0 !important;
         }
 
         .big-badge span.v-badge__badge {
@@ -67,8 +74,14 @@
     <div id="App"></div>
     <script>
         window.PageConfig = {!! json_encode($config) !!};
-        console.log(window.PageConfig);
+        window.echoConfig = {
+            protocol: {!! json_encode(env('ECHO_WEB_PROTOCOL')) !!},
+            host: {!! json_encode(env('ECHO_WEB_HOST')) !!},
+            port: {!! json_encode(env('ECHO_WEB_PORT')) !!}
+        };
+        console.log(window.PageConfig, window.echoConfig);
     </script>
+    <script src="{{ env('ECHO_WEB_PROTOCOL').'://'.env('ECHO_WEB_HOST').':'.env('ECHO_WEB_PORT') }}/socket.io/socket.io.js"></script>
     <script src="{{ asset('/storage/vendor/larapress-pages/js/manifest.js') }}"></script>
     <script src="{{ asset('/storage/vendor/larapress-pages/js/vendor.bundle.js') }}"></script>
     <script src="{{ asset('/storage/vendor/larapress-pages/js/app.bundle.js') }}"></script>

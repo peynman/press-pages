@@ -24,7 +24,9 @@ export default class FieldsRenderSettings extends BaseInputSettings {
         ]
     }
 
-    getInputProperties () {
+
+
+    getInputProperties (item) {
         return {
             id: {
                 type: 'input',
@@ -73,6 +75,7 @@ export default class FieldsRenderSettings extends BaseInputSettings {
                         fields: {
                             enabled: CheckboxSettings('User Wrapper'),
                             class: TextSettings('Wrapper Class'),
+                            props: TextSettings('Wrapper props in JSON String'),
                             component: TextSettings('Wrapper Component'),
                             inside: {
                                 options: {
@@ -81,7 +84,8 @@ export default class FieldsRenderSettings extends BaseInputSettings {
                                 },
                                 fields: {
                                     class: TextSettings('Wrapper inside Class'),
-                                    component: TextSettings('Wrapper inside Component')
+                                    component: TextSettings('Wrapper inside Component'),
+                                    props: TextSettings('Wrapper inside props in JSON String'),
                                 }
                             }
                         }

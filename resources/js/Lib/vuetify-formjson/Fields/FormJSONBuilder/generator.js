@@ -1,18 +1,47 @@
 import Blockly from 'blockly'
 import GeneratVueJSObject from '../Blockly/generator'
-import { EasyNestedObject } from '../mixins'
-import { compile } from 'vue-template-compiler';
+import {
+    EasyNestedObject
+} from '../mixins'
+import {
+    compile
+} from 'vue-template-compiler';
+import Echo from "laravel-echo";
+import io from "socket.io-client";
+window.io = io;
+
+const deepCopy = function (obj) {
+    if (typeof obj !== "object" || !obj)
+        return obj;
+    var copy;
+    if (Array.isArray(obj)) {
+        copy = [];
+        for (var key = 0; key < obj.length; key++) {
+            copy[key] = deepCopy(obj[key]);
+        }
+        return copy;
+    }
+    if (Object.prototype.toString.call(obj) !== "[object Object]")
+        return obj;
+
+    copy = {};
+    for (var key in obj)
+        copy[key] = deepCopy(obj[key]);
+    return copy;
+}
 
 export default {
     mixins: [EasyNestedObject],
     data: () => ({
         formModel: {},
-        formSchema: {}
+        formSchema: {},
+        channelObjs: {},
+        echo: null,
+        isConnected: false
     }),
     methods: {
         UpdatePageContent(body, options, sources) {
             const compiled = this.CompileFormJSONSchemaWithCode(this, body.schema, body.code);
-            console.log(compiled);
             this[this.getFormSchemaPropName()] = {
                 fields: compiled.fields,
                 options: compiled.options,
@@ -25,11 +54,66 @@ export default {
                 })
             }
 
-            if (compiled.onFormInit) {
-                compiled.onFormInit()
+            if (window.echoConfig) {
+                this.echo = new Echo({
+                    broadcaster: "socket.io",
+                    host: `${window.echoConfig.protocol}://${window.echoConfig.host}:${window.echoConfig.port}`,
+                    authEndpoint: "/broadcast/auth",
+                    encrypted: true,
+                    auth: {
+                        headers: this.getWebAuthHeaders({})
+                    }
+                });
+
+                this.echo.connector.socket.on("connect", () => {
+                    this.isConnected = true;
+                    this.onFormChannels?.();
+                });
+
+                this.echo.connector.socket.on("disconnect", function () {
+                    this.isConnected = false;
+                    console.log("disconnected");
+                });
             }
+
+            const extraEvents = [
+                'onFormInit',
+                'onFormChannels'
+            ]
+
+            extraEvents.forEach((ev) => {
+                if (compiled[ev]) {
+                    this[ev] = compiled[ev].bind(this)
+                }
+            })
+
+            this.onFormInit?.();
         },
-        getRoutePathPartAt (index) {
+        registerChannelListener(event, channel, callback) {
+            if (!this.channelObjs[channel] && this.$store.state.channels) {
+                this.$store.state.channels.forEach(c => {
+                    if (c.name === channel) {
+                        switch (c.access) {
+                            case "private":
+                                this.channelObjs[c.name] = this.echo.private(c.name);
+                                break;
+                            case "public":
+                                this.channelObjs[c.name] = this.echo.channel(c.name);
+                                break;
+                            case "presence":
+                                this.channelObjs[c.name] = this.echo.join(c.name);
+                                break;
+                        }
+                    }
+                });
+            }
+
+            if (this.channelObjs[channel]) {
+                this.channelObjs[channel].listen(event, callback);
+            }
+
+        },
+        getRoutePathPartAt(index) {
             let pathname = window.location.pathname
             if (pathname.startsWith('/')) {
                 pathname = pathname.substr(1)
@@ -37,38 +121,91 @@ export default {
             const parts = pathname.split('/')
             return parts[index];
         },
-        gotoPage (page, data) {
+        gotoPage(page, data) {
             this.$emit('goto-page', page, data);
         },
-        loadSchema (schema) {
+        loadSchema(schema) {
             this.$emit('load-schema', schema)
         },
-        authenticateUserWithToken (user, token) {
+        authenticateUserWithToken(user, token) {
             this.$emit('update-user', user, token)
         },
-        getFormValuePropName () {
+        getFormValuePropName() {
             return 'formModel'
         },
-        getFormSchemaPropName () {
+        getFormSchemaPropName() {
             return 'formSchema'
         },
-        webRequest (data) {
+        webRequest(data) {
             console.log(data)
             return this.axios(data)
         },
-        getWebAuthHeaders (headers) {
+        getWebAuthHeaders(headers) {
             const authHeaders = {}
             if (this.$store &&
                 this.$store.state.tokens &&
                 this.$store.state.tokens.api) {
-                    authHeaders['Authorization'] = 'Bearer ' + this.$store.state.tokens.api
+                authHeaders['Authorization'] = 'Bearer ' + this.$store.state.tokens.api
             }
             return {
                 ...headers,
                 ...authHeaders
             }
         },
-        getAlertForResponse (response) {
+        clearTemplate(targetPath, templates) {
+            const target = deepCopy(this.getNestedPathValue(this[this.getFormSchemaPropName()], targetPath));
+            let tl = templates.split(',');
+            for (const prop in target) {
+                if (!tl.includes(prop)) {
+                    target[prop] = undefined;
+                }
+            }
+            this.setNestedPathValue(this[this.getFormSchemaPropName()], targetPath, target);
+        },
+        makeTemplate(targetPath, template, sourcePath) {
+            const target = deepCopy(this.getNestedPathValue(this.formSchema, targetPath));
+            const deepIterate = function (targ, src) {
+                for (const p in src) {
+                    if (typeof src[p] === 'object') {
+                        if (!targ[p]) {
+                            if (Array.isArray(src[p])) {
+                                targ[p] = []
+                            } else {
+                                targ[p] = {}
+                            }
+                        }
+                        deepIterate(targ[p], src[p])
+                    } else {
+                        targ[p] = src[p]
+                    }
+                }
+            }
+            template.hidden = true;
+            const source = this.getStateFromNestedPath(sourcePath);
+            if (source && Array.isArray(source)) {
+                source.forEach((item) => {
+                    const copy = deepCopy(template)
+                    copy.hidden = false;
+                    deepIterate(copy, item)
+                    target[item.id] = copy
+                })
+                this.setNestedPathValue(this[this.getFormSchemaPropName()], targetPath, target);
+            }
+        },
+        duplicateObjectAndFilter(obj, callback) {
+            const dup = Array.isArray(obj) ? [] : {}
+            for (const key in obj) {
+                if (callback(key, obj[key])) {
+                    if (Array.isArray(obj)) {
+                        dup.push(obj[key])
+                    } else {
+                        dup[key] = obj[key]
+                    }
+                }
+            }
+            return dup;
+        },
+        getAlertForResponse(response) {
             let data = response
             if (response.response) {
                 data = response.response
@@ -98,7 +235,7 @@ export default {
             }
             return alert;
         },
-        setFormValidations (errors) {
+        setFormValidations(errors) {
             let valErrors = errors
             if (errors.validations) {
                 valErrors = errors.validations
@@ -123,9 +260,9 @@ export default {
                 }
             }
         },
-        resetFormValidations () {
+        resetFormValidations() {
             const form = this[this.getFormSchemaPropName()].fields
-            const iterateAndRemoveErrors = function(ref) {
+            const iterateAndRemoveErrors = function (ref) {
                 for (const prop in ref) {
                     if (ref[prop] && ref[prop].props && ref[prop].props['error-messages']) {
                         ref[prop].props['error-messages'] = []
@@ -137,7 +274,7 @@ export default {
             }
             iterateAndRemoveErrors(form)
         },
-        getStateFromNestedPath (path) {
+        getStateFromNestedPath(path) {
             const parts = path.split('.')
             let ref = this
             let indexer = 0
@@ -146,18 +283,22 @@ export default {
             }
             return ref
         },
-        setStateForNestedPath (path, value) {
+        setStateForNestedPath(path, value) {
             const parts = path.split('.')
             let ref = this
             let indexer = 0
             while (ref && indexer < parts.length - 1) {
+                if (!ref[parts[indexer++]]) {
+                    ref[parts[indexer++]] = {}
+                }
                 ref = ref[parts[indexer++]]
             }
             if (ref) {
+                console.log(path, value, ref, parts);
                 ref[parts[parts.length - 1]] = value
             }
         },
-        appendStateForNestedPath (path, value) {
+        appendStateForNestedPath(path, value) {
             const parts = path.split('.')
             let ref = this
             let indexer = 0
@@ -172,7 +313,7 @@ export default {
                 }
             }
         },
-        CompileFormJSONSchemaWithCode (component, schema, codeDom, blocklyBlocks) {
+        CompileFormJSONSchemaWithCode(component, schema, codeDom, blocklyBlocks) {
             let evalObj = {}
             try {
                 evalObj = GeneratVueJSObject(Blockly, codeDom, blocklyBlocks)
@@ -214,7 +355,12 @@ export default {
             // bind functions in blockly code
             for (const func in evalObj) {
                 if (typeof evalObj[func] === 'function') {
-                    component[func] = evalObj[func].bind(component)
+                    if (func === 'onFormInit') {
+                        output[func] = evalObj[func].bind(component)
+                        component[func] = output[func]
+                    } else {
+                        component[func] = evalObj[func].bind(component)
+                    }
                 }
             }
             if (evalObj.blockly) {
@@ -222,7 +368,7 @@ export default {
             }
             return output
         },
-        DeCompileEvents (schema) {
+        DeCompileEvents(schema) {
             const output = {}
             const iterateForVOn = function (root, outter) {
                 for (const prop in root) {

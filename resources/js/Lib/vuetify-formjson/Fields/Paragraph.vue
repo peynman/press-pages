@@ -7,7 +7,7 @@
             </v-btn>
         </div>
         <div v-show="mode === 'view' || field.readonly" ref="editorView" class="fill-height" style="width: 100%;"></div>
-        <v-card v-show="mode === 'editor' && !field.readonly" style="position: relative; width: 100%; min-height: 24px;" class="fill-hight mx-2">
+        <v-card v-show="mode === 'editor' && !field.readonly" style="position: relative; width: 100%; min-height: 100px; overflow: scroll;" class="fill-hight mx-2">
             <div class="" :style="`position: absolute; width: 100%; left: 0; right: 0; top: 0; bottom: 0; ${field.height ? 'height: ' + field.height : ''}`" ref="editorCode">
             </div>
         </v-card>
@@ -26,6 +26,7 @@ import MarkdownItColor from './MarkdownInput/MarkdownItColor/index'
 import MermaidPlugin from './MarkdownInput/mermaid'
 import FromJSONPlugin from './MarkdownInput/formjson'
 import MathLivePlugin from './MarkdownInput/mathlive'
+import markdownItAttrs from 'markdown-it-attrs'
 
 import { VBtn, VIcon, VCard } from 'vuetify/lib'
 export default {
@@ -117,8 +118,14 @@ export default {
             host: this
         })
         this.markdownEditor.use(MathLivePlugin, {
-
+            host: this
         })
+        this.markdownEditor.use(markdownItAttrs, {
+            // optional, these are default options
+            leftDelimiter: '{',
+            rightDelimiter: '}',
+            allowedAttributes: []  // empty array = all attributes are allowed
+        });
         // init ace editor before calling update
         this.updateMarkdownText()
     }

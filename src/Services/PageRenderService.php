@@ -17,6 +17,9 @@ use Larapress\Pages\Models\PageSchema;
 use Larapress\Profiles\Repository\Domain\IDomainRepository;
 use Illuminate\Routing\Route;
 use Larapress\CRUD\Base\ICRUDService;
+use Larapress\ECommerce\Services\IBankingService;
+use Mews\Captcha\Facades\Captcha;
+use Illuminate\Http\Response;
 
 class PageRenderService implements IPageRenderService
 {
@@ -33,7 +36,7 @@ class PageRenderService implements IPageRenderService
         $pages = $pageProvider->getPagesForRequest($request);
 
         $router = new Router(new Dispatcher());
-        foreach ( $pages as $page ) {
+        foreach ($pages as $page) {
             $router->get($page->slug, [
                 'id' => $page->id
             ]);
@@ -80,7 +83,7 @@ class PageRenderService implements IPageRenderService
     {
         $lang = TranslationHelper::getLocaleLanguage(app()->getLocale());
         $jwtToken = null;
-        /** @var  ICRUDUser */
+        /** @var  IProfileUser|ICRUDUser */
         $user = Auth::user();
         if (!is_null($user)) {
             $jwtToken = auth()->guard('api')->tokenById($user->id);
@@ -94,6 +97,7 @@ class PageRenderService implements IPageRenderService
             }
         }
 
+
         $sources = [];
         if (isset($page->options['sources']) && is_array($page->options['sources'])) {
             /** @var ICRUDService */
@@ -102,19 +106,26 @@ class PageRenderService implements IPageRenderService
                 $res = [];
                 switch ($source['resource']) {
                     case 'object':
-                        $provider = new $source['class'];
-                        $crudService->useProvider($provider);
-                        $res = $crudService->show($request, $route->parameter($source['param']));
-                    break;
+                        switch ($source['class']) {
+                            case 'captcha':
+                                $res = Captcha::create('default', true);
+                                break;
+                            default:
+                                $provider = new $source['class'];
+                                $crudService->useProvider($provider);
+                                $res = $crudService->show($request, $route->parameter($source['param']));
+                                break;
+                        }
+                        break;
                     case 'repository':
                         $repo = $source['class'];
                         $safeRepos = config('larapress.pages.safe-sources');
                         if (in_array($repo, $safeRepos)) {
-                            $params =  isset($source['params']) ? $source['params']: [];
+                            $params =  isset($source['params']) ? $source['params'] : [];
                             $repoRef = app()->make($repo);
                             $res = call_user_func([$repoRef,  $source['method']], $user, ...$params);
                         }
-                    break;
+                        break;
                 }
 
                 $sources[] = [
@@ -134,8 +145,49 @@ class PageRenderService implements IPageRenderService
             $template = $page->options['template'];
         }
 
+        if (!is_null($user)) {
+            /** @var IBankingService */
+            $cartService = app(IBankingService::class);
+            /** @var IDomainRepository */
+            $domainRepo = app(IDomainRepository::class);
+            $domain = $domainRepo->getRequestDomain($request);
+            // include carts and balance of current user
+            $user['current_cart'] = $cartService->getPurchasingCart(
+                $user,
+                $domain,
+                config('larapress.ecommerce.banking.currency.id')
+            );
+            $user['current_cart']['items'] = $cartService->getPurchasingCartItems(
+                $user,
+                $domain,
+                config('larapress.ecommerce.banking.currency.id')
+            );
+            $user['balance'] = [
+                'amount' =>  $cartService->getUserBalance(
+                    $user,
+                    $domain,
+                    config('larapress.ecommerce.banking.currency.id')
+                ),
+                'currency' => config('larapress.ecommerce.banking.currency')
+            ];
+        }
+
+        $channels = [];
+        if (!is_null($user)) {
+            if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super-role'), config('larapress.profiles.security.roles.affiliate')))) {
+                $permissions = $user->getPermissions();
+                foreach ($permissions as $permission) {
+                    if (!in_array('crud.' . $permission[1], $channels)) {
+                        $channels[] = ['name' => 'crud.' . $permission[1], 'access' => 'private']; // attach first part if permission string as name.verb
+                    }
+                }
+            }
+
+            $channels[] = ['name' => 'front', 'access' => 'presence'];
+        }
+
         return [
-            'user' => Auth::user(),
+            'user' => $user,
             'tokens' => [
                 'api' => $jwtToken
             ],
@@ -151,7 +203,11 @@ class PageRenderService implements IPageRenderService
                 'name' => $lang->getName(),
                 'title' => $lang->getTitle(),
             ],
-            'sources' => $sources
+            'sources' => $sources,
+            'channels' => $channels,
+            'currencies' => [
+                config('larapress.ecommerce.banking.currency.id') => config('larapress.ecommerce.banking.currency.title')
+            ]
         ];
     }
 }

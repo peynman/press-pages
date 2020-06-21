@@ -1,8 +1,8 @@
 <template>
   <v-content :id="id">
     <v-app-bar color="deep-purple accent-4" dense dark>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <v-toolbar-title>آکامی آنلاین</v-toolbar-title>
+      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+      <v-toolbar-title>آنلاین آکادمی</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu left bottom>
         <template v-slot:activator="{ on }">
@@ -11,19 +11,35 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-item v-for="crud in cruds" :key="`action-${crud.id}`" :href="`/admin/${crud.id}`">
+          <!-- <v-list-item v-for="crud in cruds" :key="`action-${crud.id}`" :href="`/admin/${crud.id}`">
             <v-list-item-title>{{ crud.title }}</v-list-item-title>
-          </v-list-item>
+          </v-list-item>-->
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-container>
+    <v-sheet height="100%" :style="`position: relative;`">
+      <v-navigation-drawer v-model="drawer" absolute temporary right>
+        <v-list nav dense>
+          <v-list-item
+            v-for="crud in cruds"
+            :key="`${id}-admin-crud-link-${crud.id}`"
+            :href="`/admin/${crud.id}`"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ crud.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ crud.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+      <v-container>
         <v-card>
-            <v-card-text>
-                <vuetify-formjson v-bind="this[this.getFormSchemaPropName()]" v-model="formModel"></vuetify-formjson>
-            </v-card-text>
+          <v-card-text>
+            <vuetify-formjson v-bind="this[this.getFormSchemaPropName()]" v-model="formModel"></vuetify-formjson>
+          </v-card-text>
         </v-card>
-    </v-container>
+      </v-container>
+    </v-sheet>
   </v-content>
 </template>
 
@@ -41,7 +57,7 @@ export default {
     },
     sources: {
       type: Array,
-      default: () => ([])
+      default: () => []
     },
     body: {
       type: Object,
@@ -50,75 +66,99 @@ export default {
         code: "",
         values: {}
       })
-    },
+    }
   },
-  data () {
-      return {
-          cruds: [
-              {
-                  id: 'users',
-                  title: 'کاربران'
-              },
-              {
-                  id: 'roles',
-                  title: 'نقش ها'
-              },
-              {
-                  id: 'domains',
-                  title: 'دامنه ها'
-              },
-              {
-                  id: 'forms',
-                  title: 'فرم ها'
-              },
-              {
-                  id: 'products',
-                  title: 'محصولات'
-              },
-              {
-                  id: 'product-types',
-                  title: 'نوع محصولات'
-              },
-              {
-                  id: 'product-categories',
-                  title: 'دسته بندی محصولات'
-              },
-              {
-                  id: 'sms-gateways',
-                  title: 'درگاه پیامک'
-              },
-              {
-                  id: 'sms-messages',
-                  title: 'پیامک ها'
-              },
-              {
-                  id: 'bank-gateways',
-                  title: 'درگاه بانک'
-              },
-              {
-                  id: 'bank-gateway-transactions',
-                  title: 'تراکنش های بانک'
-              },
-              {
-                  id: 'carts',
-                  title: 'سبد های خرید'
-              },
-              {
-                  id: 'wallet-transactions',
-                  title: 'تراکنش های کیف پول'
-              },
-          ]
-      }
+  data() {
+    return {
+      drawer: false,
+      cruds: [
+        {
+          id: "users",
+          title: "کاربران",
+          icon: "mdi-account"
+        },
+        {
+          id: "roles",
+          title: "نقش ها",
+          icon: "mdi-account-alert"
+        },
+        {
+          id: "domains",
+          title: "دامنه ها",
+          icon: "mdi-domain"
+        },
+        {
+          id: "forms",
+          title: "فرم ها",
+          icon: "mdi-clipboard-arrow-right"
+        },
+        {
+          id: "form-entries",
+          title: "فرم های پر شده",
+          icon: "mdi-clipboard-check-multiple"
+        },
+        {
+          id: "pages",
+          title: "صفحات سایت",
+          icon: "mdi-file-document"
+        },
+        {
+          id: "products",
+          title: "محصولات",
+          icon: "mdi-widgets"
+        },
+        {
+          id: "product-types",
+          title: "انواع محصولات",
+          icon: "mdi-widgets-outline"
+        },
+        {
+          id: "product-categories",
+          title: "دسته بندی محصولات",
+          icon: "mdi-selection-drag"
+        },
+        {
+          id: "sms-gateways",
+          title: "درگاه‌های پیامکی",
+          icon: "mdi-cellphone-basic"
+        },
+        {
+          id: "sms-messages",
+          title: "پیامک ها",
+          icon: "mdi-cellphone-arrow-down"
+        },
+        {
+          id: "bank-gateways",
+          title: "درگاه‌های بانکی",
+          icon: "mdi-bank"
+        },
+        {
+          id: "bank-gateway-transactions",
+          title: "تراکنش های بانک",
+          icon: "mdi-bank-transfer"
+        },
+        {
+          id: "carts",
+          title: "سبد های خرید",
+          icon: "mdi-cart"
+        },
+        {
+          id: "wallet-transactions",
+          title: "تراکنش های کیف پول",
+          icon: "mdi-cart-arrow-right"
+        }
+      ]
+    };
   },
-  mounted () {
-      if (this.body) {
-          this.UpdatePageContent(this.body, this.options, this.sources)
-      }
+  mounted() {
+    if (this.body) {
+      this.UpdatePageContent(this.body, this.options, this.sources);
+    }
   },
   watch: {
-      body () {
-        this.UpdatePageContent(this.body, this.options, this.sources)
-      }
+    body() {
+      this.UpdatePageContent(this.body, this.options, this.sources);
+    }
   }
 };
 </script>

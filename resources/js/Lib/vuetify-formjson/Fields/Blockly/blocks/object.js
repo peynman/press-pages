@@ -62,6 +62,74 @@ export default function (Blockly) {
     }
 
 
+    // object assign
+    Blockly.Blocks.obj_assign = {
+        init: function () {
+            this.appendValueInput('OBJ')
+                .setCheck('Object')
+                .appendField('Assign to object')
+            this.appendValueInput('VAL')
+                .setCheck('Object')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('with value')
+            this.setOutput(true, ['Object', 'String', 'Number', 'Array', 'Boolean'])
+            this.setColour(105)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.obj_assign = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return [`Object.assign(${argument0}, ${argument2})\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
+    }
+
+
+    // array push
+    Blockly.Blocks.arr_push = {
+        init: function () {
+            this.appendValueInput('OBJ')
+                .setCheck('Array')
+                .appendField('Push to array')
+            this.appendValueInput('VAL')
+                .setCheck('Array')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('with values')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(260)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.arr_push = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.blockly.__tempArr = ${argument2}; if (Array.isArray(this.blockly.__tempArr)) { this.blockly.__tempArr.forEach((item) => { ${argument0}.push(item) }) }\n`
+    }
+
+    // append nested
+    Blockly.Blocks.obj_assign = {
+        init: function () {
+            this.appendValueInput('OBJ')
+                .setCheck(null)
+                .appendField('Assign to object')
+            this.appendValueInput('VAL')
+                .setCheck(null)
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('with value')
+            this.setOutput(true, ['Object', 'String', 'Number', 'Array', 'Boolean'])
+            this.setColour(105)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.obj_assign = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return [`Object.assign(${argument0}, ${argument2})\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
+    }
+
     // set nested
     Blockly.Blocks.obj_set_nested = {
         init: function () {
@@ -105,6 +173,35 @@ export default function (Blockly) {
     Blockly.JavaScript.obj_create_new = function (block) {
         return [`{}`, Blockly.JavaScript.ORDER_NEW]
     }
+
+    // set key value
+    Blockly.Blocks.obj_set_key_value = {
+        init: function () {
+            this.appendValueInput('KEY')
+                .setCheck('String')
+                .appendField('Set key ')
+            this.appendValueInput('OBJ')
+                .setCheck('Object')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('for object')
+            this.appendValueInput('VAL')
+                .setCheck(null)
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('to value')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(105)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.obj_set_key_value = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument1 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `${argument1}[${argument0}] = ${argument2}\n`
+    }
+
 
     // append nested
     Blockly.Blocks.obj_append_nested = {
@@ -192,9 +289,11 @@ export default function (Blockly) {
 export const CategoryObject =
 `
 <category id="catObj" colour="105" name="Object">
+    <block type="obj_create_new"></block>
+    <block type="obj_set_key_value"></block>
     <block type="obj_get_nested"></block>
     <block type="obj_set_nested"></block>
-    <block type="obj_create_new"></block>
+    <block type="obj_assign"></block>
     <block type="obj_is_set_nested"></block>
     <block type="obj_json_stringify"></block>
     <block type="obj_json_parse"></block>
