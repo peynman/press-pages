@@ -77,9 +77,9 @@ export default {
         });
     },
 
-    onUpdateUser(user, tokens) {
+    onUpdateUser(user, token) {
       this.$store.state.user = user;
-      this.$store.state.tokens = tokens;
+      this.$store.state.tokens = { api: token };
     },
 
     updatePageWithData(data) {
@@ -95,7 +95,10 @@ export default {
       this.template = template;
       this.loading = false;
 
-      this.onUpdateUser(data.user, data.tokens);
+
+      if (this.$store.state.user === null || data.user != null) {
+          this.onUpdateUser(data.user, data.tokens.api);
+      }
       if (data.currencies) {
         this.$store.state.currencies = data.currencies;
       }

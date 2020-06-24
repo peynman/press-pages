@@ -84,13 +84,13 @@ export default function (Blockly) {
         return [`Object.assign(${argument0}, ${argument2})\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
     }
 
-
     // array push
     Blockly.Blocks.arr_push = {
         init: function () {
             this.appendValueInput('OBJ')
                 .setCheck('Array')
-                .appendField('Push to array')
+                .appendField(new Blockly.FieldDropdown([ ['unshift', 'unshift'], ['push', 'push']]), 'MODE')
+                .appendField('(to) array')
             this.appendValueInput('VAL')
                 .setCheck('Array')
                 .setAlign(Blockly.ALIGN_RIGHT)
@@ -105,7 +105,39 @@ export default function (Blockly) {
     Blockly.JavaScript.arr_push = function (block) {
         var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
-        return `this.blockly.__tempArr = ${argument2}; if (Array.isArray(this.blockly.__tempArr)) { this.blockly.__tempArr.forEach((item) => { ${argument0}.push(item) }) }\n`
+        const dropdownMode = block.getFieldValue('MODE');
+        return `this.blockly.__tempArr = ${argument2}; if (Array.isArray(this.blockly.__tempArr)) { this.blockly.__tempArr.forEach((item) => { ${argument0}.${dropdownMode}(item) }) }\n`
+    }
+
+
+    // array merge/replace
+    Blockly.Blocks.arr_merge = {
+        init: function () {
+            this.appendValueInput('OBJ')
+                .setCheck('Array')
+                .appendField(new Blockly.FieldDropdown([['merge', 'merge'], ['replace', 'replace']]), 'MODE')
+                .appendField('in array')
+            this.appendValueInput('VAL')
+                .setCheck('Array')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('with values')
+            this.appendValueInput('KEY')
+                .setCheck('String')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('key propery(id)')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(260)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.arr_merge = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument3 = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ASSIGNMENT) || '`id`'
+        const dropdownMode = block.getFieldValue('MODE');
+        return `this.arrayMergeWithObjects(${argument0}, ${argument2}, ${argument3}, '${dropdownMode}')\n`
     }
 
     // append nested

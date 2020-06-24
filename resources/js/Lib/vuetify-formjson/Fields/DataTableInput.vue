@@ -58,6 +58,7 @@
         clearable
         hide-details
         placeholder="Search..."
+        @keyup.native="updateSearch($event)"
       ></v-text-field>
       <vf-datatable-dialog-delete
         v-if="selected.length > 0 && !field['hide-remove']"
@@ -77,6 +78,10 @@
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :loading="loading"
+      :footer-props="{
+          'items-per-page-options': [5, 10, 15, 30, 50, 100]
+        }"
+    :items-per-page="50"
       selectable-key
       v-model="selected"
       v-bind="fieldProps"
@@ -386,6 +391,11 @@ export default {
       } else {
         arr.push(item);
       }
+    },
+    updateSearch(ev) {
+      if (ev.keyCode === 13) {
+        this.updateTable();
+      }
     }
   },
   watch: {
@@ -399,9 +409,6 @@ export default {
       }
     },
     showCreate: function() {},
-    search: function(o, n) {
-      this.updateTable();
-    },
     options: {
       deep: true,
       handler() {

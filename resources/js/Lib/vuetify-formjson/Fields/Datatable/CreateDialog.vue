@@ -69,7 +69,7 @@ export default {
       devalue: this.value,
       loading: false,
       dField: {},
-      dOptions: {},
+      dOptions: {}
     };
   },
   computed: {
@@ -185,6 +185,44 @@ export default {
           };
     }
   },
+  methods: {
+    updateFormFromURL() {
+      if (
+        this.url &&
+        (!this.field ||
+          !this.field.fields ||
+          Object.keys(this.field.fields).length === 0)
+      ) {
+        this.loading = true;
+        const host = this.$store.state.host;
+        host
+          .webRequest({
+            method: "GET",
+            url: this.url,
+            headers: host.getWebAuthHeaders({
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            })
+          })
+          .then(response => {
+            this.loading = false;
+            this.UpdatePageContent(
+              response.data.body,
+              response.data.options,
+              response.data.sources
+            );
+            this.dField = this.formSchema.fields;
+            this.dOptions = this.formSchema.options;
+            this.devalue = this.formModel;
+          })
+          .catch(err => {
+            host.showSnack(err.message);
+            console.log(err);
+            this.loading = false;
+          });
+      }
+    }
+  },
   watch: {
     devalue: {
       deep: true,
@@ -200,41 +238,15 @@ export default {
     },
     forceShow: function() {
       this.showCreate = this.forceShow;
+    },
+    showCreate: function() {
+        if (this.showCreate && (!this.fields || !this.field.fields)) {
+            this.updateFormFromURL();
+        }
     }
   },
   mounted() {
     this.showCreate = this.forceShow;
-    if (
-      this.url &&
-      (!this.field ||
-        !this.field.fields ||
-        Object.keys(this.field.fields).length === 0)
-    ) {
-      this.loading = true;
-      const host = this.$store.state.host;
-      host
-        .webRequest({
-          method: "GET",
-          url: this.url,
-          headers: host.getWebAuthHeaders({
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          })
-        })
-        .then(response => {
-          this.loading = false;
-            this.UpdatePageContent(response.data.body, response.data.options, response.data.sources);
-            this.dField = this.formSchema.fields;
-            this.dOptions = this.formSchema.options;
-            this.devalue = this.formModel;
-            console.log(this.dField, this.dOptions, this.devalue);
-        })
-        .catch(err => {
-          host.showSnack(err.message);
-          console.log(err);
-          this.loading = false;
-        });
-    }
   }
 };
 </script>

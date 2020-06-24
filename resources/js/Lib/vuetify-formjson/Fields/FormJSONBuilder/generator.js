@@ -89,6 +89,19 @@ export default {
 
             this.onFormInit?.();
         },
+        arrayMergeWithObjects(target, items, key, mode) {
+            target.forEach((i) => {
+                items.forEach((j) => {
+                    if (i[key] == j[key]) {
+                        if (mode === 'merge') {
+                            for (const prop in j) {
+                                i[prop] = j[prop]
+                            }
+                        }
+                    }
+                })
+            })
+        },
         registerChannelListener(event, channel, callback) {
             if (!this.channelObjs[channel] && this.$store.state.channels) {
                 this.$store.state.channels.forEach(c => {
@@ -294,7 +307,6 @@ export default {
                 ref = ref[parts[indexer++]]
             }
             if (ref) {
-                console.log(path, value, ref, parts);
                 ref[parts[parts.length - 1]] = value
             }
         },

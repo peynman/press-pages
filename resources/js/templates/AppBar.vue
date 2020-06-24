@@ -111,7 +111,14 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                <v-btn dark outlined rounded block class="mx-auto" href="/me/current-cart">تایید و صفحه پرداخت</v-btn>
+                <v-btn
+                  dark
+                  outlined
+                  rounded
+                  block
+                  class="mx-auto"
+                  href="/me/current-cart"
+                >تایید و صفحه پرداخت</v-btn>
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -214,3 +221,7 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+</style>

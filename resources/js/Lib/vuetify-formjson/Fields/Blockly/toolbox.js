@@ -297,6 +297,7 @@ export const CategoryLists =
     </block>
     <block type="lists_create_with"></block>
     <block type="arr_push"></block>
+    <block type="arr_merge"></block>
     <block type="lists_repeat">
     <value name="NUM">
         <shadow type="math_number">

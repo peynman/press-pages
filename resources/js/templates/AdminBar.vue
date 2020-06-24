@@ -17,8 +17,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-sheet height="100%" :style="`position: relative;`">
-      <v-navigation-drawer v-model="drawer" absolute temporary right>
+    <v-navigation-drawer v-model="drawer" absolute temporary right>
         <v-list nav dense>
           <v-list-item
             v-for="crud in cruds"
@@ -32,14 +31,13 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-container>
+    <v-container>
         <v-card>
           <v-card-text>
             <vuetify-formjson v-bind="this[this.getFormSchemaPropName()]" v-model="formModel"></vuetify-formjson>
           </v-card-text>
         </v-card>
       </v-container>
-    </v-sheet>
   </v-content>
 </template>
 
@@ -71,7 +69,7 @@ export default {
   data() {
     return {
       drawer: false,
-      cruds: [
+      availableCRUDS: [
         {
           id: "users",
           title: "کاربران",
@@ -128,6 +126,11 @@ export default {
           icon: "mdi-cellphone-arrow-down"
         },
         {
+            id: 'phone-numbers',
+            title: 'شماره های ثبت شده',
+            icon: 'mdi-cellphone-text'
+        },
+        {
           id: "bank-gateways",
           title: "درگاه‌های بانکی",
           icon: "mdi-bank"
@@ -146,9 +149,17 @@ export default {
           id: "wallet-transactions",
           title: "تراکنش های کیف پول",
           icon: "mdi-cart-arrow-right"
-        }
+        },
       ]
     };
+  },
+  computed: {
+      user () {
+          return this.$store.state.user;
+      },
+      cruds: function () {
+          return this.availableCRUDS.filter((item) => (this.user?.permissions.filter((permString) => permString.startsWith(item.id).length > 0)))
+      }
   },
   mounted() {
     if (this.body) {

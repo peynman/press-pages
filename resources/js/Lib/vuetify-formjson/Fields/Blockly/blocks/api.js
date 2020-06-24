@@ -144,7 +144,7 @@ export default function (Blockly, crudList) {
     }
     Blockly.JavaScript.web_get_auth_token = function (block) {
         var variableName = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('var_name'), Blockly.Variables.NAME_TYPE)
-        return [`this.getNestedPathValue(this.blockly.${variableName}, 'data.token.api')\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
+        return [`this.getNestedPathValue(this.blockly.${variableName}, 'data.tokens.api')\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
     }
 
     // web get data response

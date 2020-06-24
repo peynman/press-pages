@@ -16,18 +16,22 @@
         <div style="position: relative">
           <div
             v-if="product.categories"
-            style="position: absolute; top: -15px; left: -15px; align-items: flex-end;"
+            style="position: absolute; top: -15px; left: -7px; align-items: flex-end;"
             class="d-flex flex-column"
           >
-            <v-chip
+            <p class="ribbon mb-2" v-for="(cat, index) in product.categories" :key="`${id}-product-cats-${index}`" v-show="!cat.data.dont_show">
+              <span class="text px-3 py-0" :style="{background: cat.data.color ? cat.data.color : '#9290DAB0', color: cat.data.dark ? cat.data.dark ? 'white':'black':'black'}">
+                {{ cat.data.title }}
+              </span>
+            </p>
+            <!-- <v-chip
               class="mb-1"
               dense
               v-for="(cat, index) in product.categories"
               :key="`${id}-product-cats-${index}`"
-              :color="cat.data.color ? cat.data.color : '#9290DAB0'"
               :dark="cat.data.dark !== undefined || cat.data.dark !== null || cat.data.dark !== '' ? cat.data.dark : false"
               v-show="!cat.data.dont_show"
-            >{{ cat.data.title }}</v-chip>
+            >{{ cat.data.title }}</v-chip>-->
           </div>
         </div>
         <div class="d-flex flex-column">
