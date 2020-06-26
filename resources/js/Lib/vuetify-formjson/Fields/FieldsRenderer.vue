@@ -47,7 +47,7 @@ export default {
     name: 'vf-fields-renderer',
     props: {
         id: String,
-        fields: Object,
+        fields: [Object, Array],
         value: {
             type: [Object, Array],
             default: () => ({})
@@ -95,8 +95,8 @@ export default {
                 }
                 if (
                     this.options &&
-          this.options['v-on'] &&
-          this.options['v-on'].input
+                    this.options['v-on'] &&
+                    this.options['v-on'].input
                 ) {
                     this.options['v-on'].input(this.devalue)
                 }

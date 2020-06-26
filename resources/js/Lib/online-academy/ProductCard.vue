@@ -61,10 +61,10 @@
               dark
               outlined
               small
-              class="mx-2 red--text overline"
+              class="mx-2 my-auto red--text overline"
               style="text-decoration: line-through;"
               v-if="product.takhfif !== ''"
-            >{{product.price}}</v-chip>
+            >{{ getProductPriceOffString(field)}}</v-chip>
           </div>
 
           <!-- time & date -->
@@ -86,6 +86,7 @@
           offset-x="40"
           offset-y="15"
           class="ma-auto py-0 small-badge"
+        :value="false"
         >
           <v-btn
             class="my-2"
@@ -197,19 +198,19 @@ export default {
           this.toggleItemInCart(this.product);
         }
       } else {
-        host.onGoToPage("/signup", {});
+          window.location = '/signup'
       }
     }
   },
   data() {
     // create empty product
     let product = {
+        id: this.field.id,
       title: this.field.data.title,
       name: this.field.name,
       ...this.getProductPrice(this.field)
     };
-    const courseProduct =
-      this.field && this.field.data && this.field.data.type_course;
+    const courseProduct = this.field?.data?.types?.course;
     if (courseProduct) {
       product = {
         ...product,

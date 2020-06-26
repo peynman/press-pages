@@ -196,11 +196,13 @@ export default {
             template.hidden = true;
             const source = this.getStateFromNestedPath(sourcePath);
             if (source && Array.isArray(source)) {
-                source.forEach((item) => {
+                const iterate = source;
+                iterate.forEach((item, indexer) => {
+                    console.log(item.id);
                     const copy = deepCopy(template)
                     copy.hidden = false;
                     deepIterate(copy, item)
-                    target[item.id] = copy
+                    target[indexer] = copy
                 })
                 this.setNestedPathValue(this[this.getFormSchemaPropName()], targetPath, target);
             }

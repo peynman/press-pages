@@ -41,13 +41,18 @@ export const UserCartEditor = {
                         })
                         .catch(error => {
                             this.loading = false;
-                            host.showSnack(error.message);
+                            if (error.response?.data?.message) {
+                                host.showSnack(error.response.data.message);
+                            } else {
+                                host.showSnack(error.message);
+                            }
                         });
                 }
             }
 
             if (!found) {
                 this.loading = true;
+                console.log('add', item, item.id);
                 host
                     .axios({
                         url: "/api/me/current-cart/add",
@@ -70,12 +75,16 @@ export const UserCartEditor = {
                     })
                     .catch(error => {
                         this.loading = false;
-                        host.showSnack(error.message);
+                        if (error.response?.data?.message) {
+                            host.showSnack(error.response.data.message);
+                        } else {
+                            host.showSnack(error.message);
+                        }
                     });
             }
         },
 
-        getProductPriceString (item) {
+        getProductPriceString(item) {
             if (item.available) {
                 return item.data.already_purchased ? item.data.already_purchased : 'در دسترس'
             }
@@ -85,6 +94,12 @@ export const UserCartEditor = {
 
             const price = this.getProductPrice(item)
             return price.takhfif === '' ? price.price : price.takhfif;
+        },
+
+
+        getProductPriceOffString(item) {
+            const price = this.getProductPrice(item)
+            return price.price
         },
 
         getProductPrice(item) {

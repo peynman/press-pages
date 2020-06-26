@@ -12,7 +12,6 @@ require('./Lib/formjson');
 
 import App from './App.vue'
 
-
 Vue.use(VueAxios, axios);
 
 new Vue({

@@ -39,6 +39,7 @@
 import BaseComponent from './mixins'
 import moment from 'moment'
 import 'moment-timezone'
+
 import { VTextField, VCard, VCardText, VMenu, VTimePicker, VDatePicker, VCardTitle } from 'vuetify/lib'
 
 export default {

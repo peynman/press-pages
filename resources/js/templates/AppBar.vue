@@ -1,5 +1,5 @@
 <template>
-  <v-content :id="id">
+  <v-main :id="id">
     <v-app-bar
       dense
       app
@@ -36,6 +36,16 @@
           tile
         >{{ link.title }}</v-btn>
       </div>
+      <v-btn
+        v-if="isAdmin"
+        href="/admin/home"
+        elevation="0"
+        :color="btnOne"
+        depressed
+        large
+        class="ma-0 ms-1 px-5"
+        tile
+      >پنل ادمین</v-btn>
       <v-spacer></v-spacer>
       <!-- user account/cart menu -->
       <div class="d-flex flex-row" v-if="user">
@@ -162,7 +172,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
@@ -194,6 +204,15 @@ export default {
   computed: {
     user() {
       return this.$store.state.user;
+    },
+    isAdmin() {
+      return (
+        this.$store.state.user &&
+        this.$store.state.user.roles &&
+        this.$store.state.user.roles.filter(
+          i => i.name === "super-role" || i.name === "affiliate"
+        ).length > 0
+      );
     }
   },
   data() {
@@ -223,5 +242,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

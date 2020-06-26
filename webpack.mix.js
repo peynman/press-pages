@@ -1,6 +1,7 @@
 const mix = require('laravel-mix');
 let exec = require('child_process').exec;
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 /*
  |--------------------------------------------------------------------------
@@ -12,45 +13,44 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
  | file for the application as well as bundling up all the JS files.
  |
  */
+
 mix
     .options({
-        extractVueStyles: true,
+        extractVueStyles: false,
     })
     .webpackConfig({
         output: {
             chunkFilename: '[name].bundle.js',
-            publicPath: 'resources/dis/js',
+            publicPath: '/vendor/larapress-pages/',
         },
-        plugins: [new VuetifyLoaderPlugin({})]
+        plugins: [
+            new VuetifyLoaderPlugin({}),
+            new MomentLocalesPlugin({
+                localesToKeep: ['fa']
+            }),
+        ]
     })
-    .js('resources/js/app.js', '/js')
-    .extract([
-        'vue',
-        'vue-router',
-        'axios',
-        'vue-axios',
-        'vue-template-compiler',
-        'vuex',
-        'vuetify',
-        'blockly',
-        'markdown-it',
-        'mathlive',
-        'mermaid',
-        'jsoneditor',
-        'moment-jalaali',
-        'moment',
-    ])
+    .babelConfig({
+        plugins: ['@babel/plugin-syntax-dynamic-import']
+    })
+    .js('resources/js/app.js', 'js/')
     .setPublicPath('resources/dist/')
-    .sass('resources/sass/app.scss', 'resources/dist/css')
     .setResourceRoot('../')
-    .then(() => {
-        exec('node_modules/rtlcss/bin/rtlcss.js resources/dist/css/app.css resources/dist/css/app-rtl.css');
-    });
+    .copyDirectory('resources/dist/', '../../public/vendor/larapress-pages')
+    .disableNotifications();
+
+mix.version();
 
 if (mix.inProduction()) {
-    mix.version();
 } else {
-    mix.copyDirectory('resources/dist/', '../../storage/app/public/vendor/larapress-pages');
-}
+    Mix.listen('configReady', config => {
+        const scssRule = config.module.rules.find(r => r.test.toString() === /\.scss$/.toString())
+        const scssOptions = scssRule.loaders.find(l => l.loader === 'sass-loader').options
+        scssOptions.data = '@import "./resources/sass/styles.scss";'
 
-mix.disableNotifications();
+        const sassRule = config.module.rules.find(r => r.test.toString() === /\.sass$/.toString())
+        const sassOptions = sassRule.loaders.find(l => l.loader === 'sass-loader').options
+        sassOptions.data = '@import "./resources/sass/styles.scss"'
+    })
+    mix.sass('resources/sass/app.scss', 'resources/dist/css')
+}

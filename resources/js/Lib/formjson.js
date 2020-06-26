@@ -10,7 +10,7 @@ import CurrentCartSettings from './online-academy/settings/CurrentCart'
 import LoginCard from './online-academy/LoginCard.vue'
 
 window.ExtraFormJSONComponents = {
-    [ProductCard.name]: ProductCard,
+    'vf-product-card-input': ProductCard,
     [CurrentCart.name]: CurrentCart,
     [LoginCard.name]: LoginCard,
 

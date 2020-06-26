@@ -7,7 +7,7 @@ export default {
     name: 'vuetify-formjson',
     props: {
         id: String,
-        fields: Object,
+        fields: [Object, Array],
         value: [Object, Array],
         options: Object
     },

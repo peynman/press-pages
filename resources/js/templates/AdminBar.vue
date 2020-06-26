@@ -1,5 +1,5 @@
 <template>
-  <v-content :id="id">
+  <v-main :id="id">
     <v-app-bar color="deep-purple accent-4" dense dark>
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
       <v-toolbar-title>آنلاین آکادمی</v-toolbar-title>
@@ -38,7 +38,7 @@
           </v-card-text>
         </v-card>
       </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
