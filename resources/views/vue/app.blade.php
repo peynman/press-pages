@@ -25,7 +25,7 @@
             host: {!! json_encode(env('ECHO_WEB_HOST')) !!},
             port: {!! json_encode(env('ECHO_WEB_PORT')) !!}
         };
-        console.log(window.PageConfig, window.echoConfig);
+        // console.log(window.PageConfig, window.echoConfig);
     </script>
     <script src="{{ env('ECHO_WEB_PROTOCOL').'://'.env('ECHO_WEB_HOST').':'.env('ECHO_WEB_PORT') }}/socket.io/socket.io.js"></script>
     <script src="{{ asset('/vendor/larapress-pages/js/app.js') }}"></script>

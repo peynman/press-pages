@@ -49,33 +49,33 @@ export default class ObjectsListInputSettings extends BaseInputSettings {
                         title: 'Title'
                     }
                 ],
-                create: {
-                    title: 'Add item to select list',
-                    fields: {
-                        id: {
-                            type: 'input',
-                            input: 'text',
-                            class: 'col-6 pe-0 ps-0',
-                            label: 'ID'
-                        },
-                        title: {
-                            type: 'input',
-                            input: 'text',
-                            class: 'col-6 pe-0 ps-0',
-                            label: 'Title'
-                        },
-                        props: {
-                            options: {
-                                type: 'row'
+                crud: {
+                    create: {
+                        title: 'Add item to select list',
+                        fields: {
+                            id: {
+                                type: 'input',
+                                input: 'text',
+                                class: 'col-6 pe-0 ps-0',
+                                label: 'ID'
                             },
-                            fields: {
-                                'v-on': createEventsDatatableInputForSettingsForm('Item events', api.VCheckbox.events)
+                            title: {
+                                type: 'input',
+                                input: 'text',
+                                class: 'col-6 pe-0 ps-0',
+                                label: 'Title'
+                            },
+                            props: {
+                                options: {
+                                    type: 'row'
+                                },
+                                fields: {
+                                    'v-on': createEventsDatatableInputForSettingsForm('Item events', api.VCheckbox.events)
+                                }
                             }
                         }
-                    }
-                },
-                edit: {},
-                remove: {}
+                    },
+                }
             },
             decorator: {
                 options: {

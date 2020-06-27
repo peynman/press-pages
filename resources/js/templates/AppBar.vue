@@ -8,34 +8,7 @@
       dark
       scroll-target="#scrolling-techniques-2"
     >
-      <!-- guest user links -->
-      <div v-if="options.guest_links">
-        <v-btn
-          v-for="(link, index) in options.guest_links"
-          :key="`${id}-appbar-guest-link-${index}`"
-          :href="link.url ? link.url : '#'"
-          elevation="0"
-          :color="btnOne"
-          depressed
-          large
-          class="ma-0 ms-1 px-5"
-          tile
-        >{{ link.title }}</v-btn>
-      </div>
-      <!-- signed user links -->
-      <div v-if="user && options.user_links">
-        <v-btn
-          v-for="(link, index) in options.user_links"
-          :key="`${id}-appbar-user-link-${index}`"
-          :href="link.url ? link.url.replace(':id', user.id) : '#'"
-          elevation="0"
-          :color="btnOne"
-          depressed
-          large
-          class="ma-0 ms-1 px-5"
-          tile
-        >{{ link.title }}</v-btn>
-      </div>
+      <v-btn href="/" elevation="0" :color="btnOne" depressed large class="ma-0 ms-1 px-5" tile>خانه</v-btn>
       <v-btn
         v-if="isAdmin"
         href="/admin/home"
@@ -46,6 +19,16 @@
         class="ma-0 ms-1 px-5"
         tile
       >پنل ادمین</v-btn>
+      <v-btn
+        v-if="user.current_cart && user.current_cart.items && user.current_cart.items.length > 0"
+        href="/me/current-cart"
+        elevation="0"
+        color="green"
+        depressed
+        large
+        class="ma-0 ms-1 px-5"
+        tile
+      >صفحه پرداخت</v-btn>
       <v-spacer></v-spacer>
       <!-- user account/cart menu -->
       <div class="d-flex flex-row" v-if="user">
@@ -113,7 +96,13 @@
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon small color="red" @click="toggleItemInCart(item)">
+                  <v-btn
+                    icon
+                    small
+                    color="red"
+                    @click="toggleItemInCart(item)"
+                    :loading="loading[item.id]"
+                  >
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -128,7 +117,7 @@
                   block
                   class="mx-auto"
                   href="/me/current-cart"
-                >تایید و صفحه پرداخت</v-btn>
+                >تایید و صفحه جزییات پرداخت</v-btn>
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -178,9 +167,13 @@
 <script>
 import FormJSONRenderer from "../Lib/vuetify-formjson/Fields/FormJSONBuilder/generator";
 import { UserCartEditor } from "./../Lib/online-academy/mixins";
+import Footer from "./Footer";
 
 export default {
   mixins: [FormJSONRenderer, UserCartEditor],
+  components: {
+    [Footer.name]: Footer
+  },
   name: "page-template-app-bar",
   props: {
     id: String,
@@ -217,6 +210,7 @@ export default {
   },
   data() {
     return {
+      loading: {},
       btnOne: "rgba(84, 84, 84, 0.74)",
       btnTWo: "rgba(84, 84, 84, 0.74)",
       btnThree: "rgba(84, 84, 84, 0.74)",

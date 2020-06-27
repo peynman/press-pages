@@ -18,7 +18,11 @@ export const UserCartEditor = {
                     }
                 });
                 if (found) {
-                    this.loading = true;
+                    if (typeof this.loading === 'object') {
+                        this.loading[item.id] = true;
+                    } else {
+                        this.loading = true;
+                    }
                     host
                         .axios({
                             url: "/api/me/current-cart/remove",
@@ -32,7 +36,11 @@ export const UserCartEditor = {
                             }
                         })
                         .then(response => {
-                            this.loading = false;
+                            if (typeof this.loading === 'object') {
+                                this.loading[item.id] = false;
+                            } else {
+                                this.loading = false;
+                            }
                             const newUser = {
                                 ...this.$store.state.user
                             };
@@ -40,7 +48,11 @@ export const UserCartEditor = {
                             this.$store.state.user = newUser;
                         })
                         .catch(error => {
-                            this.loading = false;
+                            if (typeof this.loading === 'object') {
+                                this.loading[item.id] = false;
+                            } else {
+                                this.loading = false;
+                            }
                             if (error.response?.data?.message) {
                                 host.showSnack(error.response.data.message);
                             } else {
@@ -51,8 +63,11 @@ export const UserCartEditor = {
             }
 
             if (!found) {
-                this.loading = true;
-                console.log('add', item, item.id);
+                if (typeof this.loading === 'object') {
+                    this.loading[item.id] = true;
+                } else {
+                    this.loading = true;
+                }
                 host
                     .axios({
                         url: "/api/me/current-cart/add",
@@ -66,7 +81,11 @@ export const UserCartEditor = {
                         }
                     })
                     .then(response => {
-                        this.loading = false;
+                        if (typeof this.loading === 'object') {
+                            this.loading[item.id] = false;
+                        } else {
+                            this.loading = false;
+                        }
                         const newUser = {
                             ...this.$store.state.user
                         };
@@ -74,7 +93,11 @@ export const UserCartEditor = {
                         this.$store.state.user = newUser;
                     })
                     .catch(error => {
-                        this.loading = false;
+                        if (typeof this.loading === 'object') {
+                            this.loading[item.id] = false;
+                        } else {
+                            this.loading = false;
+                        }
                         if (error.response?.data?.message) {
                             host.showSnack(error.response.data.message);
                         } else {
@@ -86,14 +109,14 @@ export const UserCartEditor = {
 
         getProductPriceString(item) {
             if (item.available) {
-                return item.data.already_purchased ? item.data.already_purchased : 'در دسترس'
+                return item.data.already_purchased?item.data.already_purchased : 'دسترسی به زودی'
             }
             if (item.period_end) {
-                return item.data.period_ended ? item.data.period_ended : 'پرداخت اقساط'
+                return item.data.period_ended?item.data.period_ended : 'پرداخت اقساط'
             }
 
             const price = this.getProductPrice(item)
-            return price.takhfif === '' ? price.price : price.takhfif;
+            return price.takhfif === ''?price.price : price.takhfif;
         },
 
 
@@ -104,7 +127,7 @@ export const UserCartEditor = {
 
         getProductPrice(item) {
             // add prices from pricing
-            const prices = JSON.parse(JSON.stringify(item.data.pricing ? item.data.pricing : [])).sort(
+            const prices = JSON.parse(JSON.stringify(item.data.pricing?item.data.pricing : [])).sort(
                 (a, b) => a.priority > b.priority
             );
             const product = {}
@@ -137,6 +160,42 @@ export const UserCartEditor = {
             }
 
             return product;
+        },
+
+        getProductPriceValue(item) {
+            const prices = JSON.parse(JSON.stringify(item.data.pricing?item.data.pricing : [])).sort(
+                (a, b) => a.priority > b.priority
+            );
+            return prices[0];
+        },
+
+        hasPeriodicPrice(item) {
+            return item.data?.price_periodic?.length > 0;
+        },
+
+        getProductFirstPeriodPriceValue(item) {
+            const prices = item.data?.price_periodic.sort(
+                (a, b) => a.priority > b.priority
+            );
+
+            return prices[0];
+        },
+
+        getProductFirstPeriodPrice(item) {
+            const prices = JSON.parse(JSON.stringify(item.data?.price_periodic)).sort(
+                (a, b) => a.priority > b.priority
+            );
+
+            return prices[0].amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' ' +
+                this.$store.state.currencies[prices[0].currency];
+        },
+
+        getProductPeriodicPriceListString(item) {
+            const count = item.data?.calucalte_periodic?.period_count;
+            const amount = item.data?.calucalte_periodic?.period_amount?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            const days = item.data?.calucalte_periodic?.period_duration;
+            const currency = this.$store.state.currencies[1]
+            return `و سپس ${count} قسط ${amount} ${currency} هر ${days} روز`
         }
     }
 };

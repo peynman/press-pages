@@ -197,12 +197,12 @@ export default {
             const source = this.getStateFromNestedPath(sourcePath);
             if (source && Array.isArray(source)) {
                 const iterate = source;
+                const start = Object.keys(target).length
                 iterate.forEach((item, indexer) => {
-                    console.log(item.id);
                     const copy = deepCopy(template)
                     copy.hidden = false;
                     deepIterate(copy, item)
-                    target[indexer] = copy
+                    target[indexer + start] = copy
                 })
                 this.setNestedPathValue(this[this.getFormSchemaPropName()], targetPath, target);
             }

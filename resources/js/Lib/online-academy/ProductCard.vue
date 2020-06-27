@@ -5,12 +5,12 @@
       style="position: relative"
     >
       <v-img class="white--text align-end" height="275px" :src="product.image" width="100%"></v-img>
-      <v-card-title>{{product.title}}</v-card-title>
+      <v-card-title style="word-break: break-word;">{{product.title}}</v-card-title>
       <div class="ps-5">
         <vf-paragraph-input :field="{'readonly': true}" :value="product.subtitle"></vf-paragraph-input>
       </div>
       <v-avatar tile style="position: absolute; left: 50px; top: 260px; height:35px ; " size="50">
-        <img src="/storage/images/logo.png" />
+        <img src="/public/images/logo.png" />
       </v-avatar>
       <v-card-text class="text--primary pa-0 mb-12">
         <div style="position: relative">
@@ -63,7 +63,7 @@
               small
               class="mx-2 my-auto red--text overline"
               style="text-decoration: line-through;"
-              v-if="product.takhfif !== ''"
+              v-if="product.takhfif !== '' && !field.available"
             >{{ getProductPriceOffString(field)}}</v-chip>
           </div>
 
@@ -100,8 +100,9 @@
         <v-chip
           small
           outlined
+          v-if="field.data.price_periodic && field.data.price_periodic.length > 0 && !field.available"
           class="deep-purple--text ma-auto"
-        >{{ field.data.single_session ? field.data.single_session : 'تبت نام تک جلسه' }}</v-chip>
+        >امکان خرید اقساط</v-chip>
       </v-card-actions>
     </v-card>
   </v-col>
@@ -130,7 +131,7 @@ export default {
     },
     actionBtnColor() {
       if (this.user) {
-        if (this.product.available) {
+        if (this.field.available) {
           return "#57cc91";
         } else {
           let found = false;
@@ -157,8 +158,8 @@ export default {
     },
     actionBtnLabel() {
       if (this.user) {
-        if (this.product.available) {
-          return this.field.data.access ? this.field.data.access : "نمایش";
+        if (this.field.available) {
+          return "خریداری شد";
         } else {
           let found = false;
           if (
@@ -193,7 +194,7 @@ export default {
     onProductAction() {
       const host = this.$store.state.host;
       if (this.user) {
-        if (this.product.available) {
+        if (this.field.available) {
         } else {
           this.toggleItemInCart(this.product);
         }

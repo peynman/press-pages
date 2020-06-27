@@ -18,6 +18,7 @@ export default class CurrentCartSettings extends BaseInputSettings {
     getInputProperties() {
         return {
             ...CommonInputEssentials,
+            gateways: TextSettings('Gateways'),
         }
     }
 }

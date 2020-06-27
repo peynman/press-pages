@@ -39,7 +39,6 @@ export default {
     },
   },
   mounted () {
-      console.log(this.options)
       if (this.body) {
           this.UpdatePageContent(this.body, this.options, this.sources)
       }
