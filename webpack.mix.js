@@ -39,9 +39,12 @@ mix
     .copyDirectory('resources/dist/', '../../public/vendor/larapress-pages')
     .disableNotifications();
 
-mix.version();
-
 if (mix.inProduction()) {
+    mix.extract([
+        'vuetify',
+        'vue',
+        'vuex'
+    ]);
 } else {
     Mix.listen('configReady', config => {
         const scssRule = config.module.rules.find(r => r.test.toString() === /\.scss$/.toString())
