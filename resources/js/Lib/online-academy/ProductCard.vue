@@ -10,7 +10,7 @@
         <vf-paragraph-input :field="{'readonly': true}" :value="product.subtitle"></vf-paragraph-input>
       </div>
       <v-avatar tile style="position: absolute; left: 50px; top: 260px; height:35px ; " size="50">
-        <img src="/public/images/logo.png" />
+        <img src="/images/logo.png" />
       </v-avatar>
       <v-card-text class="text--primary pa-0 mb-12">
         <div style="position: relative">
