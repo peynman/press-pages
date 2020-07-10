@@ -1,5 +1,5 @@
 <template>
-  <vf-objects-list-input :field="field" :id="`${id}-bitwise`" v-model="innerValue"></vf-objects-list-input>
+  <vf-objects-list-input class="mt-2" :field="field" :id="`${id}-bitwise`" v-model="innerValue"></vf-objects-list-input>
 </template>
 
 <script>
@@ -14,18 +14,24 @@ export default {
     },
     data () {
         return {
-            innerValue: {}
+            innerValue: this.getInnerValues(),
         }
     },
-    watch: {
-        devalue: function () {
+    methods: {
+        getInnerValues () {
             const newInner = {}
-            this.field.objects.forEach((i) => {
+
+            this.field.objects?.forEach((i) => {
                 if ((this.value & i.id) !== 0) {
                     newInner[i.id] = true
                 }
             })
-            this.innerValue = newInner
+            return newInner;
+        }
+    },
+    watch: {
+        devalue: function () {
+            this.innerValue = this.getInnerValues()
         },
         innerValue: {
             deep: true,

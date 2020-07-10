@@ -7,19 +7,16 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Larapress\CRUD\Exceptions\AppException;
 use Larapress\CRUD\Translation\TranslationHelper;
 use Larapress\Pages\Models\Page;
 use Larapress\CRUD\ICRUDUser;
-use Larapress\CRUD\Models\Role;
-use Larapress\Pages\Models\PageSchema;
 use Larapress\Profiles\Repository\Domain\IDomainRepository;
 use Illuminate\Routing\Route;
 use Larapress\CRUD\Base\ICRUDService;
 use Larapress\ECommerce\Services\IBankingService;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Http\Response;
+use Larapress\Profiles\Repository\Form\IFormRepository;
 
 class PageRenderService implements IPageRenderService
 {
@@ -85,108 +82,23 @@ class PageRenderService implements IPageRenderService
         $jwtToken = null;
         /** @var  IProfileUser|ICRUDUser */
         $user = Auth::user();
+        if (!$this->checkUserAccessToPage($user, $page)) {
+            return redirect('/signin')->with('endpoint', $request->path());
+        }
+
+        $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
+        [$channels, $permissions] = $this->collectPageChannelsAndPermissionsForUser($user);
+        [$currentCart, $balance] = $this->collectPageUserECommerce($user, $request);
         if (!is_null($user)) {
             $jwtToken = auth()->guard('api')->tokenById($user->id);
-        }
-        if (isset($page->options['roles']) && isset($page->options['roles'][0]['id'])) {
-            $roles = collect($page->options['roles'])->pluck('id')->toArray();
-            if (count($roles) > 0) {
-                if (is_null($user) || !$user->hasRole($roles)) {
-                    return redirect('/signin')->with('endpoint', $request->path());
-                }
-            }
+            $user['permissions'] = $permissions;
+            $user['current_cart'] = $currentCart;
+            $user['balance'] = $balance;
+            // make sure user profile ise loaded if exists
+            $user['profile'] = $user->profile;
         }
 
-
-        $sources = [];
-        if (isset($page->options['sources']) && is_array($page->options['sources'])) {
-            /** @var ICRUDService */
-            $crudService = app(ICRUDService::class);
-            foreach ($page->options['sources'] as $source) {
-                $res = [];
-                switch ($source['resource']) {
-                    case 'object':
-                        switch ($source['class']) {
-                            case 'captcha':
-                                $res = Captcha::create('default', true);
-                                break;
-                            default:
-                                $provider = new $source['class'];
-                                $crudService->useProvider($provider);
-                                $res = $crudService->show($request, $route->parameter($source['param']));
-                                break;
-                        }
-                        break;
-                    case 'repository':
-                        $repo = $source['class'];
-                        $safeRepos = config('larapress.pages.safe-sources');
-                        if (in_array($repo, $safeRepos)) {
-                            $params =  isset($source['params']) ? $source['params'] : [];
-                            $repoRef = app()->make($repo);
-                            $res = call_user_func([$repoRef,  $source['method']], $user, ...$params);
-                        }
-                        break;
-                }
-
-                $sources[] = [
-                    'resource' => $res,
-                    'path' => $source['path']
-                ];
-            }
-        }
-
-        $template = [
-            'name' => config('larapress.pages.default-template'),
-            'props' => []
-        ];
-        if (isset($page->body['template'])) {
-            $template = $page->body['template'];
-        } else if (isset($page->options['template'])) {
-            $template = $page->options['template'];
-        }
-
-        if (!is_null($user)) {
-            /** @var IBankingService */
-            $cartService = app(IBankingService::class);
-            /** @var IDomainRepository */
-            $domainRepo = app(IDomainRepository::class);
-            $domain = $domainRepo->getRequestDomain($request);
-            // include carts and balance of current user
-            $user['current_cart'] = $cartService->getPurchasingCart(
-                $user,
-                $domain,
-                config('larapress.ecommerce.banking.currency.id')
-            );
-            $user['current_cart']['items'] = $cartService->getPurchasingCartItems(
-                $user,
-                $domain,
-                config('larapress.ecommerce.banking.currency.id')
-            );
-            $user['balance'] = [
-                'amount' =>  $cartService->getUserBalance(
-                    $user,
-                    $domain,
-                    config('larapress.ecommerce.banking.currency.id')
-                ),
-                'currency' => config('larapress.ecommerce.banking.currency')
-            ];
-        }
-
-        $channels = [];
-        if (!is_null($user)) {
-            $userPermissions = [];
-            if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super-role'), config('larapress.profiles.security.roles.affiliate')))) {
-                $permissions = $user->getPermissions();
-                foreach ($permissions as $permission) {
-                    if (!in_array('crud.' . $permission[1], $channels)) {
-                        $channels[] = ['name' => 'crud.' . $permission[1], 'access' => 'private']; // attach first part if permission string as name.verb
-                        $userPermissions[] = $permission[1];
-                    }
-                }
-            }
-            $channels[] = ['name' => 'users', 'access' => 'presence'];
-            $user['permissions'] = $userPermissions;
-        }
+        $this->reportPageEvents($user, $request, $route, $page);
 
         return [
             'user' => $user,
@@ -194,7 +106,6 @@ class PageRenderService implements IPageRenderService
                 'api' => $jwtToken
             ],
             'title' => isset($page->options['title']) ? $page->options['title'] : config('larapress.pages.default-title'),
-            'template' => $template,
             'body' => $page->body,
             'options' => $page->options,
             'datetime' => [
@@ -211,5 +122,136 @@ class PageRenderService implements IPageRenderService
                 config('larapress.ecommerce.banking.currency.id') => config('larapress.ecommerce.banking.currency.title')
             ]
         ];
+    }
+
+    protected function reportPageEvents($user, Request $request, Route $route, Page $page)
+    {
+        /** @var IDomainRepository */
+        $domainRepo = app(IDomainRepository::class);
+        $domain = $domainRepo->getRequestDomain($request);
+
+        if (isset($page->options['report_visits']) && $page->options['report_visits']) {
+            $filters = [];
+            $pageFilterName = isset($page->options['report_filter']) ? $page->options['report_filter'] : null;
+            $pageParameterName = isset($page->options['report_parameter']) ? $page->options['report_parameter'] : null;
+            if (!is_null($pageFilterName) && !is_null($pageParameterName)) {
+                $filters[$pageFilterName] = $route->parameter($pageParameterName);
+            }
+
+            PageVisitEvent::dispatch($user, $page->id, $domain, $request->ip(), time(), $filters);
+        }
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @param Page $page
+     * @return void
+     */
+    protected function checkUserAccessToPage($user, Page $page)
+    {
+        if (isset($page->options['roles']) && isset($page->options['roles'])) {
+            if (isset($page->options['roles'][0]['id'])) {
+                $roles = collect($page->options['roles'])->pluck('id')->toArray();
+            } else {
+                $roles = array_keys($page->options['roles']);
+            }
+            if (count($roles) > 0) {
+                if (is_null($user) || !$user->hasRole($roles)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @param Request $request
+     * @param Route $route
+     * @param Page $page
+     * @return void
+     */
+    protected function collectPageSourcesForUser($user, Request $request, Route $route, Page $page)
+    {
+        if (isset($page->options['sources']) && is_array($page->options['sources'])) {
+            /** @var IFormRepository */
+            $srcRepo = app(IFormRepository::class);
+            return $srcRepo->getFormDataSources($user, $request, $route, $page->options['sources']);
+        }
+
+        return [];
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @return void
+     */
+    protected function collectPageChannelsAndPermissionsForUser($user)
+    {
+        $channels = [];
+        $userPermissions = [];
+        if (!is_null($user)) {
+            $userPermissions = [];
+            if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super-role'), config('larapress.profiles.security.roles.affiliate')))) {
+                $permissions = $user->getPermissions();
+                foreach ($permissions as $permission) {
+                    if (!in_array('crud.' . $permission[1], $channels)) {
+                        $channels[] = ['name' => 'crud.' . $permission[1], 'access' => 'private']; // attach first part if permission string as name.verb
+                        $userPermissions[] = $permission[1];
+                    }
+                }
+            }
+            $channels[] = ['name' => 'users', 'access' => 'presence'];
+            $userPermissions = $userPermissions;
+        }
+
+        return [$channels, $userPermissions];
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @param Request $request
+     * @return void
+     */
+    protected function collectPageUserECommerce($user, Request $request)
+    {
+        if (!is_null($user)) {
+            /** @var IBankingService */
+            $cartService = app(IBankingService::class);
+            /** @var IDomainRepository */
+            $domainRepo = app(IDomainRepository::class);
+            $domain = $domainRepo->getRequestDomain($request);
+            // include carts and balance of current user
+            $currentCart = $cartService->getPurchasingCart(
+                $user,
+                $domain,
+                config('larapress.ecommerce.banking.currency.id')
+            );
+            $currentCart['items'] = $cartService->getPurchasingCartItems(
+                $user,
+                $domain,
+                config('larapress.ecommerce.banking.currency.id')
+            );
+            $balance = [
+                'amount' =>  $cartService->getUserBalance(
+                    $user,
+                    $domain,
+                    config('larapress.ecommerce.banking.currency.id')
+                ),
+                'currency' => config('larapress.ecommerce.banking.currency')
+            ];
+
+            return [$currentCart, $balance];
+        }
+
+        return [null, null];
     }
 }

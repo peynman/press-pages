@@ -45,7 +45,7 @@ class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     public $validRelations = ['author'];
     public $validFilters = [];
     public $defaultShowRelations = ['author'];
-    public $excludeFromUpdate = [];
+    public $excludeIfNull = [];
     public $searchColumns = ['schema', 'name'];
     public $filterFields = [];
     public $filterDefaults = [];

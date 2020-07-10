@@ -11,13 +11,21 @@
     >{{ alert.message }}</v-alert>
     <v-toolbar dense flat class="ma-0 pa-0">
       <v-btn
+        v-if="field.table && field.table['reports-url']"
+        x-small
+        icon
+        :href="field.table['reports-url']"
+      >
+        <v-icon small>mdi-chart-pie</v-icon>
+      </v-btn>
+      <v-btn
         icon
         small
-        color="secondary"
+        :color="showFilters ? 'warning':'secondary'"
         @click="showFilters = !showFilters"
-        v-if="field.crud && field.crud.filter && !field['hide-filters']"
+        v-if="field.crud && field.crud.filters && !field['hide-filters']"
       >
-        <v-icon small>mdi-filter-plus-outline</v-icon>
+        <v-icon small>{{ showFilters ? 'mdi-close' : 'mdi-filter-plus-outline' }}</v-icon>
       </v-btn>
       <vf-datatable-dialog-create
         v-if="((field.crud && field.crud.create) || (field.table && field.table['create-url'])) && !field['hide-create']"
@@ -68,6 +76,47 @@
         @accept="onRemoveSelected()"
       ></vf-datatable-dialog-delete>
     </v-toolbar>
+    <v-expand-transition v-if="field.crud && field.crud.filters">
+      <v-card flat v-show="showFilters" class="mb-2">
+        <v-divider></v-divider>
+        <vf-fields-renderer
+          v-model="customFilters"
+          :value="customFilters"
+          :fields="field.crud.filters.fields"
+          :options="field.crud.filters.options"
+        ></vf-fields-renderer>
+        <v-divider></v-divider>
+        <v-card-actions class="d-flex flex-row justify-start">
+          <v-btn
+            color="primary"
+            :disabled="loading"
+            outlined
+            small
+            dense
+            class="my-auto"
+            @click="updateTable()"
+          >اعمال فیلتر</v-btn>
+          <v-btn
+            color="warning"
+            :disabled="loading"
+            outlined
+            small
+            dense
+            class="my-auto"
+            @click="resetFilters()"
+          >حذف فیلتر‌ها</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="secondary"
+            :disabled="loading"
+            outlined
+            small
+            dense
+            class="my-auto"
+          >دانلود کامل گزارش</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-expand-transition>
     <v-data-table
       :headers="headers"
       :items="devalue"
@@ -81,7 +130,7 @@
       :footer-props="{
           'items-per-page-options': [5, 10, 15, 30, 50, 100]
         }"
-    :items-per-page="50"
+      :items-per-page="50"
       selectable-key
       v-model="selected"
       v-bind="fieldProps"
@@ -183,7 +232,8 @@ export default {
     sortBy: null,
     sortDesc: null,
     expandTemplate: null,
-    expandTemplateDefaultMetadata: null
+    expandTemplateDefaultMetadata: null,
+    customFilters: {}
   }),
   computed: {
     headers: function() {
@@ -256,6 +306,10 @@ export default {
     }
   },
   methods: {
+    resetFilters() {
+      this.customFilters = {};
+      this.updateTable();
+    },
     updateTable() {
       const sort = [];
       this.options.sortBy.forEach((s, index) => {
@@ -295,6 +349,7 @@ export default {
             page: this.options.page,
             limit: this.options.itemsPerPage,
             search: this.search,
+            filters: this.customFilters,
             sort: sort,
             with: this.field.table.query.relations
               ? this.field.table.query.relations

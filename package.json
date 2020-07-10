@@ -10,6 +10,7 @@
         "acorn": "^7.2.0",
         "axios": "^0.19",
         "blockly": "^3.20200402.1",
+        "chart.js": "^2.9.3",
         "cross-env": "^5.1",
         "crossroads": "^0.12.2",
         "eslint": "^7.1.0",

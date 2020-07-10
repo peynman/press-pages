@@ -3,9 +3,9 @@
     :class="`${options && options.formClass ? options.formClass : ''}`"
     :is="getRootComponent()"
     v-bind="getRootComponentProps()"
-    >
+  >
     <component
-      v-if="options && options.wrap && options.wrap.enabled !== false"
+      v-if="options && options.wrap && options.wrap.enabled !== false && options.wrap.inside"
       :is="options.wrap.component"
       v-bind="wrapProps"
       :class="options.wrap.class"
@@ -38,144 +38,180 @@
 </template>
 
 <script>
-import { VRow, VCol, VCard, VCardActions, VCardText, VCardTitle, VList, VListItem, VListItemTitle, VListItemContent, VCarousel, VCarouselItem, VSlideGroup, VSlideItem } from 'vuetify/lib'
+import {
+  VRow,
+  VCol,
+  VCard,
+  VCardActions,
+  VCardText,
+  VCardTitle,
+  VList,
+  VListItem,
+  VListItemTitle,
+  VListItemContent,
+  VCarousel,
+  VCarouselItem,
+  VSlideGroup,
+  VSlideItem
+} from "vuetify/lib";
 
 export default {
-    components: {
-        VRow, VCol, VCard, VCardActions, VCardText, VCardTitle, VList, VListItem, VListItemTitle, VListItemContent, VCarousel, VCarouselItem, VSlideGroup, VSlideItem
+  components: {
+    VRow,
+    VCol,
+    VCard,
+    VCardActions,
+    VCardText,
+    VCardTitle,
+    VList,
+    VListItem,
+    VListItemTitle,
+    VListItemContent,
+    VCarousel,
+    VCarouselItem,
+    VSlideGroup,
+    VSlideItem
+  },
+  name: "vf-fields-renderer",
+  props: {
+    id: String,
+    fields: [Object, Array],
+    value: {
+      type: [Object, Array],
+      default: () => ({})
     },
-    name: 'vf-fields-renderer',
-    props: {
-        id: String,
-        fields: [Object, Array],
-        value: {
-            type: [Object, Array],
-            default: () => ({})
-        },
-        options: Object,
-        onUpdated: Function
-    },
-    data () {
-        let wrapProps = this.options && this.options.wrap && this.options.wrap.props ? this.options.wrap.props : {}
-        const wrapInnerProps = {};
-        if (typeof wrapProps === 'string') {
-            try {
-                wrapProps = JSON.parse(wrapProps);
-            } catch (e) {
-                wrapProps = {};
-            }
-        }
-
-        return {
-            devalue: this.value,
-            wrapProps,
-            wrapInnerProps
-        }
-    },
-    computed: {
-        visibleFields () {
-            const filter = function (obj, predicate) {
-                const result = {}; let key
-                for (key in obj) {
-                    if (obj[key] && !predicate(obj[key])) {
-                        result[key] = obj[key]
-                    }
-                }
-                return result
-            }
-            return filter(this.fields, (i) => i.hidden === true)
-        }
-    },
-    watch: {
-        devalue: {
-            deep: true,
-            handler: function () {
-                if (this.onUpdated) {
-                    this.onUpdated(this.devalue)
-                }
-                if (
-                    this.options &&
-                    this.options['v-on'] &&
-                    this.options['v-on'].input
-                ) {
-                    this.options['v-on'].input(this.devalue)
-                }
-                this.$emit('input', this.devalue)
-            }
-        },
-        value: {
-            deep: true,
-            handler () {
-                this.devalue = this.value
-            }
-        }
-    },
-    methods: {
-        getRootComponent () {
-            if (this.options) {
-                switch (this.options.type) {
-                case 'col':
-                    return VCol
-                case 'component':
-                    return this.options.component
-                }
-            }
-            return VRow
-        },
-        getRootComponentProps () {
-            if (this.options) {
-                if (this.options.props) {
-                    return this.options.props
-                }
-            }
-            return {}
-        },
-        isVisibleField (field) {
-            return field.visible !== false
-        },
-        getComponentPropsForField (field, key) {
-            if (!field.type || field.type === 'row' || field.type === 'col') {
-                return {
-                    fields: field.fields,
-                    options: {
-                        type: field.type ? field.type : 'row',
-                        props: field.props,
-                        ...field.options
-                    }
-                }
-            }
-
-            const props = {
-                field: { ...field },
-                id: `${this.id}-field-${key}`
-            }
-            if (this.options) {
-                if (this.options.class) {
-                    props.field.class =
-            this.options.class +
-            (props.field.class ? ' ' + props.field.class : '')
-                }
-                if (this.options.props) {
-                    props.field.props = {
-                        ...this.options.props,
-                        ...(props.field.props ? props.field.props : {})
-                    }
-                }
-            }
-
-            return props
-        },
-        getComponentForField (field) {
-            if (field.type === 'input' && field.input) {
-                return `vf-${field.input}-input`
-            } else if (field.type === 'group' && field.group) {
-                return `vf-group-${field.group}`
-            } else if (field.type === 'component') {
-                return field.component
-            } else if (field.fields) {
-                return 'vf-fields-renderer'
-            }
-        }
+    options: Object,
+    onUpdated: Function
+  },
+  data() {
+    let wrapProps =
+      this.options && this.options.wrap && this.options.wrap.props
+        ? this.options.wrap.props
+        : {};
+    const wrapInnerProps = {};
+    if (typeof wrapProps === "string") {
+      try {
+        wrapProps = JSON.parse(wrapProps);
+      } catch (e) {
+        wrapProps = {};
+      }
     }
-}
+
+    return {
+      devalue: this.value ? this.value : {},
+      wrapProps,
+      wrapInnerProps
+    };
+  },
+  computed: {
+    visibleFields() {
+      const filter = function(obj, predicate) {
+        const result = {};
+        let key;
+        for (key in obj) {
+          if (obj[key] && !predicate(obj[key])) {
+            result[key] = obj[key];
+          }
+        }
+        return result;
+      };
+      return filter(this.fields, i => i.hidden === true);
+    }
+  },
+  watch: {
+    devalue: {
+      deep: true,
+      handler: function() {
+        if (this.onUpdated) {
+          this.onUpdated(this.devalue);
+        }
+        if (
+          this.options &&
+          this.options["v-on"] &&
+          this.options["v-on"].input
+        ) {
+          this.options["v-on"].input(this.devalue);
+        }
+        this.$emit("input", this.devalue);
+      }
+    },
+    value: {
+      deep: true,
+      handler() {
+        if (this.value) {
+          this.devalue = this.value;
+        } else {
+          this.devalue = {};
+        }
+      }
+    }
+  },
+  methods: {
+    getRootComponent() {
+      if (this.options) {
+        switch (this.options.type) {
+          case "col":
+            return VCol;
+          case "component":
+            return this.options.component;
+        }
+      }
+      return VRow;
+    },
+    getRootComponentProps() {
+      if (this.options) {
+        if (this.options.props) {
+          return this.options.props;
+        }
+      }
+      return {};
+    },
+    isVisibleField(field) {
+      return field.visible !== false;
+    },
+    getComponentPropsForField(field, key) {
+      if (!field.type || field.type === "row" || field.type === "col") {
+        return {
+          fields: field.fields,
+          options: {
+            type: field.type ? field.type : "row",
+            props: field.props,
+            ...field.options
+          }
+        };
+      }
+
+      const props = {
+        field: { ...field },
+        id: `${this.id}-field-${key}`
+      };
+      if (this.options) {
+        if (this.options.class) {
+          props.field.class =
+            this.options.class +
+            (props.field.class ? " " + props.field.class : "");
+        }
+        if (this.options.props) {
+          props.field.props = {
+            ...this.options.props,
+            ...(props.field.props ? props.field.props : {})
+          };
+        }
+      }
+
+      return props;
+    },
+    getComponentForField(field) {
+      if (field.type === "input" && field.input) {
+        return `vf-${field.input}-input`;
+      } else if (field.type === "group" && field.group) {
+        return `vf-group-${field.group}`;
+      } else if (field.type === "component") {
+        return field.component;
+      } else if (field.fields) {
+        return "vf-fields-renderer";
+      }
+    }
+  }
+};
 </script>

@@ -4,11 +4,14 @@ namespace Larapress\Pages\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Larapress\Pages\Commands\PageCommands;
+use Larapress\Pages\Repository\IPageRepository;
+use Larapress\Pages\Repository\PageRepository;
 use Larapress\Pages\Services\DomainPageProvider;
 use Larapress\Pages\Services\IPageProvider;
 use Larapress\Pages\Services\IPageRenderService;
 use Larapress\Pages\Services\PageRenderService;
-
+use Larapress\Profiles\Repository\Filter\FilterRepository;
+use Larapress\Profiles\Repository\Filter\IFilterRepository;
 
 class PackageServiceProvider extends ServiceProvider
 {
@@ -21,6 +24,10 @@ class PackageServiceProvider extends ServiceProvider
     {
         $this->app->bind(IPageRenderService::class, PageRenderService::class);
         $this->app->bind(IPageProvider::class, DomainPageProvider::class);
+        $this->app->bind(IFilterRepository::class, FilterRepository::class);
+        $this->app->bind(IPageRepository::class, PageRepository::class);
+
+        $this->app->register(EventServiceProvider::class);
     }
 
     /**

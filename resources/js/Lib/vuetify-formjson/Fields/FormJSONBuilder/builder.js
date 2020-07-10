@@ -651,7 +651,7 @@ export default {
                         'fields',
                         'groups',
                         'components',
-                        'v-on'
+                        'v-on',
                     ]
 
                     // apply settings on item value before asking for InputSlots
@@ -748,7 +748,8 @@ export default {
                         settings: {
                             tabs: {
                                 fieldProperties: settingsVals,
-                                eventHandlers: JSON.parse(JSON.stringify(eventsVals))
+                                eventHandlers: JSON.parse(JSON.stringify(eventsVals)),
+                                validations: settingsVals.validations,
                             }
                         },
                         slots: {

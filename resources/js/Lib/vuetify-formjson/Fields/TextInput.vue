@@ -5,6 +5,7 @@
     :class="`vf-input ${field.class ? field.class:''}`"
     v-bind="fieldProps"
     hide-details="auto"
+    :rules="rules"
     @keyup.native="updateInput($event)"
     v-on="eventHandlers"
   >
@@ -22,7 +23,7 @@ export default {
     props: {
         id: String,
         field: Object,
-        value: [Object, String, Array]
+        value: [Object, String, Array, Number]
     },
     methods: {
         updateInput: function (ev) {

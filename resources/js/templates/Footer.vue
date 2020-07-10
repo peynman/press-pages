@@ -1,28 +1,30 @@
 <template>
   <v-footer dark padless>
-    <v-card flat tile class="grey darken1-1 white--text text-center">
-      <v-card-title>
-        <v-btn
-          v-for="icon in svgs"
-          :key="icon.name"
-          class="transparent"
-          elevation="0"
-          fab
-          href="icon.ref"
-        >
-          <v-img class="mx-4 white--text" :src="icon.image" max-height="40px" max-width="40px"></v-img>
-        </v-btn>
-        <v-icon size="24px">{{ icon }}</v-icon>
-      </v-card-title>
-
+    <v-card flat tile class="grey darken1-1 white--text text-center pt-2">
       <v-card-text class="white--text pt-0">
         <v-row>
-          <v-col
-            cols="6"
-            justify-start
-          >
+          <v-col cols="12" md="6" justify-start class="text-start">
+            <v-row>
+              <v-col cols="4" class="justify-center">
+                  <v-img src="../../../images/logo-big.jpeg"></v-img>
+              </v-col>
+              <v-col cols="8" class="justify-center">
+                «درباره ی تخته سیاه»
+                هولدینگ تخته سیاه مجموعه ای است‌ که از سال ۱۳۸۳ فعالیت خود را در قالب چاپ کتاب های آموزشی در زمینه ی کنکور آغاز کرده است و‌ تا به امروز بیش‌ از ۱۰۰۰ عنوان کتاب مختلف به چاپ رسانده است که بسیاری از این عناوین مثل کتاب های ژنتیک،گیاهی،تاریخ ادبیات،ریاضیات جامع و ... بارها و بارها تجدید چاپ شده اند.
+                در حال حاضر این هولدینگ دارای شاخه های زیر میباشد:
+                ۱.نشر کتب ویژه ی کنکور در رشته های مختلف تحصیلی.
+                ۲.نشر کتاب های آموزشی پایه در مقاطع ابتدایی و متوسطه.
+                ۳.نشر کتاب کودک به نام انتشارات شازده کوچولو.
+                ۴.آکادمی آنلاین.
+              </v-col>
+            </v-row>
           </v-col>
-          <v-col cols="6" class="justify-center">
+          <v-col cols="12" md="6" class="justify-center">
+            <v-list dense class="grey darken1-1">
+              <v-list-item>راه‌های ارتباطی</v-list-item>
+              <v-list-item>دفتر مرکزی: تهران - تهران - انقلاب -خیابان 12 فروردین - خیابان وحید نظری - پلاک 99</v-list-item>
+              <v-list-item>تلفن تماس: ۰۹۳۶۱۲۲۲۱۲۰</v-list-item>
+            </v-list>
             <v-img
               v-for="item in imageBank"
               :key="item"
@@ -53,10 +55,9 @@ export default {
       {
         name: "insta",
         image: "/logo.png",
-        ref:
-          "https://www.google.com/search?q=svg&rlz=1C5CHFA_enDE773DE773&oq=svg&aqs=chrome..69i57j0l7.1727j0j4&sourceid=chrome&ie=UTF-8"
+        ref: ""
       },
-      { name: "insta3", image: "../../../public/logo" }
+      { name: "insta3", image: "../../../public/logo.png" }
     ]
   })
 };

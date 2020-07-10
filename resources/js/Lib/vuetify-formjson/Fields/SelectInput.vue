@@ -42,6 +42,6 @@ export default {
         devalue: function () {
             this.$emit('input', this.devalue)
         }
-    }
+    },
 }
 </script>

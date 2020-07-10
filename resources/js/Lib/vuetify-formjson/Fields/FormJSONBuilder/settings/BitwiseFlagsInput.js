@@ -2,7 +2,8 @@ import {
     CommonInputEssentials,
     BaseInputSettings,
     MessagesTab,
-    createEventsDatatableInputForSettingsForm
+    createEventsDatatableInputForSettingsForm,
+    TextSettings
 } from './comon'
 
 import api from './../api'
@@ -41,41 +42,32 @@ export default class BitwiseFlagsInputSettings extends BaseInputSettings {
                 },
                 columns: [
                     {
-                        column: 'id',
-                        title: 'ID'
+                        id: 'id',
+                        label: 'ID'
                     },
                     {
-                        column: 'title',
-                        title: 'Title'
+                        id: 'title',
+                        label: 'Title'
                     }
                 ],
-                create: {
-                    title: 'Add item to select list',
-                    fields: {
-                        id: {
-                            type: 'input',
-                            input: 'text',
-                            class: 'col-6 pe-0 ps-0',
-                            label: 'ID'
-                        },
-                        title: {
-                            type: 'input',
-                            input: 'text',
-                            class: 'col-6 pe-0 ps-0',
-                            label: 'Title'
-                        },
-                        props: {
-                            options: {
-                                type: 'row'
+                crud: {
+                    create: {
+                        fields: {
+                            id: {
+                                type: 'input',
+                                input: 'text',
+                                class: 'col-6 pe-0 ps-0',
+                                label: 'ID'
                             },
-                            fields: {
-                                'v-on': createEventsDatatableInputForSettingsForm('Item events', api.VCheckbox.events)
+                            title: {
+                                type: 'input',
+                                input: 'text',
+                                class: 'col-6 pe-0 ps-0',
+                                label: 'Title'
                             }
                         }
-                    }
-                },
-                edit: {},
-                remove: {}
+                    },
+                }
             },
             props: {
                 options: {

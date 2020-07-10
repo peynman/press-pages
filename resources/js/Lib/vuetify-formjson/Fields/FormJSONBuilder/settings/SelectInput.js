@@ -32,8 +32,10 @@ export default class SwitchInputSettings extends BaseInputSettings {
                 class: 'col-12 ma-0 pa-0',
                 props: {
                     'disable-pagination': true,
-                    dense: true
+                    dense: true,
+                    'show-select': true,
                 },
+                'hide-search': true,
                 columns: [
                     {
                         id: 'id',
@@ -62,7 +64,6 @@ export default class SwitchInputSettings extends BaseInputSettings {
                         }
                     }
                 },
-                'hide-search': true,
             },
             multiple: CheckboxSettings('Multiple'),
             decorator: {

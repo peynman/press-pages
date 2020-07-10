@@ -9,6 +9,8 @@ use Larapress\CRUD\Base\BaseCRUDProvider;
 use Larapress\CRUD\Base\ICRUDProvider;
 use Larapress\CRUD\Base\IPermissionsMetadata;
 use Larapress\Pages\Models\Page;
+use Larapress\Pages\Services\PageVisitReport;
+use Larapress\Reports\Services\IReportsService;
 
 class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
 {
@@ -20,6 +22,7 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         self::CREATE,
         self::EDIT,
         self::DELETE,
+        self::REPORTS,
     ];
     public $model = Page::class;
     public $createValidations = [
@@ -31,6 +34,7 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
+        'zorder' => 'nullable|numeric',
     ];
     public $updateValidations = [
         'name' => 'nullable|string|unique:pages,name',
@@ -41,6 +45,7 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
+        'zorder' => 'nullable|numeric',
     ];
     public $autoSyncRelations = [];
     public $validSortColumns = [
@@ -50,15 +55,31 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'author_id',
         'publish_at',
         'unpublish_at',
-        'flags'
+        'flags',
+        'zorder',
     ];
     public $validRelations = ['author'];
     public $validFilters = [];
     public $defaultShowRelations = ['author'];
-    public $excludeFromUpdate = [];
+    public $excludeIfNull = [
+        'zorder',
+        'flags',
+    ];
     public $searchColumns = ['slug', 'body'];
     public $filterFields = [];
     public $filterDefaults = [];
+
+    /**
+     *
+     */
+    public function getReportSources()
+    {
+        /** @var IReportsService */
+        $service = app(IReportsService::class);
+        return [
+            new PageVisitReport($service),
+        ];
+    }
 
     /**
      * Exclude current id in name unique request
@@ -96,12 +117,11 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
      */
     public function onBeforeUpdate( $args )
     {
-        if (isset($slug)) {
+        if (isset($args['slug'])) {
             if (!Str::startsWith($args['slug'], '/')) {
                 $args['slug'] = '/'.$args['slug'];
             }
         }
-
 
         return $args;
     }

@@ -22,7 +22,7 @@ class PageRenderController extends Controller
      *
      * @return void
      */
-    public static function registerRoutes() {
+    public static function registerPublicWebRoutes() {
         Route::any('{slug?}', '\\'.self::class.'@renderPage')
             ->where('slug', '.*')
             ->name(config('larapress.pages.routes.pages.name').'.any.view');

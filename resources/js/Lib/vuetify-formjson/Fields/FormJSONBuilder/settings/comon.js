@@ -23,17 +23,76 @@ export class BaseInputSettings {
                 })
             }
         }
+        // find validations too
+        const inputValidationsGroup = getNestedPathValue(settings, 'tabs.validations')
+        // add all validations to outputed properties
+        if (inputValidationsGroup) {
+            if (!inputProperties) {
+                inputProperties = {}
+            }
+            inputProperties.validations = inputValidationsGroup
+        }
+
         return inputProperties
+    }
+
+    getInputValidations(item) {
+        return {
+            required: CheckboxSettings('Required'),
+        }
     }
 
     getSettingsFormFields (item) {
         return createSettingsFrom(
             this.getInputProperties(item),
             this.getInputEventGroupsList(item),
-            this.getInputSlots(item)
+            this.getInputSlots(item),
+            this.getInputValidations(item),
         )
     }
 }
+
+export function createSettingsFrom (fields, events, slots, validations) {
+    const eventFields = {}
+    events.forEach((eg) => {
+        eventFields[eg.id] = createEventsDatatableInputForSettingsForm(eg.title, eg.events)
+    })
+
+    return {
+        tabs: {
+            type: 'group',
+            group: 'tabs',
+            groups: {
+                fieldProperties: {
+                    label: 'Properties',
+                    options: {
+                        type: 'row',
+                        formClass: 'ma-0 pa-0'
+                    },
+                    fields
+                },
+                eventHandlers: {
+                    label: 'Events',
+                    fields: {
+                        ...eventFields
+                    }
+                },
+                validations: {
+                    label: 'Validations',
+                    fields: {
+                        ...validations
+                    }
+                }
+            },
+            props: {
+                color: 'primary',
+                centered: true,
+                flat: true,
+            }
+        }
+    }
+}
+
 
 export function createEventsDatatableInputForSettingsForm (title, events) {
     return {
@@ -96,40 +155,6 @@ export function createEventsDatatableInputForSettingsForm (title, events) {
     }
 }
 
-export function createSettingsFrom (fields, events, slots) {
-    const eventFields = {}
-    events.forEach((eg) => {
-        eventFields[eg.id] = createEventsDatatableInputForSettingsForm(eg.title, eg.events)
-    })
-
-    return {
-        tabs: {
-            type: 'group',
-            group: 'tabs',
-            groups: {
-                fieldProperties: {
-                    label: 'Properties',
-                    options: {
-                        type: 'row',
-                        formClass: 'ma-0 pa-0'
-                    },
-                    fields
-                },
-                eventHandlers: {
-                    label: 'Events',
-                    fields: {
-                        ...eventFields
-                    }
-                }
-            },
-            props: {
-                color: 'primary',
-                centered: true,
-                flat: true,
-            }
-        }
-    }
-}
 
 export const CommonInputEssentials = {
     id: {
@@ -285,12 +310,15 @@ export function SwitchSettings (label) {
     }
 }
 
-export function TextSettings (label) {
+export function TextSettings (label, hint = undefined) {
     return {
         type: 'input',
         input: 'text',
         class: 'col-12 mx-0 px-0',
-        label
+        label,
+        props: {
+            hint
+        }
     }
 }
 

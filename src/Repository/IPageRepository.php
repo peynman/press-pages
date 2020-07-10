@@ -10,4 +10,12 @@ interface IPageRepository {
      * @return void
      */
     public function getAllPageRepositories($user);
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @return void
+     */
+    public function getAllPageTitles($user);
 }

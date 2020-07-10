@@ -1,51 +1,51 @@
 <template>
   <v-main :id="id">
-    <v-app-bar color="deep-purple accent-4" dense dark>
+    <v-app-bar color="rgba(84, 84, 84, 0.74)" app dense dark>
       <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
       <v-toolbar-title>آنلاین آکادمی</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-menu left bottom>
+      <v-menu offset-y dark>
         <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
+          <v-btn small rounded outlined color="success" class="my-auto ms-1" v-on="on">
+            <span class="white--text">{{ user.name }}</span>
           </v-btn>
         </template>
         <v-list>
-          <!-- <v-list-item v-for="crud in cruds" :key="`action-${crud.id}`" :href="`/admin/${crud.id}`">
-            <v-list-item-title>{{ crud.title }}</v-list-item-title>
-          </v-list-item>-->
+          <v-list-item
+            v-for="link in links"
+            :key="link.href"
+            justify="space-between"
+            :href="link.href"
+          >
+            <v-icon>{{link.icon}}</v-icon>
+            <v-list-item-title class="mx-10">{{ link.text }}</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" absolute temporary right>
-        <v-list nav dense>
-          <v-list-item
-            v-for="crud in cruds"
-            :key="`${id}-admin-crud-link-${crud.id}`"
-            :href="`/admin/${crud.id}`"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ crud.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ crud.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
+    <v-navigation-drawer v-model="drawer" temporary right fixed style="min-width: 300px;">
+      <AdminLinks :id="`${id}-links`" :groups="userGroups"></AdminLinks>
+    </v-navigation-drawer>
+
     <v-container>
-        <v-card>
-          <v-card-text>
-            <vuetify-formjson v-bind="this[this.getFormSchemaPropName()]" v-model="formModel"></vuetify-formjson>
-          </v-card-text>
-        </v-card>
-      </v-container>
+      <v-card>
+        <v-card-text>
+          <vuetify-formjson v-bind="this[this.getFormSchemaPropName()]" v-model="formModel"></vuetify-formjson>
+        </v-card-text>
+      </v-card>
+    </v-container>
   </v-main>
 </template>
 
 <script>
 import FormJSONRenderer from "../Lib/vuetify-formjson/Fields/FormJSONBuilder/generator";
+import AdminLinks from "./AdminLinks.vue";
 
 export default {
   mixins: [FormJSONRenderer],
+  components: {
+    AdminLinks
+  },
   name: "page-template-admin-bar",
   props: {
     id: String,
@@ -69,97 +69,332 @@ export default {
   data() {
     return {
       drawer: false,
-      availableCRUDS: [
+      groups: [
         {
-          id: "users",
-          title: "کاربران",
-          icon: "mdi-account"
+          id: "dashboards",
+          title: "داشبرد ادمین",
+          icon: "mdi-monitor-dashboard",
+          links: [
+            {
+              icon: "mdi-home",
+              title: "خانه ادمین",
+              id: "dashboard_home",
+              href: "/admin/home",
+            }
+          ]
         },
         {
-          id: "roles",
-          title: "نقش ها",
-          icon: "mdi-account-alert"
+          id: "accounts",
+          icon: "mdi-account-box-multiple",
+          title: "حساب‌های کاربری",
+          links: [
+            {
+              id: "users",
+              title: "کاربران",
+              icon: "mdi-account",
+              group: "accounts",
+              extras: [
+                {
+                  icon: "mdi-chart-pie",
+                  id: "reports",
+                  color: "cyan lighten-3"
+                },
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "roles",
+              title: "نقش ها",
+              icon: "mdi-account-question",
+              group: "accounts"
+            },
+            {
+              id: "domains",
+              title: "دامنه ها",
+              icon: "mdi-domain",
+              group: "accounts",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            }
+          ]
         },
         {
-          id: "domains",
-          title: "دامنه ها",
-          icon: "mdi-domain"
-        },
-        {
-          id: "forms",
-          title: "فرم ها",
-          icon: "mdi-clipboard-arrow-right"
-        },
-        {
-          id: "form-entries",
-          title: "فرم های پر شده",
-          icon: "mdi-clipboard-check-multiple"
-        },
-        {
-          id: "pages",
-          title: "صفحات سایت",
-          icon: "mdi-file-document"
+          id: "content",
+          icon: "mdi-offer",
+          title: "محتوای سایت",
+          links: [
+            {
+              id: "forms",
+              title: "فرم ها",
+              icon: "mdi-clipboard-arrow-right",
+              group: "content",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "form-entries",
+              title: "فرم های پر شده",
+              group: "content",
+              icon: "mdi-clipboard-check-multiple",
+            },
+            {
+              id: "pages",
+              title: "صفحات سایت",
+              group: "content",
+              icon: "mdi-file-document",
+              extras: [
+                {
+                  icon: "mdi-chart-pie",
+                  id: "reports",
+                  color: "cyan lighten-3"
+                },
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "filters",
+              title: "فیلترهای سایت",
+              group: "content",
+              icon: "mdi-air-filter",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            }
+          ]
         },
         {
           id: "products",
+          icon: "mdi-widgets",
           title: "محصولات",
-          icon: "mdi-widgets"
+          links: [
+            {
+              id: "products",
+              title: "محصولات",
+              group: "products",
+              icon: "mdi-widgets",
+              extras: [
+                {
+                  icon: "mdi-chart-pie",
+                  id: "reports",
+                  color: "cyan lighten-3"
+                },
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "product-categories",
+              title: "دسته بندی محصولات",
+              icon: "mdi-selection-drag",
+              group: "products",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "product-types",
+              title: "انواع محصولات",
+              group: "products",
+              icon: "mdi-widgets-outline"
+            }
+          ]
         },
         {
-          id: "product-types",
-          title: "انواع محصولات",
-          icon: "mdi-widgets-outline"
+          id: "contacts",
+          icon: "mdi-contacts",
+          title: "تماس و پشتیبانی",
+          links: [
+            {
+              id: "sms-gateways",
+              title: "درگاه‌های پیامکی",
+              group: "contacts",
+              icon: "mdi-cellphone-basic",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "sms-messages",
+              title: "پیامک ها",
+              group: "contacts",
+              icon: "mdi-cellphone-arrow-down"
+            },
+            {
+              id: "phone-numbers",
+              title: "شماره های ثبت شده",
+              group: "contacts",
+              icon: "mdi-cellphone-text"
+            }
+          ]
         },
         {
-          id: "product-categories",
-          title: "دسته بندی محصولات",
-          icon: "mdi-selection-drag"
+          id: "ecommerce",
+          icon: "mdi-credit-card-settings",
+          title: "تجارت آنلاین",
+          links: [
+            {
+              id: "bank-gateways",
+              title: "درگاه‌های بانکی",
+              group: "ecommerce",
+              icon: "mdi-bank",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "bank-gateway-transactions",
+              title: "تراکنش های بانک",
+              group: "ecommerce",
+              icon: "mdi-bank-transfer",
+              extras: [
+                {
+                  icon: "mdi-chart-pie",
+                  id: "reports",
+                  color: "cyan lighten-3"
+                },
+              ]
+            },
+            {
+              id: "carts",
+              title: "سبد های خرید",
+              icon: "mdi-cart",
+              group: "ecommerce",
+              extras: [
+                {
+                  icon: "mdi-chart-pie",
+                  id: "reports",
+                  color: "cyan lighten-3"
+                },
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            },
+            {
+              id: "wallet-transactions",
+              title: "تراکنش های کیف پول",
+              icon: "mdi-cart-arrow-right",
+              group: "ecommerce",
+              extras: [
+                {
+                  icon: "mdi-chart-pie",
+                  id: "reports",
+                  color: "cyan lighten-3"
+                },
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
+            }
+          ]
         },
         {
-          id: "sms-gateways",
-          title: "درگاه‌های پیامکی",
-          icon: "mdi-cellphone-basic"
-        },
+          id: "system",
+          icon: "mdi-settings",
+          title: "مدیریت سیستم",
+          links: [
+            {
+              icon: "",
+              id: "log-viewer",
+              title: "لوگ سیستم",
+              permission: "system.log-viewer"
+            },
+            {
+              icon: "",
+              id: "horizon",
+              title: "صف سیستم",
+              permission: "system.horizon"
+            }
+          ]
+        }
+      ],
+      links: [
+        { icon: "mdi-face-profile", text: "پروفایل من", href: "/me/forms/1" },
         {
-          id: "sms-messages",
-          title: "پیامک ها",
-          icon: "mdi-cellphone-arrow-down"
+          icon: "mdi-onepassword",
+          text: "تغییر رمز عبور",
+          href: "/me/password"
         },
-        {
-            id: 'phone-numbers',
-            title: 'شماره های ثبت شده',
-            icon: 'mdi-cellphone-text'
-        },
-        {
-          id: "bank-gateways",
-          title: "درگاه‌های بانکی",
-          icon: "mdi-bank"
-        },
-        {
-          id: "bank-gateway-transactions",
-          title: "تراکنش های بانک",
-          icon: "mdi-bank-transfer"
-        },
-        {
-          id: "carts",
-          title: "سبد های خرید",
-          icon: "mdi-cart"
-        },
-        {
-          id: "wallet-transactions",
-          title: "تراکنش های کیف پول",
-          icon: "mdi-cart-arrow-right"
-        },
+        { icon: "mdi-exit-run", text: "خروج", href: "/logout" }
       ]
     };
   },
   computed: {
-      user () {
-          return this.$store.state.user;
-      },
-      cruds: function () {
-          return this.availableCRUDS.filter((item) => (this.user?.permissions.filter((permString) => permString.startsWith(item.id).length > 0)))
-      }
+    user() {
+      return this.$store.state.user;
+    },
+    userGroups() {
+      return this.groups
+        .filter(g =>
+          g.links
+            ? g.links.filter(ig => this.isCrudAvailable(ig)).length > 0
+            : this.isCrudAvailable(g)
+        )
+        .map(g =>
+          g.links
+            ? {
+                ...g,
+                links: g.links
+                  .filter(ig => this.isCrudAvailable(ig))
+                  .map(l => ({
+                    ...l,
+                    extras: l.extras?.filter(x => this.isCrudAvailable({...x, permission: l.id + '.' + x.id }))
+                  }))
+              }
+            : { ...g }
+        );
+    }
+  },
+  methods: {
+    isCrudAvailable: function(item) {
+      const av = this.user.permissions.filter(
+        permString =>
+          permString.startsWith(item.permission ? item.permission : item.id) ||
+          item.id.startsWith("dashboard")
+      );
+      return av.length > 0;
+    }
   },
   mounted() {
     if (this.body) {

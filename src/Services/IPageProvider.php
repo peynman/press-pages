@@ -12,6 +12,15 @@ interface IPageProvider
      */
     public function getPagesForRequest(Request $request);
 
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @return array
+     */
+    public function getVisinlePages($user);
+
     /**
      * @return void
      */

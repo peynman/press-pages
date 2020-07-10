@@ -413,6 +413,99 @@ export default function (Blockly) {
         return `this.appendNestedPathValue(this[this.getFormSchemaPropName()], ${argument0}, ${argument1})\n`
     }
 
+    // append to form blockly code
+    Blockly.Blocks.app_append_form_blockly_code = {
+        init: function () {
+            this.appendValueInput('XML')
+                .setCheck('String')
+                .appendField('merge to form functions')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_append_form_blockly_code = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'XML', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.appendFormFunctions(${argument0})\n`
+    }
+
+
+    // append to form options
+    Blockly.Blocks.app_append_form_options = {
+        init: function () {
+            this.appendValueInput('XML')
+                .setCheck('String')
+                .appendField('merge to form options')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_append_form_options = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'XML', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.appendFormOptions(${argument0})\n`
+    }
+
+    // append to form sources
+    Blockly.Blocks.app_append_form_sources = {
+        init: function () {
+            this.appendValueInput('XML')
+                .setCheck('String')
+                .appendField('merge to form sources')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_append_form_sources = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'XML', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.appendFormSources(${argument0})\n`
+    }
+
+
+    // append to form values
+    Blockly.Blocks.app_append_form_values = {
+        init: function () {
+            this.appendValueInput('XML')
+                .setCheck('String')
+                .appendField('merge to form values')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_append_form_values = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'XML', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.appendFormValues(${argument0})\n`
+    }
+
+    // reset form schema
+    Blockly.Blocks.app_reset_form_schema = {
+        init: function () {
+            this.appendValueInput('XML')
+                .setCheck('String')
+                .appendField('reset form schema')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_reset_form_schema = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'XML', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.resetFormSchema(${argument0})\n`
+    }
+
+
 
     // set form value at path
     Blockly.Blocks.app_set_form_value_at_path = {
@@ -435,7 +528,6 @@ export default function (Blockly) {
         var argument1 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         return `this.setNestedPathValue(this[this.getFormValuePropName()], ${argument0}, ${argument1})\n`
     }
-
 
     // append to form value at path
     Blockly.Blocks.app_append_form_value_at_path = {
@@ -506,6 +598,11 @@ export const CategoryApp =
     <block type="app_register_channel"></block>
     <block type="app_new_filtered_from_state"></block>
     <block type="app_get_route_path_parts"></block>
+    <block type="app_append_form_blockly_code"></block>
+    <block type="app_append_form_options"></block>
+    <block type="app_append_form_sources"></block>
+    <block type="app_append_form_values"></block>
+    <block type="app_reset_form_schema"></block>
     <block type="app_get_from_state"></block>
     <block type="app_form_value_at_path"></block>
     <block type="app_form_response_alert"></block>

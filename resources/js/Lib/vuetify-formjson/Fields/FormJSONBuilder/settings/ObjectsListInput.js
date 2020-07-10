@@ -2,7 +2,8 @@ import {
     CommonInputEssentials,
     MessagesTab,
     BaseInputSettings,
-    createEventsDatatableInputForSettingsForm
+    createEventsDatatableInputForSettingsForm,
+    TextSettings
 } from './comon'
 
 import api from './../api'
@@ -37,8 +38,10 @@ export default class ObjectsListInputSettings extends BaseInputSettings {
                 class: 'col-12 ma-0 pa-0',
                 props: {
                     'disable-pagination': true,
-                    dense: true
+                    dense: true,
+                    'show-select': true,
                 },
+                'hide-search': true,
                 columns: [
                     {
                         column: 'id',
@@ -99,10 +102,11 @@ export default class ObjectsListInputSettings extends BaseInputSettings {
             },
             props: {
                 options: {
-                    type: 'row',
+                    type: 'col',
                     formClass: 'ma-0 pa-0'
                 },
                 fields: {
+                    class: TextSettings('Items class'),
                     messages: MessagesTab
                 }
             }

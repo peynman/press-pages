@@ -30,7 +30,23 @@
         {{ field.label }}
       </label>
       <v-spacer></v-spacer>
-      <v-select style="max-width: 250px;" item-value="id" item-text="title" reverse rounded solo small chips flat hide-details v-model="template" label="Template" dense v-if="templates" :items="templates"></v-select>
+      <v-select
+        style="max-width: 250px;"
+        item-value="id"
+        item-text="title"
+        reverse
+        rounded
+        solo
+        small
+        chips
+        flat
+        hide-details
+        v-model="template"
+        label="Template"
+        dense
+        v-if="templates"
+        :items="templates"
+      ></v-select>
       <v-btn small icon @click="onResetValues" color="red">
         <v-icon small>mdi-database-refresh</v-icon>
       </v-btn>
@@ -197,7 +213,7 @@ export default {
           drawerProps: {
             width: 400,
             dark: false,
-            'center-active': true,
+            "center-active": true
           },
           formProps: {
             class: "pa-4",
@@ -223,9 +239,9 @@ export default {
             hoverable: true,
             rounded: true,
             "return-object": true,
-            'selection-type': 'independent',
-            'multiple-active': false,
-            transition: true,
+            "selection-type": "independent",
+            "multiple-active": false,
+            transition: true
           }
         }
       },
@@ -236,7 +252,7 @@ export default {
       blocklyField: {
         class: "fill-height"
       },
-      currentSelectedBlocksCode: '',
+      currentSelectedBlocksCode: "",
       blocklyError: null,
       fullscreenCodeEditor: false,
       showCode: false,
@@ -244,20 +260,22 @@ export default {
       jsonString: "",
       onFormInit: null,
       template: null,
-      templates: this.field.templates ? this.field.templates : [
-          {
-              id: 'Centered',
-              title: 'Centered',
-          },
-          {
-              id: 'AppBar',
-              title: 'App Navigation'
-          },
-          {
-              id: 'AdminBar',
-              title: 'Admin Navigation'
-          }
-      ]
+      templates: this.field.templates
+        ? this.field.templates
+        : [
+            {
+              id: "Centered",
+              title: "Centered"
+            },
+            {
+              id: "AppBar",
+              title: "App Navigation"
+            },
+            {
+              id: "AdminBar",
+              title: "Admin Navigation"
+            }
+          ]
     };
   },
   methods: {
@@ -286,48 +304,34 @@ export default {
       } catch (e) {
         this.blocklyError = e;
       }
-      const inputValue = {
-        schema: this[this.getFormSchemaPropName()],
-        values: this.formModel,
-        code: this.codeModel,
-        template: {
-            name: this.template,
-            props: this.schema.builder[0].value ? this.schema.builder[0].value.__template: {}
-        }
-      };
-      this.jsonString = JSON.stringify(inputValue, null, 2);
-      this.$emit("input", inputValue);
+
+      this.$nextTick(() => {
+          const workspace = this.getWorkspace();
+          this.jsonString = JSON.stringify(workspace, null, 2);
+          this.$emit("input", workspace);
+      });
     },
-    applyManualEditor () {
+    applyManualEditor() {
       try {
         this.onUploaded(JSON.parse(this.jsonString));
       } catch (e) {
         console.log(e);
       }
     },
-    resetManualEditor () {
-      const inputValue = {
-        schema: this[this.getFormSchemaPropName()],
-        values: this.formModel,
-        code: this.codeModel,
-        template: {
-            name: this.template,
-            props: this.schema.builder[0].value ? this.schema.builder[0].value.__template: {}
-        }
-      };
-      this.jsonString = JSON.stringify(inputValue, null, 2);
+    resetManualEditor() {
+      this.jsonString = JSON.stringify(this.getWorkspace(), null, 2);
     },
     onBlocklySelectionChanged(code) {
-        this.currentSelectedBlocksCode = code;
+      this.currentSelectedBlocksCode = code;
     },
     blocklyCopyContent() {
-        this.onCopyToClipBoard(this.currentSelectedBlocksCode);
+      this.onCopyToClipBoard(this.currentSelectedBlocksCode);
     },
     blocklyPasteContent() {
-        this.onPasteFromClipboard((text) => {
-            this.$refs.blocklyEditor.pasteToWorkspace(text);
-        })
-    },
+      this.onPasteFromClipboard(text => {
+        this.$refs.blocklyEditor.pasteToWorkspace(text);
+      });
+    }
   },
 
   mounted() {
@@ -355,9 +359,9 @@ export default {
           }
         });
       } else if (this.mode === "view") {
-        if (this.onFormInit) {
-          this.onFormInit();
-        }
+        // if (this.onFormInit) {
+        //   this.onFormInit();
+        // }
       }
     },
 
@@ -385,17 +389,17 @@ export default {
       this.$emit("update:code", this.schema);
     },
 
-    template () {
-        this.updateFormJSONInput();
+    template() {
+      this.updateFormJSONInput();
     },
 
     formModel: {
-        deep: true,
-        handler () {
-            console.log(this.formModel);
+      deep: true,
+      handler() {
         this.updateFormJSONInput();
+        this.resetManualEditor();
+      }
     }
-    },
   }
 };
 </script>

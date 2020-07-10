@@ -106,6 +106,12 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                 label: 'Sortable',
                 class: 'col-12 ma-0 pa-0',
             },
+            sort_name: {
+                type: 'input',
+                input: 'text',
+                label: 'Sort key name',
+                class: 'col-12 ma-0 pa-0',
+            },
             align: {
                 type: 'input',
                 input: 'select',

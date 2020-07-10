@@ -4,9 +4,9 @@
         {{ field.message }}
         <v-list dense v-if="field.validations" class="mt-1">
             <v-list-item v-for="(valMsgs, valKey) in field.validations" :key="`${id}-validations-${valKey}`">
-                <v-list-content v-for="(msg, index) in valMsgs" :key="`${id}-validations-${valKey}-${index}`">
+                <v-list-item-content v-for="(msg, index) in valMsgs" :key="`${id}-validations-${valKey}-${index}`">
                     <v-list-item-title :class="`${validationType}--text`" v-text="msg"></v-list-item-title>
-                </v-list-content>
+                </v-list-item-content>
             </v-list-item>
         </v-list>
     </v-alert>

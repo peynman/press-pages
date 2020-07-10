@@ -46,7 +46,8 @@ export default {
                 fields: compiled.fields,
                 options: compiled.options,
             }
-            this[this.getFormValuePropName()] = body.values && !Array.isArray(body.values) ? body.values : {}
+            console.log(body.values);
+            this[this.getFormValuePropName()] = body.values ? Array.isArray(body.values) ? {...body.values} : body.values : {}
 
             if (sources) {
                 sources.forEach((src) => {
@@ -55,15 +56,17 @@ export default {
             }
 
             if (window.echoConfig) {
-                this.echo = new Echo({
+                const echoOptions = {
                     broadcaster: "socket.io",
                     host: `${window.echoConfig.protocol}://${window.echoConfig.host}:${window.echoConfig.port}`,
-                    authEndpoint: "/broadcast/auth",
+                    path: window.echoConfig.path,
+                    authEndpoint: "/api/broadcast/auth",
                     encrypted: true,
                     auth: {
                         headers: this.getWebAuthHeaders({})
-                    }
-                });
+                    },
+                };
+                this.echo = new Echo(echoOptions);
 
                 this.echo.connector.socket.on("connect", () => {
                     this.isConnected = true;
@@ -87,7 +90,71 @@ export default {
                 }
             })
 
-            this.onFormInit?.();
+            this.$nextTick(() => {
+                this.onFormInit?.();
+            })
+        },
+        appendFormFunctions(code) {
+            const compiled = this.CompileFormJSONSchemaWithCode(this, this.formSchema, code);
+            this[this.getFormSchemaPropName()] = {
+                fields: compiled.fields,
+                options: compiled.options,
+            }
+
+            const extraEvents = [
+                'onFormChannels'
+            ]
+            extraEvents.forEach((ev) => {
+                if (compiled[ev]) {
+                    this[ev] = compiled[ev].bind(this)
+                }
+            })
+
+            this.$nextTick(() => {
+                compiled.onFormInit?.();
+            })
+        },
+        resetFormSchema(form) {
+            const compiled = this.CompileFormJSONSchemaWithCode(this, form.schema, form.code);
+            this[this.getFormSchemaPropName()] = {
+                fields: compiled.fields,
+                options: form.schema.options,
+            }
+
+            const extraEvents = [
+                'onFormChannels'
+            ]
+            extraEvents.forEach((ev) => {
+                if (compiled[ev]) {
+                    this[ev] = compiled[ev].bind(this)
+                }
+            })
+
+            this.$nextTick(() => {
+                this.formModel = form.values;
+                compiled.onFormInit?.();
+            })
+        },
+        appendFormValues(values) {
+            this.$nextTick(() => {
+                this.formModel = {
+                    ...this.formModel,
+                    ...values,
+                }
+            })
+        },
+        appendFormOptions(options) {
+            this.formSchema = {
+                fields: this.formSchema.fields,
+                options: { ...this.formSchema.options, ...options }
+            }
+        },
+        appendFormSources(sources) {
+            if (sources) {
+                sources.forEach((src) => {
+                    this.setNestedPathValue(this, src.path, src.resource)
+                })
+            }
         },
         arrayMergeWithObjects(target, items, key, mode) {
             target.forEach((i) => {
@@ -249,6 +316,10 @@ export default {
                 hidden: false,
             }
             return alert;
+        },
+        appendFormValue(value) {
+            this.formModel = { ...this.formModel, ...value };
+            console.log('new value', this, value, this.formModel);
         },
         setFormValidations(errors) {
             let valErrors = errors

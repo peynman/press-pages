@@ -20,16 +20,19 @@
     <div id="App"></div>
     <script>
         window.PageConfig = {!! json_encode($config) !!};
-        // window.echoConfig = {
-        //     protocol: {!! json_encode(env('ECHO_WEB_PROTOCOL')) !!},
-        //     host: {!! json_encode(env('ECHO_WEB_HOST')) !!},
-        //     port: {!! json_encode(env('ECHO_WEB_PORT')) !!}
-        // };
-        // console.log(window.PageConfig, window.echoConfig);
+        window.echoConfig = {
+            protocol: window.location.protocol.startsWith('https') ? 'https':'http',
+            host: window.location.hostname,
+            port: {!! json_encode(env('ECHO_PORT')) !!},
+        };
     </script>
-<!--    <script src="{{ env('ECHO_WEB_PROTOCOL').'://'.env('ECHO_WEB_HOST').':'.env('ECHO_WEB_PORT') }}/socket.io/socket.io.js"></script> -->
-    <script src="{{ asset('/vendor/larapress-pages/js/manifest.js') }}"></script>
-    <script src="{{ asset('/vendor/larapress-pages/js/vendor.bundle.js') }}"></script>
-    <script src="{{ asset('/vendor/larapress-pages/js/app.bundle.js') }}"></script>
+    <script src="{!! env('ECHO_WEB_PATH') !!}/socket.io/socket.io.js"></script>
+    @if(env('APP_ENV') === 'debug')
+        <script src="{{ asset('/vendor/larapress-pages/js/app.js') }}"></script>
+    @else
+        <script src="{{ asset('/vendor/larapress-pages/js/manifest.js') }}"></script>
+        <script src="{{ asset('/vendor/larapress-pages/js/vendor.bundle.js') }}"></script>
+        <script src="{{ asset('/vendor/larapress-pages/js/app.bundle.js') }}"></script>
+    @endif
 </body>
 </html>

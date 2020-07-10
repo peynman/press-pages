@@ -15,7 +15,11 @@
       v-bind="templateProps"
       @goto-page="onGotoPage"
       @update-user="onUpdateUser"
+      ref="renderer"
     ></component>
+    <v-alert v-else>
+        No template is defined in Page Body
+    </v-alert>
   </v-app>
 </template>
 
@@ -84,17 +88,13 @@ export default {
 
     updatePageWithData(data) {
       window.document.title = data.title;
-      const template = data.body?.template?.name
-        ? data.body?.template?.name
-        : data.template;
       this.templateProps = {
         body: data.body,
-        options: data.template.props,
+        options: data.body?.template?.props,
         sources: data.sources
       };
-      this.template = template;
+      this.template = data.body?.template?.name;
       this.loading = false;
-
 
       if (this.$store.state.user === null || data.user != null) {
           this.onUpdateUser(data.user, data.tokens.api);

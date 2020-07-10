@@ -87,7 +87,6 @@ export default {
             deep: true,
             handler () {
                 this.updateMarkdownText()
-                this.$emit('input', this.devalue)
             }
         }
     },
@@ -102,6 +101,7 @@ export default {
             this.aceUpdate = true
             this.$nextTick(() => {
                 this.devalue = this.aceEditor.session.getValue()
+                this.$emit('input', this.devalue)
             })
         })
         this.aceEditor.session.setValue(this.devalue)

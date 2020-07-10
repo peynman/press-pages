@@ -14,7 +14,7 @@ export default {
                 this.schema.builder[0].value.__template = data.template.props
             }
         },
-        onDownload() {
+        getWorkspace() {
             const formjson = this.getFormJSONFromSchema(this.schema.builder);
             const rootFieldsRenderer = formjson[this.schema.builder[0].model.id]
             const inputValue = {
@@ -28,7 +28,10 @@ export default {
                     props: this.schema.builder[0].value ? this.schema.builder[0].value.__template : {}
                 }
             }
-            this.startJSONDownload(JSON.stringify(inputValue, null, 2))()
+            return inputValue;
+        },
+        onDownload() {
+            this.startJSONDownload(JSON.stringify(this.getWorkspace(), null, 2))()
         },
         onReset() {
             this.$refs.confirm

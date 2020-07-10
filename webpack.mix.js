@@ -43,7 +43,10 @@ if (mix.inProduction()) {
     mix.extract([
         'vuetify',
         'vue',
-        'vuex'
+        'vuex',
+        'moment',
+        'moment-jalaali',
+        'moment-timezone',
     ]);
 } else {
     Mix.listen('configReady', config => {

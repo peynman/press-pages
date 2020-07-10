@@ -1,7 +1,9 @@
 import {
     CommonInputEssentials,
     MessagesTab,
-    BaseInputSettings
+    BaseInputSettings,
+    TextSettings,
+    CheckboxSettings
 } from './comon'
 
 import api from './../api'
@@ -19,6 +21,19 @@ export default class TextInputSettings extends BaseInputSettings {
                 events: api.VTextField.events
             }
         ]
+    }
+
+    getInputValidations() {
+        return {
+            required: CheckboxSettings('Required'),
+            numeric: CheckboxSettings('is Numeric'),
+            minLength: TextSettings('Min characters length'),
+            maxLength: TextSettings('Max characters length'),
+            mask: TextSettings('Input mask'),
+            removeMask: CheckboxSettings('Remove mask on dispatch'),
+            farsi: CheckboxSettings('Farsi/Arabic characters only'),
+            ascii: CheckboxSettings('ASCII characters only'),
+        }
     }
 
     getInputProperties () {
