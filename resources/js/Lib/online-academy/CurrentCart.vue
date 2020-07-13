@@ -46,18 +46,21 @@
                 </v-btn>
               </td>
             </tr>
-            <tr v-if="user.current_cart.items.length > 0">
-              <td></td>
-              <td></td>
-              <td>
-                <strong>مبلغ قابل پرداخت</strong>
-                {{ totalPrice }}
-              </td>
-              <td></td>
-            </tr>
           </tbody>
         </template>
       </v-simple-table>
+      <v-row v-if="user.current_cart.items.length > 0">
+        <v-col cols="12" md="6">
+          <v-row align="start" justify="start" class="pa-0 mx-0 my-2" v-if="user.balance.amount > 0">
+            <strong class="my-auto">موجودی شما</strong>
+            <span class="mx-2 my-auto">{{ balance }}</span>
+            <v-checkbox hide-details dense class="my-auto" v-model="useBalance" label="استفاده از موجودی"></v-checkbox>
+          </v-row>
+          <strong>مبلغ قابل پرداخت</strong>
+          {{ totalPrice }}
+          <v-chip v-if="giftCode" color="green text-white" dark>با تخفیف {{ giftPrice }}</v-chip>
+        </v-col>
+      </v-row>
       <div class="text-center ma-3" v-if="user.current_cart.items.length == 0">سبد خرید شما خالی است</div>
     </v-card-text>
     <v-card-text>
@@ -68,7 +71,15 @@
         <v-col cols="12" md="4" sm="9" xs="9" class="my-auto">
           <v-text-field hide-details class="my-auto" v-model="offCode" solo rounded>
             <template v-slot:append>
-              <v-btn text rounded outlined dense color="primary">اعمال کد</v-btn>
+              <v-btn
+                @click="checkCode()"
+                :loading="checkingCode"
+                text
+                rounded
+                outlined
+                dense
+                color="primary"
+              >اعمال کد</v-btn>
             </template>
           </v-text-field>
         </v-col>
@@ -119,7 +130,10 @@ export default {
     loading: {},
     gatewayIndex: 0,
     offCode: "",
-    loadingBtn: false
+    loadingBtn: false,
+    checkingCode: false,
+    useBalance: false,
+    giftCode: null
   }),
   computed: {
     gateways: function() {
@@ -146,21 +160,7 @@ export default {
       return gateways;
     },
     totalPrice: function() {
-      let price = 0;
-      this.user.current_cart.items.forEach(it => {
-        if (this.periodic[it.id]) {
-          price += parseInt(
-            it.data.price_periodic.sort((a, b) => a.priority > b.priority)[0]
-              .amount
-          );
-        } else {
-          const v = this.getProductPriceValue(it);
-          if (v) {
-            price += parseInt(v.amount);
-          }
-        }
-      });
-
+      let price = this.totalPriceVal;
       return (
         price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
         " " +
@@ -183,7 +183,46 @@ export default {
         }
       });
 
+      if (this.giftCode?.amount) {
+        price -= parseInt(this.giftCode.amount);
+        price = Math.max(price, 0);
+      }
+
+      if (this.useBalance) {
+        price -= parseFloat(this.user.balance.amount);
+        price = Math.max(price, 0);
+      }
+
       return price;
+    },
+    giftPrice() {
+      if (this.giftCode?.amount) {
+        return (
+          this.giftCode?.amount
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          " " +
+          this.$store.state.currencies[1]
+        );
+      }
+      return null;
+    },
+    balance() {
+      return (
+        this.user.balance.amount
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+        " " +
+        this.user.balance.currency.title
+      );
+    }
+  },
+  watch: {
+    periodic: {
+      deep: true,
+      handler() {
+        this.giftCode = null;
+      }
     }
   },
   methods: {
@@ -197,12 +236,17 @@ export default {
         data: {
           currency: 1,
           periods: this.periodic,
-          gateway: this.gateways[this.gatewayIndex].id
+          gateway: this.gateways[this.gatewayIndex].id,
+          gift_code: this.offCode,
+          use_balance: this.useBalance
         }
       })
         .then(response => {
           this.loadingBtn = false;
-          if (parseFloat(response.data?.cart?.amount) === parseFloat(this.totalPriceVal)) {
+          if (
+            parseFloat(response.data?.cart?.amount) ===
+            parseFloat(this.totalPriceVal)
+          ) {
             window.location =
               "/bank-gateways/" +
               this.gateways[this.gatewayIndex].id +
@@ -225,12 +269,40 @@ export default {
           }
         });
     },
+    checkCode() {
+      const host = this.$store.state.host;
+      this.checkingCode = true;
+      this.axios({
+        url: "/api/me/current-cart/apply/gift-code",
+        method: "POST",
+        headers: host.getWebAuthHeaders({ Accept: "application/json" }),
+        data: {
+          currency: 1,
+          gift_code: this.offCode,
+          periods: this.periodic
+        }
+      })
+        .then(response => {
+          this.checkingCode = false;
+          this.giftCode = response.data;
+        })
+        .catch(error => {
+          this.checkingCode = false;
+          this.giftCode = null;
+          if (error.response?.data?.message) {
+            host.showSnack(error.response.data.message);
+          } else {
+            host.showSnack(error.message);
+          }
+        });
+    },
     title(item) {
       return item.data?.title;
     },
     teacher(item) {
       return item.data?.types?.course?.teacher;
     }
-  }
+  },
+  mounted() {}
 };
 </script>

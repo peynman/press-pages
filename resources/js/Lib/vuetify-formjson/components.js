@@ -33,6 +33,7 @@ export const customComponents = {
     'vf-group-single-exp': () => import(/* webpackChunkName: "group-single-exp"*/ './Fields/GroupSingleExpansion.vue'),
     'vf-group-tabs': () => import(/* webpackChunkName: "gorup-tabs"*/ './Fields/GroupTabs.vue'),
     'vf-group-treeview': () => import(/* webpackChunkName: "group-treeview"*/ './Fields/GroupTreeview.vue'),
+    'vf-file-upload-input': () => import(/* webpackChunkName: "file-upload"*/ './Fields/FileUpload.vue')
 }
 
 export default {

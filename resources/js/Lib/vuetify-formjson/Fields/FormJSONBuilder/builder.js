@@ -24,7 +24,7 @@ import AlertInputSettings from './settings/AlertInput'
 import FormJSONSettings from './settings/FormJSONInput'
 import PaginationSettings from './settings/PaginationInput'
 import SimpleCaptchaSettings from './settings/SimpleCaptcha'
-
+import FileUploadInputSettings from './settings/FileUploadInput'
 import AdminBarTemplateSettings from './settings/AdminBar'
 import AppBarTemplateSettings from './settings/AppBar'
 import CenteredTemplateSettings from './settings/Centered'
@@ -76,6 +76,7 @@ export default {
             'vf-alert-input': new AlertInputSettings(),
             'vf-formjson-input': new FormJSONSettings(),
             'vf-simple-captcha-input': new SimpleCaptchaSettings(),
+            'vf-file-upload-input': new FileUploadInputSettings(),
             group: new GroupSettings(),
             column: new DatatableColumnSettings(),
             'Centered': new CenteredTemplateSettings(),

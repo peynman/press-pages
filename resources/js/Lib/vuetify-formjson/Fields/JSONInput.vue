@@ -8,7 +8,7 @@
         :color="options.mode === 'code' ? 'primary':'secondary'"
         @click="setMode('code')"
       >
-        <v-icon>{{ field.icons && field.icons.code ? field.icons.code:'code'}}</v-icon>
+        <v-icon>{{ field.icons && field.icons.code ? field.icons.code:'mdi-code-array'}}</v-icon>
       </v-btn>
       <v-btn
         text
@@ -16,7 +16,7 @@
         :color="options.mode === 'tree' ? 'primary':'secondary'"
         @click="setMode('tree')"
       >
-        <v-icon>{{ field.icons && field.icons.edit ? field.icons.edit:'edit'}}</v-icon>
+        <v-icon>{{ field.icons && field.icons.edit ? field.icons.edit:'mdi-file-document-edit'}}</v-icon>
       </v-btn>
       <v-btn
         text
@@ -24,7 +24,7 @@
         :color="options.mode === 'form' ? 'primary':'secondary'"
         @click="setMode('form')"
       >
-        <v-icon>{{ field.icons && field.icons.view ? field.icons.view:'remove_red_eye'}}</v-icon>
+        <v-icon>{{ field.icons && field.icons.view ? field.icons.view:'mdi-eye'}}</v-icon>
       </v-btn>
     </div>
     <div ref="editor" :style="`width: 100%; height: ${field.height ? field.height:'400px'};`"></div>

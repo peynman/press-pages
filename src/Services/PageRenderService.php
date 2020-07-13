@@ -13,7 +13,7 @@ use Larapress\CRUD\ICRUDUser;
 use Larapress\Profiles\Repository\Domain\IDomainRepository;
 use Illuminate\Routing\Route;
 use Larapress\CRUD\Base\ICRUDService;
-use Larapress\ECommerce\Services\IBankingService;
+use Larapress\ECommerce\Services\Banking\IBankingService;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Http\Response;
 use Larapress\Profiles\Repository\Form\IFormRepository;
@@ -246,7 +246,8 @@ class PageRenderService implements IPageRenderService
                     $domain,
                     config('larapress.ecommerce.banking.currency.id')
                 ),
-                'currency' => config('larapress.ecommerce.banking.currency')
+                'currency' => config('larapress.ecommerce.banking.currency'),
+                'default_gateway' => config('larapress.ecommerce.banking.default_gateway'),
             ];
 
             return [$currentCart, $balance];

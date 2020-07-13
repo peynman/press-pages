@@ -1,6 +1,8 @@
 import {
     CommonInputEssentials,
-    BaseInputSettings
+    BaseInputSettings,
+    TextSettings,
+    CheckboxSettings
 } from './comon'
 
 export default class DatatableColumnSettings extends BaseInputSettings {
@@ -95,6 +97,11 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                         },
                     }
                 }
+            } else if (type === 'amount') {
+                extras['currency'] = TextSettings('Currency')
+                extras['show_type'] = CheckboxSettings('Show type')
+                extras['positive'] = TextSettings('Positive value')
+                extras['negative'] = TextSettings('Negative value')
             }
         }
 
@@ -167,6 +174,10 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     {
                         id: 'actions',
                         title: 'Actions'
+                    },
+                    {
+                        id: 'amount',
+                        title: 'Currency/Amount',
                     },
                     {
                         id: 'custom',

@@ -186,6 +186,7 @@ import ColumnNestedObject from "./Datatable/ColumnNestedObject.vue";
 import ColumnExpandableLinks from "./Datatable/ColumnExpandableLinks.vue";
 import ColumnHoverList from "./Datatable/ColumnHoverList.vue";
 import ColumnDatetime from "./Datatable/ColumnDatetime.vue";
+import ColumnAmount from "./Datatable/ColumnAmount.vue";
 
 export default {
   mixins: [BaseComponent],
@@ -278,6 +279,8 @@ export default {
             case "datetime":
               template.component = ColumnDatetime;
               break;
+            case "amount":
+              template.component = ColumnAmount;
             default:
               break;
           }

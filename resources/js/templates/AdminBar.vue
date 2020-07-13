@@ -79,7 +79,7 @@ export default {
               icon: "mdi-home",
               title: "خانه ادمین",
               id: "dashboard_home",
-              href: "/admin/home",
+              href: "/admin/home"
             }
           ]
         },
@@ -149,7 +149,7 @@ export default {
               id: "form-entries",
               title: "فرم های پر شده",
               group: "content",
-              icon: "mdi-clipboard-check-multiple",
+              icon: "mdi-clipboard-check-multiple"
             },
             {
               id: "pages",
@@ -181,6 +181,11 @@ export default {
                   color: "green lighten-3"
                 }
               ]
+            },
+            {
+              id: "file-uploads",
+              title: "فایل‌های ارسالی",
+              icon: "mdi-file"
             }
           ]
         },
@@ -288,7 +293,7 @@ export default {
                   icon: "mdi-chart-pie",
                   id: "reports",
                   color: "cyan lighten-3"
-                },
+                }
               ]
             },
             {
@@ -326,6 +331,19 @@ export default {
                   color: "green lighten-3"
                 }
               ]
+            },
+            {
+              id: "gift-codes",
+              title: "کد هدیه",
+              icon: "mdi-gift",
+              group: "ecommerce",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
             }
           ]
         },
@@ -335,16 +353,21 @@ export default {
           title: "مدیریت سیستم",
           links: [
             {
-              icon: "",
               id: "log-viewer",
               title: "لوگ سیستم",
+              icon: "",
               permission: "system.log-viewer"
             },
             {
-              icon: "",
               id: "horizon",
               title: "صف سیستم",
+              icon: "",
               permission: "system.horizon"
+            },
+            {
+              id: "task-reports",
+              title: "گزارش تسک‌های سیستم",
+              icon: "mdi-file"
             }
           ]
         }
@@ -379,7 +402,12 @@ export default {
                   .filter(ig => this.isCrudAvailable(ig))
                   .map(l => ({
                     ...l,
-                    extras: l.extras?.filter(x => this.isCrudAvailable({...x, permission: l.id + '.' + x.id }))
+                    extras: l.extras?.filter(x =>
+                      this.isCrudAvailable({
+                        ...x,
+                        permission: l.id + "." + x.id
+                      })
+                    )
                   }))
               }
             : { ...g }

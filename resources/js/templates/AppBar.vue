@@ -1,5 +1,31 @@
 <template>
   <v-main :id="id">
+    <v-navigation-drawer v-model="drawer" temporary right fixed style="min-width: 300px;">
+      <v-list nav dense>
+        <v-list-item
+          v-for="(nav, index) in navs"
+          :key="`${id}-nav-link-${index}`"
+          :href="nav.href ? nav.href:'#'"
+          :two-line="!!nav.sub"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ nav.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title v-if="nav.title">{{ nav.title }}</v-list-item-title>
+            <v-list-item-subtitle v-if="nav.sub">{{ nav.sub }}</v-list-item-subtitle>
+            <v-list-item-subtitle v-if="nav.inputs">
+              <vf-fields-renderer
+                class="mt-2"
+                v-model="increaseWallet"
+                :fields="nav.inputs.fields"
+                :options="nav.inputs.options"
+              ></vf-fields-renderer>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
     <v-app-bar
       dense
       app
@@ -8,28 +34,7 @@
       dark
       scroll-target="#scrolling-techniques-2"
     >
-      <v-menu>
-        <template v-slot:activator="{on}">
-          <v-app-bar-nav-icon v-on="on"></v-app-bar-nav-icon>
-        </template>
-        <v-list nav dense>
-          <v-list-item
-            v-for="(nav, index) in navs"
-            :key="`${id}-nav-link-${index}`"
-            :href="nav.href"
-            :two-line="!!nav.sub"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ nav.icon }}</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>{{ nav.title }}</v-list-item-title>
-              <v-list-item-subtitle v-if="nav.sub">{{ nav.sub }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>آنلاین آکادمی</v-toolbar-title>
       <v-spacer></v-spacer>
       <!-- user account/cart menu -->
@@ -315,8 +320,46 @@ export default {
           });
           navs.push({
             icon: "mdi-credit-card",
-            title: "افزایش اعتبار",
-            href: "/me/increase-credits",
+            inputs: {
+              options: {
+                formClass: "d-flex flex-column justify-end pa-0 ma-0"
+              },
+              fields: {
+                amount: {
+                  type: "input",
+                  input: "text",
+                  label: "افزایش اعتبار به مبلغ",
+                  props: {
+                    solo: true,
+                    dense: true,
+                    "hide-details": true,
+                    rounded: true
+                  },
+                  validations: {
+                      numeric: true,
+                  }
+                },
+                submit: {
+                  type: "input",
+                  input: "button",
+                  label: "انتقال به بانک",
+                  class: 'mt-1',
+                  props: {
+                    dense: true,
+                    outlined: true,
+                    rounded: true,
+                    color: 'success',
+                    'v-on': {
+                        click: () => {
+                            if (parseInt(this.increaseWallet.amount) >= 1000) {
+                                window.location = '/bank-gateways/' + this.user.balance.default_gateway + '/redirect/increase/' + this.increaseWallet.amount + '/currency/' + 1;
+                            }
+                        }
+                    }
+                  }
+                }
+              }
+            },
             sub:
               "موجودی شما: " +
               this.user.balance.amount
@@ -327,18 +370,20 @@ export default {
           });
         }
       }
-      navs.push(...[
-        {
-          icon: "mdi-police-badge",
-          title: "قوانین و مقررات",
-          href: "/terms"
-        },
-        {
-          icon: "mdi-information",
-          title: "درباره ما",
-          href: "/about"
-        }
-      ]);
+      navs.push(
+        ...[
+          {
+            icon: "mdi-police-badge",
+            title: "قوانین و مقررات",
+            href: "/terms"
+          },
+          {
+            icon: "mdi-information",
+            title: "درباره ما",
+            href: "/about"
+          }
+        ]
+      );
       return navs;
     }
   },
@@ -350,6 +395,7 @@ export default {
       btnThree: "rgba(84, 84, 84, 0.74)",
       showMediaLinks: false,
       drawer: false,
+      increaseWallet: {},
       links: [
         { icon: "mdi-face-profile", text: "پروفایل من", href: "/me/forms/1" },
         {
