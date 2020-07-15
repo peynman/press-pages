@@ -535,6 +535,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash_clonedeep__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash.clonedeep */ "./node_modules/lodash.clonedeep/index.js");
 /* harmony import */ var lodash_clonedeep__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash_clonedeep__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 //
 //
 //
@@ -557,8 +559,35 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   data: function data() {
+    var _this = this;
+
+    var clone = lodash_clonedeep__WEBPACK_IMPORTED_MODULE_0___default()(this.column);
+
+    var iterateForVOn = function iterateForVOn(ref) {
+      for (var prop in ref) {
+        if (prop === "v-on") {
+          var events = ref[prop];
+
+          var _loop = function _loop(event) {
+            var handle = events[event];
+
+            events[event] = function (e) {
+              handle(_this.item, _this.column, e);
+            };
+          };
+
+          for (var event in events) {
+            _loop(event);
+          }
+        } else if (_typeof(ref[prop]) === "object") {
+          iterateForVOn(ref[prop]);
+        }
+      }
+    };
+
+    iterateForVOn(clone.actions);
     return {
-      columnInstance: lodash_clonedeep__WEBPACK_IMPORTED_MODULE_0___default()(this.column)
+      columnInstance: clone
     };
   },
   mounted: function mounted() {

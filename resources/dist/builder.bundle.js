@@ -24209,21 +24209,24 @@ var FileUploadInputSettings = /*#__PURE__*/function (_BaseInputSettings) {
       return _objectSpread(_objectSpread({}, _comon__WEBPACK_IMPORTED_MODULE_0__["CommonInputEssentials"]), {}, {
         singleFile: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["CheckboxSettings"])('Single file'),
         max_file_size: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["TextSettings"])('Max file size (1m, 2g, for ex.)'),
+        chunk_size: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["TextSettings"])('Chunk Size (200kb,...)'),
+        max_retries: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["TextSettings"])('Max retries'),
+        prevent_duplicates: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["CheckboxSettings"])('Prevent duplicates'),
         filters: {
           type: 'input',
           input: 'datatable',
           label: 'Availabel extensions',
           columns: [{
-            id: 'extensions',
-            title: 'Extensions'
-          }, {
             id: 'title',
-            title: 'Title'
+            label: 'Title'
+          }, {
+            id: 'extensions',
+            label: 'Extensions'
           }],
           crud: {
             create: {
               fields: {
-                mime_types: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["TextSettings"])('Extensions (jpeg,jpg,...)'),
+                extensions: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["TextSettings"])('Extensions (jpeg,jpg,...)'),
                 title: Object(_comon__WEBPACK_IMPORTED_MODULE_0__["TextSettings"])('Title')
               }
             }

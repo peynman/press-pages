@@ -65,6 +65,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -84,7 +90,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   methods: {
     startUpload: function startUpload() {
-      console.log("upload");
+      this.uploader.files.forEach(function (f) {
+        if (f.status === plupload_js_plupload_dev__WEBPACK_IMPORTED_MODULE_1___default.a.FAILED) {
+          f.status = plupload_js_plupload_dev__WEBPACK_IMPORTED_MODULE_1___default.a.STOPPED;
+        }
+      });
       this.uploader.start();
     },
     pauseUpload: function pauseUpload() {
@@ -102,12 +112,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       headers: host.getWebAuthHeaders({}),
       browse_button: window.document.getElementById("".concat(this.id, "-browse")),
       container: window.document.getElementById("".concat(this.id, "-container")),
+      chunk_size: this.field.chunk_size ? this.field.chunk_size : "1mb",
+      max_retries: this.field.max_retries ? this.field.max_retries : 0,
       filters: {
-        mime_types: this.field.filetrs ? this.field.filters : [{
+        mime_types: this.field.filters ? this.field.filters : [{
           title: "Image",
-          extenstions: "jpg,png,jpeg"
+          extensions: "jpg,png,jpeg"
         }],
-        prevent_duplicates: true,
+        prevent_duplicates: this.field.prevent_duplicates ? this.field.prevent_duplicates : false,
         max_file_size: this.field.max_file_size
       },
       init: {
@@ -126,8 +138,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           _this.$emit("added", up, files);
         },
         UploadProgress: function UploadProgress(up, file) {
-          console.log(file);
-
           _this.$emit("progress", up, file);
         },
         FileUploaded: function FileUploaded(up, file, result) {
@@ -135,21 +145,34 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         },
         BeforeUpload: function BeforeUpload(up, file) {
           _this.uploader.settings.multipart_params = _this.field.multipart_params;
-          console.log('multipart', _this.uploader.settings);
         },
         UploadComplete: function UploadComplete(up, files) {
-          console.log(files);
-
           _this.$emit("finished", up, files);
         },
         Error: function Error(up, err) {
-          console.log('error', err);
-          host.showSnack(err);
+          _this.uploader.stop();
+
+          host.showSnack(err.message);
+
+          if (err.response) {
+            try {
+              var json = JSON.parse(err.response);
+
+              if (json && json.errors) {
+                for (var _err in json.errors) {
+                  json.errors[_err].forEach(function (e) {
+                    host.showSnack(e);
+                  });
+                }
+              }
+            } catch (e) {}
+          }
 
           _this.$emit("error", up, err);
         }
       }
     };
+    console.log(opt);
     this.uploader = new plupload_js_plupload_dev__WEBPACK_IMPORTED_MODULE_1___default.a.Uploader(opt);
     this.uploader.init();
   }
@@ -257,7 +280,34 @@ var render = function() {
                         staticClass: "ma-auto",
                         attrs: { value: file.percent, size: "70" }
                       },
-                      [_vm._v("%" + _vm._s(file.percent))]
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "d-flex flex-column justify-center alight-center"
+                          },
+                          [
+                            file.status === 2
+                              ? _c("v-btn", {
+                                  attrs: { icon: "", small: "", loading: true }
+                                })
+                              : _vm._e(),
+                            _vm._v(" "),
+                            file.status === 5
+                              ? _c("v-icon", { attrs: { color: "success" } }, [
+                                  _vm._v("mdi-check-decagram")
+                                ])
+                              : _vm._e(),
+                            _vm._v(
+                              "\n            %" +
+                                _vm._s(file.percent) +
+                                "\n          "
+                            )
+                          ],
+                          1
+                        )
+                      ]
                     )
                   ],
                   1
@@ -323,8 +373,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
-/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/index.js");
-/* harmony import */ var vuetify_lib_components_VProgressCircular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VProgressCircular */ "./node_modules/vuetify/lib/components/VProgressCircular/index.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/index.js");
+/* harmony import */ var vuetify_lib_components_VProgressCircular__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VProgressCircular */ "./node_modules/vuetify/lib/components/VProgressCircular/index.js");
 
 
 
@@ -353,7 +404,8 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_5__["VList"],VListItem: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_5__["VListItem"],VListItemAvatar: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_5__["VListItemAvatar"],VListItemContent: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_5__["VListItemContent"],VListItemSubtitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_5__["VListItemSubtitle"],VListItemTitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_5__["VListItemTitle"],VProgressCircular: vuetify_lib_components_VProgressCircular__WEBPACK_IMPORTED_MODULE_6__["VProgressCircular"]})
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__["VList"],VListItem: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__["VListItem"],VListItemAvatar: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__["VListItemAvatar"],VListItemContent: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__["VListItemContent"],VListItemSubtitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__["VListItemSubtitle"],VListItemTitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_6__["VListItemTitle"],VProgressCircular: vuetify_lib_components_VProgressCircular__WEBPACK_IMPORTED_MODULE_7__["VProgressCircular"]})
 
 
 /* hot reload */

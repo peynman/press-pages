@@ -157,9 +157,11 @@ export default {
             }
         },
         arrayMergeWithObjects(target, items, key, mode) {
+            let found = false;
             target.forEach((i) => {
                 items.forEach((j) => {
                     if (i[key] == j[key]) {
+                        found = true;
                         if (mode === 'merge') {
                             for (const prop in j) {
                                 i[prop] = j[prop]
@@ -168,6 +170,11 @@ export default {
                     }
                 })
             })
+            if (!found && mode === 'merge') {
+                target.forEach((t) => {
+                    items.unshift(t)
+                });
+            }
         },
         registerChannelListener(event, channel, callback) {
             if (!this.channelObjs[channel] && this.$store.state.channels) {
@@ -189,6 +196,7 @@ export default {
             }
 
             if (this.channelObjs[channel]) {
+                console.log('listen on ' + channel);
                 this.channelObjs[channel].listen(event, callback);
             }
 

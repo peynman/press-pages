@@ -355,19 +355,25 @@ export default {
             {
               id: "log-viewer",
               title: "لوگ سیستم",
-              icon: "",
-              permission: "system.log-viewer"
+              icon: "mdi-format-page-break",
+              permission: "app.log-viewer"
             },
             {
               id: "horizon",
               title: "صف سیستم",
-              icon: "",
-              permission: "system.horizon"
+              icon: "mdi-format-list-checks",
+              permission: "app.horizon"
+            },
+            {
+              id: "telescope",
+              title: "تلسکوپ",
+              icon: "mdi-format-list-checks",
+              permission: "app.telescope"
             },
             {
               id: "task-reports",
               title: "گزارش تسک‌های سیستم",
-              icon: "mdi-file"
+              icon: "mdi-clipboard-pulse"
             }
           ]
         }

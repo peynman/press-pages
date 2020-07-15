@@ -37,24 +37,27 @@ export default class FileUploadInputSettings extends BaseInputSettings {
             ...CommonInputEssentials,
             singleFile: CheckboxSettings('Single file'),
             max_file_size: TextSettings('Max file size (1m, 2g, for ex.)'),
+            chunk_size: TextSettings('Chunk Size (200kb,...)'),
+            max_retries: TextSettings('Max retries'),
+            prevent_duplicates: CheckboxSettings('Prevent duplicates'),
             filters: {
                 type: 'input',
                 input: 'datatable',
                 label: 'Availabel extensions',
                 columns: [
                     {
-                        id: 'extensions',
-                        title: 'Extensions'
+                        id: 'title',
+                        label: 'Title'
                     },
                     {
-                        id: 'title',
-                        title: 'Title'
+                        id: 'extensions',
+                        label: 'Extensions'
                     },
                 ],
                 crud: {
                     create: {
                         fields: {
-                            mime_types: TextSettings('Extensions (jpeg,jpg,...)'),
+                            extensions: TextSettings('Extensions (jpeg,jpg,...)'),
                             title: TextSettings('Title'),
                         }
                     }
