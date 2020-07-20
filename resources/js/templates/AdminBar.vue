@@ -27,13 +27,11 @@
       <AdminLinks :id="`${id}-links`" :groups="userGroups"></AdminLinks>
     </v-navigation-drawer>
 
-    <v-container>
       <v-card>
         <v-card-text>
           <vuetify-formjson v-bind="this[this.getFormSchemaPropName()]" v-model="formModel"></vuetify-formjson>
         </v-card-text>
       </v-card>
-    </v-container>
   </v-main>
 </template>
 
@@ -185,7 +183,14 @@ export default {
             {
               id: "file-uploads",
               title: "فایل‌های ارسالی",
-              icon: "mdi-file"
+              icon: "mdi-file",
+              extras: [
+                {
+                  icon: "mdi-plus",
+                  id: "create",
+                  color: "green lighten-3"
+                }
+              ]
             }
           ]
         },

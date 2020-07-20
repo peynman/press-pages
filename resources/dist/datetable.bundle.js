@@ -381,7 +381,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             search: this.search,
             filters: this.customFilters,
             sort: sort,
-            "with": this.field.table.query.relations ? this.field.table.query.relations : []
+            "with": this.field.table.query.relations ? this.field.table.query.relations : [],
+            appends: this.field.table.query.appends ? this.field.table.query.appends : []
           }
         }).then(function (response) {
           _this.response = response;
@@ -572,7 +573,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             var handle = events[event];
 
             events[event] = function (e) {
-              handle(_this.item, _this.column, e);
+              handle(_this.item, _this.columnInstance, e);
             };
           };
 
@@ -611,6 +612,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../mixins */ "./resources/js/Lib/vuetify-formjson/Fields/mixins.js");
 //
 //
 //
@@ -619,7 +621,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins__WEBPACK_IMPORTED_MODULE_0__["EasyNestedObject"]],
   name: "vf-datatable-column-amount",
   props: {
     item: Object,
@@ -627,14 +631,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     typeString: function typeString() {
-      if (parseFloat(this.item[this.column.id]) > 0) {
+      if (parseFloat(this.getNestedPathValue(this.item, this.column.id)) > 0) {
         return this.column.positive;
       } else {
         return this.column.negative;
       }
     },
     amountString: function amountString() {
-      return Math.abs(this.item[this.column.id]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return Math.abs(this.getNestedPathValue(this.item, this.column.id)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
   }
 });

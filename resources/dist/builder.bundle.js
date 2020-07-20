@@ -23826,6 +23826,33 @@ var DatatableInputSettings = /*#__PURE__*/function (_BaseInputSettings) {
                       }
                     }
                   }
+                },
+                appends: {
+                  type: 'input',
+                  input: 'datatable',
+                  label: 'Remote API query attributes to append',
+                  columns: {
+                    attribute: {
+                      id: 'attribute',
+                      label: 'Attribute Name'
+                    }
+                  },
+                  props: {
+                    'hide-footer': true,
+                    'dense': true,
+                    'show-select': true
+                  },
+                  crud: {
+                    create: {
+                      fields: {
+                        attribute: {
+                          type: 'input',
+                          input: 'text',
+                          label: 'Attribute Name'
+                        }
+                      }
+                    }
+                  }
                 }
               }
             },

@@ -126,10 +126,91 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: "VfCurrentCartInput",
   mixins: [_mixins__WEBPACK_IMPORTED_MODULE_0__["UserCartEditor"]],
-  name: "vf-current-cart-input",
   props: {
     field: Object,
     value: Object,
@@ -231,6 +312,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
   },
+  mounted: function mounted() {},
   methods: {
     goToBank: function goToBank() {
       var _this2 = this;
@@ -316,8 +398,7 @@ __webpack_require__.r(__webpack_exports__);
 
       return (_item$data2 = item.data) === null || _item$data2 === void 0 ? void 0 : (_item$data2$types = _item$data2.types) === null || _item$data2$types === void 0 ? void 0 : (_item$data2$types$cou = _item$data2$types.course) === null || _item$data2$types$cou === void 0 ? void 0 : _item$data2$types$cou.teacher;
     }
-  },
-  mounted: function mounted() {}
+  }
 });
 
 /***/ }),
@@ -344,7 +425,7 @@ var render = function() {
         "v-card-title",
         [
           _c("v-icon", { staticClass: "mx-2", attrs: { large: "" } }, [
-            _vm._v("mdi-cart")
+            _vm._v("\n      mdi-cart\n    ")
           ]),
           _vm._v("\n    " + _vm._s(_vm.field.label) + "\n  ")
         ],
@@ -391,7 +472,9 @@ var render = function() {
                             !_vm.periodic[item.id]
                               ? _c("td", [
                                   _vm._v(
-                                    _vm._s(_vm.getProductPriceString(item))
+                                    "\n              " +
+                                      _vm._s(_vm.getProductPriceString(item)) +
+                                      "\n            "
                                   )
                                 ])
                               : _c("td", [
@@ -434,7 +517,11 @@ var render = function() {
                                       {
                                         attrs: { dense: "", color: "warning" }
                                       },
-                                      [_vm._v("ندارد")]
+                                      [
+                                        _vm._v(
+                                          "\n                ندارد\n              "
+                                        )
+                                      ]
                                     )
                               ],
                               1
@@ -528,7 +615,13 @@ var render = function() {
                         ? _c(
                             "v-chip",
                             { attrs: { color: "green text-white", dark: "" } },
-                            [_vm._v("با تخفیف " + _vm._s(_vm.giftPrice))]
+                            [
+                              _vm._v(
+                                "\n          با تخفیف " +
+                                  _vm._s(_vm.giftPrice) +
+                                  "\n        "
+                              )
+                            ]
                           )
                         : _vm._e()
                     ],
@@ -541,7 +634,7 @@ var render = function() {
           _vm._v(" "),
           _vm.user.current_cart.items.length == 0
             ? _c("div", { staticClass: "text-center ma-3" }, [
-                _vm._v("سبد خرید شما خالی است")
+                _vm._v("\n      سبد خرید شما خالی است\n    ")
               ])
             : _vm._e()
         ],
@@ -595,7 +688,7 @@ var render = function() {
                                   }
                                 }
                               },
-                              [_vm._v("اعمال کد")]
+                              [_vm._v("\n              اعمال کد\n            ")]
                             )
                           ]
                         },
@@ -649,7 +742,11 @@ var render = function() {
                     },
                     _vm._l(_vm.gateways, function(gateway) {
                       return _c("v-chip", { key: gateway.id }, [
-                        _vm._v(_vm._s(gateway.title))
+                        _vm._v(
+                          "\n            " +
+                            _vm._s(gateway.title) +
+                            "\n          "
+                        )
                       ])
                     }),
                     1
@@ -685,7 +782,7 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("تایید سبد و انتقال به صفحه بانک")]
+            [_vm._v("\n      تایید سبد و انتقال به صفحه بانک\n    ")]
           )
         ],
         1

@@ -10,11 +10,21 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./resources/js/Lib/vuetify-formjson/Fields/mixins.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var moment_jalaali__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment-jalaali */ "./node_modules/moment-jalaali/index.js");
+/* harmony import */ var moment_jalaali__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment_jalaali__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var moment_timezone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moment-timezone */ "./node_modules/moment-timezone/index.js");
 /* harmony import */ var moment_timezone__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(moment_timezone__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -57,28 +67,42 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: "VfDatetimeInput",
   components: {
-    VTextField: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VTextField"],
-    VCard: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VCard"],
-    VCardText: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VCardText"],
-    VMenu: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VMenu"],
-    VTimePicker: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VTimePicker"],
-    VDatePicker: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VDatePicker"],
-    VCardTitle: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VCardTitle"]
+    VTextField: vuetify_lib__WEBPACK_IMPORTED_MODULE_3__["VTextField"] // VCard,
+    // VCardText,
+    // VMenu,
+    // VTimePicker,
+    // VDatePicker,
+    // VCardTitle
+
   },
   mixins: [_mixins__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  name: 'vf-datetime-input',
   props: {
     id: String,
-    value: Object,
+    value: String,
     field: Object
+  },
+  emits: ['input'],
+  data: function data() {
+    var inTime = moment_jalaali__WEBPACK_IMPORTED_MODULE_1___default()(this.value, 'YYYY/MM/DDTHH:mm:ssZ');
+    return {
+      menu: false,
+      date: null,
+      time: null,
+      calendar: "Gregorian",
+      tz: moment_timezone__WEBPACK_IMPORTED_MODULE_2___default.a.tz.guess(),
+      valid: false,
+      dirty: false,
+      devalue: this.value && inTime.isValid() ? inTime.format('jYYYY/jMM/jDDTHH:mm') : ''
+    };
   },
   computed: {
     timezones: function timezones() {
-      return moment__WEBPACK_IMPORTED_MODULE_1___default.a.tz.names();
+      return moment_timezone__WEBPACK_IMPORTED_MODULE_2___default.a.tz.names();
     },
     calendars: function calendars() {
-      return ['Gregorian', 'Shamsi', 'Ghamari'];
+      return ["Gregorian", "Shamsi", "Ghamari"];
     },
     calendarProps: function calendarProps() {
       return {};
@@ -88,20 +112,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     dateProps: function dateProps() {
       return {};
-    }
-  },
-  data: function data() {
-    return {
-      menu: false,
-      date: null,
-      time: null,
-      calendar: 'Gregorian',
-      tz: moment__WEBPACK_IMPORTED_MODULE_1___default.a.tz.guess()
-    };
-  },
-  methods: {
-    updateDateTime: function updateDateTime() {
-      console.log(this.date, this.time, this.tz);
+    },
+    hintString: function hintString() {
+      return "\u0628\u0627 \u0641\u0631\u0645\u062A " + moment_jalaali__WEBPACK_IMPORTED_MODULE_1___default()().format("jYYYY/jMM/jDDTHH:mm") + " \u0648\u0627\u0631\u062F \u06A9\u0646\u06CC\u062F";
+    },
+    isValid: function isValid() {
+      return this.getValueDateTime().isValid();
     }
   },
   watch: {
@@ -113,6 +129,43 @@ __webpack_require__.r(__webpack_exports__);
     },
     tz: function tz() {
       this.updateDateTime();
+    },
+    value: function value() {
+      var inTime = moment_jalaali__WEBPACK_IMPORTED_MODULE_1___default()(this.value, 'YYYY/MM/DDTHH:mm:ssZ');
+      console.log('watch', inTime, inTime.isValid(), this.value);
+      this.devalue = this.value && inTime.isValid() ? inTime.format('jYYYY/jMM/jDDTHH:mm') : '';
+    }
+  },
+  methods: {
+    updateDateTime: function updateDateTime() {
+      console.log(this.date, this.time, this.tz);
+    },
+    updateInput: function updateInput(ev) {
+      if ([13].includes(ev.keyCode)) {
+        if (this.isValid) {
+          this.dirty = false;
+          this.devalue = this.getValueDateTime().format('jYYYY/jMM/jDDTHH:mm');
+          console.log(this.devalue);
+          this.$emit("input", this.getValueDateTime().format('YYYY/MM/DDTHH:mm:ssZ'));
+        }
+      } else {
+        this.dirty = this.devalue && this.devalue.length > 1;
+      }
+    },
+    getValueDateTime: function getValueDateTime() {
+      if (this.devalue) {
+        if (this.devalue.includes("T")) {
+          return moment_jalaali__WEBPACK_IMPORTED_MODULE_1___default()(this.devalue, "jYYYY/jMM/jDDTHH:mm", true);
+        }
+
+        return moment_jalaali__WEBPACK_IMPORTED_MODULE_1___default()(this.devalue, "jYYYY/jMM/jDD", true);
+      }
+
+      return {
+        isValid: function isValid() {
+          return false;
+        }
+      };
     }
   }
 });
@@ -177,202 +230,51 @@ var render = function() {
           attrs: {
             label: _vm.field.label,
             "hide-details": "auto",
-            mask: "####"
+            mask: "####",
+            hint: _vm.hintString
+          },
+          nativeOn: {
+            keyup: function($event) {
+              return _vm.updateInput($event)
+            }
           },
           scopedSlots: _vm._u([
             {
-              key: "prepend-inner",
+              key: "prepend",
               fn: function() {
                 return [
                   _c(
-                    "v-menu",
+                    "v-icon",
                     {
-                      attrs: {
-                        top: "",
-                        fixed: "",
-                        "nudge-top": "-30",
-                        "close-on-content-click": false
-                      },
-                      scopedSlots: _vm._u([
+                      directives: [
                         {
-                          key: "activator",
-                          fn: function(ref) {
-                            var on = ref.on
-                            return [
-                              _c(
-                                "v-btn",
-                                _vm._g({ attrs: { icon: "", small: "" } }, on),
-                                [
-                                  _c("v-icon", { attrs: { small: "" } }, [
-                                    _vm._v("mdi-calendar-blank-multiple")
-                                  ])
-                                ],
-                                1
-                              )
-                            ]
-                          }
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.devalue && _vm.devalue.length > 1,
+                          expression: "devalue && devalue.length > 1"
                         }
-                      ]),
-                      model: {
-                        value: _vm.menu,
-                        callback: function($$v) {
-                          _vm.menu = $$v
-                        },
-                        expression: "menu"
+                      ],
+                      attrs: {
+                        color: _vm.isValid
+                          ? _vm.dirty
+                            ? "orange"
+                            : "green"
+                          : "red"
                       }
                     },
                     [
-                      _vm._v(" "),
-                      _c(
-                        "v-card",
-                        { staticClass: "d-flex flex-column" },
-                        [
-                          _c(
-                            "v-card-title",
-                            { staticClass: "pa-1" },
-                            [
-                              _c(
-                                "v-autocomplete",
-                                _vm._g(
-                                  _vm._b(
-                                    {
-                                      staticClass: "me-1",
-                                      staticStyle: { width: "60%" },
-                                      attrs: {
-                                        dark: "",
-                                        "background-color": "primary",
-                                        "hide-details": true,
-                                        dense: "",
-                                        solo: "",
-                                        items: _vm.timezones,
-                                        placeholder: "Timezone"
-                                      },
-                                      model: {
-                                        value: _vm.tz,
-                                        callback: function($$v) {
-                                          _vm.tz = $$v
-                                        },
-                                        expression: "tz"
-                                      }
-                                    },
-                                    "v-autocomplete",
-                                    _vm.field.timezoneProps,
-                                    false
-                                  ),
-                                  _vm.field.timezoneProps &&
-                                    _vm.field.timezoneProps["v-on"]
-                                    ? _vm.field.timezoneProps["v-on"]
-                                    : {}
-                                )
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-select",
-                                _vm._g(
-                                  _vm._b(
-                                    {
-                                      staticStyle: { width: "30%" },
-                                      attrs: {
-                                        dark: "",
-                                        "background-color": "primary",
-                                        "hide-details": true,
-                                        dense: "",
-                                        solo: "",
-                                        items: _vm.calendars,
-                                        placeholder: "Calendar"
-                                      },
-                                      model: {
-                                        value: _vm.calendar,
-                                        callback: function($$v) {
-                                          _vm.calendar = $$v
-                                        },
-                                        expression: "calendar"
-                                      }
-                                    },
-                                    "v-select",
-                                    _vm.calendarProps,
-                                    false
-                                  ),
-                                  _vm.field.calendarProps &&
-                                    _vm.field.calendarProps["v-on"]
-                                    ? _vm.field.calendarProps["v-on"]
-                                    : {}
-                                )
-                              )
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-card-text",
-                            { staticClass: "pa-1 d-flex flex-row" },
-                            [
-                              _c(
-                                "v-date-picker",
-                                _vm._g(
-                                  _vm._b(
-                                    {
-                                      staticClass: "me-1",
-                                      attrs: { tiled: "", landscape: "" },
-                                      model: {
-                                        value: _vm.date,
-                                        callback: function($$v) {
-                                          _vm.date = $$v
-                                        },
-                                        expression: "date"
-                                      }
-                                    },
-                                    "v-date-picker",
-                                    _vm.dateProps,
-                                    false
-                                  ),
-                                  _vm.field.dateProps &&
-                                    _vm.field.dateProps["v-on"]
-                                    ? _vm.field.dateProps["v-on"]
-                                    : {}
-                                )
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-time-picker",
-                                _vm._g(
-                                  _vm._b(
-                                    {
-                                      directives: [
-                                        {
-                                          name: "show",
-                                          rawName: "v-show",
-                                          value: !_vm.field.hideTime,
-                                          expression: "!field.hideTime"
-                                        }
-                                      ],
-                                      attrs: { tiled: "", width: "200" },
-                                      model: {
-                                        value: _vm.time,
-                                        callback: function($$v) {
-                                          _vm.time = $$v
-                                        },
-                                        expression: "time"
-                                      }
-                                    },
-                                    "v-time-picker",
-                                    _vm.timeProps,
-                                    false
-                                  ),
-                                  _vm.field.timeProps &&
-                                    _vm.field.timeProps["v-on"]
-                                    ? _vm.field.timeProps["v-on"]
-                                    : {}
-                                )
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
+                      _vm._v(
+                        "\n      " +
+                          _vm._s(
+                            _vm.isValid
+                              ? _vm.dirty
+                                ? "mdi-alert"
+                                : "mdi-check"
+                              : "mdi-alert"
+                          ) +
+                          "\n    "
                       )
-                    ],
-                    1
+                    ]
                   )
                 ]
               },
@@ -416,15 +318,8 @@ __webpack_require__.r(__webpack_exports__);
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vuetify_lib_components_VAutocomplete__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VAutocomplete */ "./node_modules/vuetify/lib/components/VAutocomplete/index.js");
-/* harmony import */ var vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
-/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
-/* harmony import */ var vuetify_lib_components_VDatePicker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VDatePicker */ "./node_modules/vuetify/lib/components/VDatePicker/index.js");
-/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
-/* harmony import */ var vuetify_lib_components_VMenu__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VMenu */ "./node_modules/vuetify/lib/components/VMenu/index.js");
-/* harmony import */ var vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VSelect */ "./node_modules/vuetify/lib/components/VSelect/index.js");
-/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
-/* harmony import */ var vuetify_lib_components_VTimePicker__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VTimePicker */ "./node_modules/vuetify/lib/components/VTimePicker/index.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
 
 
 
@@ -447,16 +342,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-
-
-
-
-
-
-
-
-
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VAutocomplete: vuetify_lib_components_VAutocomplete__WEBPACK_IMPORTED_MODULE_4__["VAutocomplete"],VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCard"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardTitle"],VDatePicker: vuetify_lib_components_VDatePicker__WEBPACK_IMPORTED_MODULE_7__["VDatePicker"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_8__["VIcon"],VMenu: vuetify_lib_components_VMenu__WEBPACK_IMPORTED_MODULE_9__["VMenu"],VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_10__["VSelect"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_11__["VTextField"],VTimePicker: vuetify_lib_components_VTimePicker__WEBPACK_IMPORTED_MODULE_12__["VTimePicker"]})
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_4__["VIcon"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_5__["VTextField"]})
 
 
 /* hot reload */

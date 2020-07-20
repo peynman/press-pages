@@ -31,7 +31,7 @@ export default {
           for (const event in events) {
             const handle = events[event];
             events[event] = e => {
-              handle(this.item, this.column, e);
+              handle(this.item, this.columnInstance, e);
             };
           }
         } else if (typeof ref[prop] === "object") {

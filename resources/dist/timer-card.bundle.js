@@ -38,9 +38,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "vf-timer-card-input",
+  name: "VfTimerCardInput",
   props: {
     field: Object,
     value: Object,
@@ -187,7 +201,11 @@ var render = function() {
                             {
                               attrs: { large: "", text: "", color: "warning" }
                             },
-                            [_vm._v("پروفایل خود را تکمیل کنید")]
+                            [
+                              _vm._v(
+                                "\n            پروفایل خود را تکمیل کنید\n          "
+                              )
+                            ]
                           )
                         : _vm._e()
                     ],
@@ -215,11 +233,11 @@ var render = function() {
               staticClass: "mx-auto mb-3",
               attrs: { value: _vm.timeRemainingPercent, size: "100" }
             },
-            [_vm._v(_vm._s(_vm.timeRemainingDays) + " روز")]
+            [_vm._v("\n      " + _vm._s(_vm.timeRemainingDays) + " روز\n    ")]
           ),
           _vm._v(" "),
           _c("v-list-item-subtitle", { staticStyle: { flex: "1" } }, [
-            _vm._v(_vm._s(_vm.field.time_message))
+            _vm._v("\n      " + _vm._s(_vm.field.time_message) + "\n    ")
           ])
         ],
         1

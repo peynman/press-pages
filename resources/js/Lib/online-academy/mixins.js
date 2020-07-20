@@ -108,15 +108,16 @@ export const UserCartEditor = {
         },
 
         getProductPriceString(item) {
-            if (item.available) {
-                return item.data.already_purchased?item.data.already_purchased : 'دسترسی به زودی'
-            }
             if (item.period_end) {
-                return item.data.period_ended?item.data.period_ended : 'پرداخت اقساط'
+                return item.data.period_ended?item.data.period_ended : 'پرداخت قسط'
             }
 
             const price = this.getProductPrice(item)
-            return price.takhfif === ''?price.price : price.takhfif;
+            if (this.getProductPriceValue(item) && this.getProductPriceValue(item).amount == 0) {
+                return 'رایگان'
+            }
+
+            return price.takhfif === '' ? price.price : price.takhfif;
         },
 
 

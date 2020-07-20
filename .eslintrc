@@ -1,8 +1,0 @@
-{
-    "parser": "babel-eslint",
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "vue"
-      ]
-}

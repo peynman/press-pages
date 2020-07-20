@@ -356,7 +356,8 @@ export default {
             sort: sort,
             with: this.field.table.query.relations
               ? this.field.table.query.relations
-              : []
+              : [],
+            appends: this.field.table.query.appends ? this.field.table.query.appends : [],
           }
         })
           .then(response => {

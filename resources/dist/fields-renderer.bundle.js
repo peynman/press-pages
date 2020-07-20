@@ -57,6 +57,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: "VfFieldsRenderer",
   components: {
     VRow: vuetify_lib__WEBPACK_IMPORTED_MODULE_0__["VRow"],
     VCol: vuetify_lib__WEBPACK_IMPORTED_MODULE_0__["VCol"],
@@ -73,7 +74,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     VSlideGroup: vuetify_lib__WEBPACK_IMPORTED_MODULE_0__["VSlideGroup"],
     VSlideItem: vuetify_lib__WEBPACK_IMPORTED_MODULE_0__["VSlideItem"]
   },
-  name: "vf-fields-renderer",
   props: {
     id: String,
     fields: [Object, Array],

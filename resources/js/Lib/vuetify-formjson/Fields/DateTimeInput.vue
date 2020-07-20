@@ -1,14 +1,24 @@
 <template>
-    <v-text-field
+  <v-text-field
     v-model="devalue"
     :class="`vf-input ${field.class ? field.class:''}`"
     :label="field.label"
     hide-details="auto"
     mask="####"
     v-bind="fieldProps"
+    :hint="hintString"
+    @keyup.native="updateInput($event)"
     v-on="eventHandlers"
   >
-    <template v-slot:prepend-inner>
+    <template #prepend>
+      <v-icon
+        v-show="devalue && devalue.length > 1"
+        :color="isValid ? dirty ? 'orange':'green':'red'"
+      >
+        {{ isValid ? dirty ? 'mdi-alert' : 'mdi-check' : 'mdi-alert' }}
+      </v-icon>
+    </template>
+    <!-- <template v-slot:prepend-inner>
       <v-menu
         top
         fixed
@@ -31,69 +41,122 @@
             </v-card-text>
         </v-card>
       </v-menu>
-    </template>
+    </template>-->
   </v-text-field>
 </template>
 
 <script>
-import BaseComponent from './mixins'
-import moment from 'moment'
-import 'moment-timezone'
+import BaseComponent from "./mixins";
+import moment from "moment-jalaali";
+import momentTz from "moment-timezone";
 
-import { VTextField, VCard, VCardText, VMenu, VTimePicker, VDatePicker, VCardTitle } from 'vuetify/lib'
+import {
+    VTextField,
+    VCard,
+    VCardText,
+    VMenu,
+    VTimePicker,
+    VDatePicker,
+    VCardTitle
+} from "vuetify/lib";
 
 export default {
+    name: "VfDatetimeInput",
     components: {
-        VTextField, VCard, VCardText, VMenu, VTimePicker, VDatePicker, VCardTitle
+        VTextField,
+        // VCard,
+        // VCardText,
+        // VMenu,
+        // VTimePicker,
+        // VDatePicker,
+        // VCardTitle
     },
     mixins: [BaseComponent],
-    name: 'vf-datetime-input',
     props: {
         id: String,
-        value: Object,
+        value: String,
         field: Object
     },
-    computed: {
-        timezones () {
-            return moment.tz.names()
-        },
-        calendars () {
-            return ['Gregorian', 'Shamsi', 'Ghamari']
-        },
-        calendarProps () {
-            return {}
-        },
-        timeProps () {
-            return {}
-        },
-        dateProps () {
-            return {}
-        }
-    },
-    data () {
+    emits: ['input'],
+    data() {
+        const inTime = moment(this.value, 'YYYY/MM/DDTHH:mm:ssZ');
         return {
             menu: false,
             date: null,
             time: null,
-            calendar: 'Gregorian',
-            tz: moment.tz.guess()
-        }
+            calendar: "Gregorian",
+            tz: momentTz.tz.guess(),
+            valid: false,
+            dirty: false,
+            devalue: this.value && inTime.isValid() ? inTime.format('jYYYY/jMM/jDDTHH:mm'):'',
+        };
     },
-    methods: {
-        updateDateTime () {
-            console.log(this.date, this.time, this.tz)
+    computed: {
+        timezones() {
+            return momentTz.tz.names();
+        },
+        calendars() {
+            return ["Gregorian", "Shamsi", "Ghamari"];
+        },
+        calendarProps() {
+            return {};
+        },
+        timeProps() {
+            return {};
+        },
+        dateProps() {
+            return {};
+        },
+        hintString() {
+            return `با فرمت ` + moment().format("jYYYY/jMM/jDDTHH:mm") + ` وارد کنید`;
+        },
+        isValid() {
+            return this.getValueDateTime().isValid()
         }
     },
     watch: {
-        date () {
-            this.updateDateTime()
+        date() {
+            this.updateDateTime();
         },
-        time () {
-            this.updateDateTime()
+        time() {
+            this.updateDateTime();
         },
-        tz () {
-            this.updateDateTime()
+        tz() {
+            this.updateDateTime();
+        },
+        value () {
+            const inTime = moment(this.value, 'YYYY/MM/DDTHH:mm:ssZ');
+            console.log('watch', inTime, inTime.isValid(), this.value);
+            this.devalue = this.value && inTime.isValid() ? inTime.format('jYYYY/jMM/jDDTHH:mm'):'';
+        }
+    },
+    methods: {
+        updateDateTime() {
+            console.log(this.date, this.time, this.tz);
+        },
+        updateInput: function(ev) {
+            if ([13].includes(ev.keyCode)) {
+                if (this.isValid) {
+                    this.dirty = false;
+                    this.devalue = this.getValueDateTime().format('jYYYY/jMM/jDDTHH:mm');
+                    console.log(this.devalue);
+                    this.$emit("input", this.getValueDateTime().format('YYYY/MM/DDTHH:mm:ssZ'))
+                }
+            } else {
+                this.dirty = this.devalue && this.devalue.length > 1;
+            }
+        },
+        getValueDateTime() {
+            if (this.devalue) {
+                if (this.devalue.includes("T")) {
+                    return moment(this.devalue, "jYYYY/jMM/jDDTHH:mm", true);
+                }
+                return moment(this.devalue, "jYYYY/jMM/jDD", true);
+            }
+            return {
+                isValid () { return false; }
+            }
         }
     }
-}
+};
 </script>

@@ -138,8 +138,6 @@ export default {
         }
       }
     };
-
-    console.log(opt);
     this.uploader = new plupload.Uploader(opt);
     this.uploader.init();
   }

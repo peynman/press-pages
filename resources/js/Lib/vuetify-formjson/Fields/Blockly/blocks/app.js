@@ -1,4 +1,23 @@
 export default function (Blockly) {
+
+    // get app state at a path
+    Blockly.Blocks.app_get_random_string = {
+        init: function () {
+            this.appendValueInput('len')
+                .setCheck('Number')
+                .appendField('generate random string with length')
+            this.setOutput(true, 'String')
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_get_random_string = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'len', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return ['this.getRandomString(' + argument0 + ')', Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    }
+
+
     // get app state at a path
     Blockly.Blocks.app_register_channel = {
         init: function () {
@@ -31,6 +50,40 @@ export default function (Blockly) {
 
         return `this.registerChannelListener(${argument1}, ${argument0}, (e) => { this.blockly.${variableEvent} = e; ${innerCode}\n})\n`
     }
+
+    // show snackbar
+    Blockly.Blocks.app_show_snackbar = {
+        init: function () {
+            this.appendValueInput('message')
+                .setCheck('String')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('')
+            this.appendValueInput('CHANNEL')
+                .setCheck('String')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('on channel')
+            this.appendStatementInput('onEvent')
+                .setCheck(null)
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('on trigger')
+                .appendField(new Blockly.FieldVariable('event'), 'event')
+                .appendField('do')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_register_channel = function (block) {
+        const argument0 = Blockly.JavaScript.valueToCode(block, 'CHANNEL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        const argument1 = Blockly.JavaScript.valueToCode(block, 'EVENT', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        const innerCode = Blockly.JavaScript.statementToCode(block, 'onEvent')
+        const variableEvent = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('event'), Blockly.Variables.NAME_TYPE)
+
+        return `this.registerChannelListener(${argument1}, ${argument0}, (e) => { this.blockly.${variableEvent} = e; ${innerCode}\n})\n`
+    }
+
 
     // get app state at a path
     Blockly.Blocks.app_new_filtered_from_state = {
@@ -590,6 +643,24 @@ export default function (Blockly) {
         var argument0 = Blockly.JavaScript.valueToCode(block, 'LOG', Blockly.JavaScript.ORDER_ASSIGNMENT) || 'this'
         return `console.log(${argument0})\n`
     }
+
+    // app window alert
+    Blockly.Blocks.app_window_alert = {
+        init: function () {
+            this.appendValueInput('message')
+                .setCheck('String')
+                .appendField('window alert')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_window_alert = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `window.alert(${argument0})\n`
+    }
 }
 
 export const CategoryApp =
@@ -623,5 +694,7 @@ export const CategoryApp =
     <block type="app_auth_user"></block>
     <block type="app_show_alert"></block>
     <block type="app_console_log"></block>
+    <block type="app_get_random_string"></block>
+    <block type="app_window_alert"></block>
 </category>
 `

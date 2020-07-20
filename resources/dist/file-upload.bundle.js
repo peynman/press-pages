@@ -172,7 +172,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }
     };
-    console.log(opt);
     this.uploader = new plupload_js_plupload_dev__WEBPACK_IMPORTED_MODULE_1___default.a.Uploader(opt);
     this.uploader.init();
   }

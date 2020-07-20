@@ -45,7 +45,7 @@ export default class DatatableInputSettings extends BaseInputSettings {
             table: {
                 options: {
                     type: 'row',
-                    formClass: 'col-12 ma-0 pa-0'
+                    formClass: 'col-12 ma-0 pa-0',
                 },
                 fields: {
                     query: {
@@ -93,7 +93,34 @@ export default class DatatableInputSettings extends BaseInputSettings {
                                         }
                                     }
                                 }
-                            }
+                            },
+                            appends: {
+                                type: 'input',
+                                input: 'datatable',
+                                label: 'Remote API query attributes to append',
+                                columns: {
+                                    attribute: {
+                                        id: 'attribute',
+                                        label: 'Attribute Name'
+                                    },
+                                },
+                                props: {
+                                    'hide-footer': true,
+                                    'dense': true,
+                                    'show-select': true,
+                                },
+                                crud: {
+                                    create: {
+                                        fields: {
+                                            attribute: {
+                                                type: 'input',
+                                                input: 'text',
+                                                label: 'Attribute Name'
+                                            },
+                                        }
+                                    }
+                                }
+                            },
                         }
                     },
                     'create-url': TextSettings('Remote Create Form URL'),

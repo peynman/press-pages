@@ -46,7 +46,6 @@ export default {
                 fields: compiled.fields,
                 options: compiled.options,
             }
-            console.log(body.values);
             this[this.getFormValuePropName()] = body.values ? Array.isArray(body.values) ? {...body.values} : body.values : {}
 
             if (sources) {
@@ -96,6 +95,7 @@ export default {
         },
         appendFormFunctions(code) {
             const compiled = this.CompileFormJSONSchemaWithCode(this, this.formSchema, code);
+            console.log(compiled, this.formSchema);
             this[this.getFormSchemaPropName()] = {
                 fields: compiled.fields,
                 options: compiled.options,
@@ -181,15 +181,15 @@ export default {
                 this.$store.state.channels.forEach(c => {
                     if (c.name === channel) {
                         switch (c.access) {
-                            case "private":
-                                this.channelObjs[c.name] = this.echo.private(c.name);
-                                break;
-                            case "public":
-                                this.channelObjs[c.name] = this.echo.channel(c.name);
-                                break;
-                            case "presence":
-                                this.channelObjs[c.name] = this.echo.join(c.name);
-                                break;
+                        case "private":
+                            this.channelObjs[c.name] = this.echo.private(c.name);
+                            break;
+                        case "public":
+                            this.channelObjs[c.name] = this.echo.channel(c.name);
+                            break;
+                        case "presence":
+                            this.channelObjs[c.name] = this.echo.join(c.name);
+                            break;
                         }
                     }
                 });
@@ -211,6 +211,14 @@ export default {
         },
         gotoPage(page, data) {
             this.$emit('goto-page', page, data);
+        },
+        getRandomString (len) {
+            const stack = "1234567890qwertyuiopasdfghjklzxcvbnmZXCVBNMASDFGHJKLQWERTYUIOP"
+            const chars = [];
+            for (let i = 0; i < len; i++) {
+                chars.push(stack[Math.floor((Math.random() * stack.length))])
+            }
+            return chars.join('')
         },
         loadSchema(schema) {
             this.$emit('load-schema', schema)
@@ -327,7 +335,6 @@ export default {
         },
         appendFormValue(value) {
             this.formModel = { ...this.formModel, ...value };
-            console.log('new value', this, value, this.formModel);
         },
         setFormValidations(errors) {
             let valErrors = errors
@@ -423,8 +430,14 @@ export default {
                     if (prop === 'v-on') {
                         outter[prop] = {}
                         for (const event in root[prop]) {
-                            if (evalObj[root[prop][event]]) {
-                                outter[prop][event] = evalObj[root[prop][event]].bind(component)
+                            if (typeof root[prop][event] === 'string') {
+                                if (evalObj[root[prop][event]]) {
+                                    outter[prop][event] = evalObj[root[prop][event]].bind(component)
+                                } else {
+                                    outter[prop][event] = root[prop][event];
+                                }
+                            } else {
+                                outter[prop][event] = root[prop][event]
                             }
                         }
                     } else if (typeof root[prop] === 'object') { // arrays are objects too
@@ -448,10 +461,8 @@ export default {
             // bind functions in blockly code
             for (const func in evalObj) {
                 if (typeof evalObj[func] === 'function') {
-                    if (func === 'onFormInit') {
-                        output[func] = evalObj[func].bind(component)
-                        component[func] = output[func]
-                    } else {
+                    output[func] = evalObj[func].bind(component)
+                    if (!component[func]) {
                         component[func] = evalObj[func].bind(component)
                     }
                 }

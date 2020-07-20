@@ -1,3 +1,5 @@
+import { random } from "lodash"
+
 export default function (Blockly) {
     // json stringify
     Blockly.Blocks.obj_json_stringify = {
@@ -313,8 +315,9 @@ export default function (Blockly) {
         const varIdx = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('IDX'), Blockly.Variables.NAME_TYPE)
         var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         var branch = Blockly.JavaScript.statementToCode(block, 'DO')
-        branch = Blockly.JavaScript.addLoopTrap(branch, block)
-        return `let indexer = 0;\nlet target = ${argument0};\nfor (const prop in target) {\n  this.blockly.${varKey} = prop;\n  this.blockly.${varVal} = target[prop];\n  this.blockly.${varIdx} = indexer;\n${branch};\n  indexer++;\n}\n`
+        branch = Blockly.JavaScript.addLoopTrap(branch, block);
+        const indexer = Math.floor(Math.random() * 1000000);
+        return `let indexer${indexer} = 0;\nlet target${indexer} = ${argument0};\nfor (const prop in target${indexer}) {\n  this.blockly.${varKey} = prop;\n  this.blockly.${varVal} = target${indexer}[prop];\n  this.blockly.${varIdx} = indexer${indexer};\n${branch};\n  indexer${indexer}++;\n}\n`
     }
 }
 
