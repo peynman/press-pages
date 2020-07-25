@@ -1,10 +1,16 @@
 <template>
   <v-col
     cols="12"
-    md="8"
-    lg="9"
+    :md="field.md ? field.md : 8"
+    :lg="field.lg ? field.lg : 9"
+    :sm="field.sm ? field.sm : 12"
+    :xs="field.xs ? field.xs : 12"
+    :class="`vf-input ${field.class ? field.class : ''}`"
   >
     <v-card class="rounded-product-card grey lighten-4 ">
+      <v-card-title v-if="field.label">
+        {{ field.label }}
+      </v-card-title>
       <v-card-text>
         <v-expansion-panels
           accordion
@@ -20,7 +26,9 @@
                 <ProductSessionTitle :session="session" />
               </template>
               <template #actions>
-                <v-icon>{{ session.available ? 'mdi-chevron-down' : 'mdi-lock' }}</v-icon>
+                <v-icon class="ms-2">
+                  {{ session.available ? 'mdi-chevron-down' : 'mdi-lock' }}
+                </v-icon>
               </template>
             </v-expansion-panel-header>
             <v-expansion-panel-content
@@ -31,6 +39,9 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+        <v-label v-if="!sessions || sessions.length === 0">
+          {{ field.emptyMessage }}
+        </v-label>
       </v-card-text>
     </v-card>
   </v-col>
@@ -55,7 +66,7 @@ export default {
     data: vm => ({}),
     computed: {
         sessions() {
-            return this.field.children.filter((child) => child.types.map((t) => t.name).includes('session')).sort((a, b) => (a.priority))
+            return this.field.children?.filter((child) => child.types.map((t) => t.name).includes('session')).sort((a, b) => (a.priority))
         },
     },
 }

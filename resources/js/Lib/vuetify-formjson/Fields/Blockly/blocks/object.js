@@ -111,7 +111,6 @@ export default function (Blockly) {
         return `this.blockly.__tempArr = ${argument2}; if (Array.isArray(this.blockly.__tempArr)) { this.blockly.__tempArr.forEach((item) => { ${argument0}.${dropdownMode}(item) }) }\n`
     }
 
-
     // array merge/replace
     Blockly.Blocks.arr_merge = {
         init: function () {
@@ -140,6 +139,34 @@ export default function (Blockly) {
         var argument3 = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ASSIGNMENT) || '`id`'
         const dropdownMode = block.getFieldValue('MODE');
         return `this.arrayMergeWithObjects(${argument0}, ${argument2}, ${argument3}, '${dropdownMode}')\n`
+    }
+
+    // array remove
+    Blockly.Blocks.arr_remove_with_key = {
+        init: function () {
+            this.appendValueInput('OBJ')
+                .setCheck('Array')
+                .appendField('in array')
+            this.appendValueInput('VAL')
+                .setCheck(['Number', 'String'])
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('remove item with value')
+            this.appendValueInput('KEY')
+                .setCheck('String')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('at key propery(id)')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(260)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.arr_remove_with_key = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument3 = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ASSIGNMENT) || '`id`'
+        return `this.arrayRemoveWithKey(${argument0}, ${argument2}, ${argument3})\n`
     }
 
     // append nested

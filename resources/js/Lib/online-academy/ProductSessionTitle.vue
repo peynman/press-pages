@@ -28,18 +28,22 @@
         dense
         small
       >
-        {{ remainTime }} تا شروع کلاس
+        {{ remainTime }}
+      </v-chip>
+      <v-chip
+        v-for="(badge, index) in badges"
+        :key="`$${id}-badges-${index}`"
+        :color="badge.color"
+        small
+        dense
+      >
+        {{ badge.title }}
       </v-chip>
     </div>
     <div
       class="ma-auto d-flex flex-row justify-end"
       style="flex: 1;"
     >
-      <ProductPrice
-        v-if="!session.available"
-        :product="session"
-        :field="{noIcon: true,}"
-      />
       <ProductActions
         v-if="!session.available"
         :product="session"
@@ -54,6 +58,21 @@ import ProductPrice from './ProductPrice.vue'
 import ProductActions from './ProductActions.vue'
 import moment from 'moment-jalaali'
 
+Object.getPrototypeOf(moment.localeData())._jMonths= [
+    'فروردین'
+    , 'اردیبهشت'
+    , 'خرداد'
+    , 'تیر'
+    , 'مرداد'
+    , 'شهریور'
+    , 'مهر'
+    , 'آبان'
+    , 'آذر'
+    , 'دی'
+    , 'بهمن'
+    , 'اسفند'
+]
+
 export default {
     components: {
         ProductPrice,
@@ -64,6 +83,14 @@ export default {
         id: String
     },
     computed: {
+        badges () {
+            return this.session.types.filter((t) => ['vod_hls', 'vod_link']
+                .includes(t.name)).map(
+                (t) => ({
+                    title: 'فایل ضبظ شده',
+                    color: 'primary',
+                }))
+        },
         startTime () {
             return moment(this.session.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm:ssZ', true);
         },
@@ -77,17 +104,31 @@ export default {
             return this.session.data.types?.livestream?.status === 'ended';
         },
         remainTime () {
-            let diff = this.startTime.diff(moment(), 'minute');
-            let unit = 'دقیقه'
-            if (diff > 60) {
-                diff = this.startTime.diff(moment(), 'hour');
-                unit = 'ساعت'
-                if (diff > 24) {
-                    diff = this.startTime.diff(moment(), 'day');
-                    unit = 'روز'
-                }
+            let duration = moment.duration(this.startTime.diff(moment()));
+            //Get Days and subtract from duration
+            const days = duration.asDays();
+            if (days > 2) {
+                return this.startTime.locale('fa').format('dddd jDD jMMMM ساعت HH:mm')
             }
-            return `${diff} ${unit}`;
+
+            duration.subtract(moment.duration(days,'days'));
+            //Get hours and subtract from duration
+            const hours = duration.hours();
+            duration.subtract(moment.duration(hours,'hours'));
+            //Get Minutes and subtract from duration
+            const minutes = duration.minutes();
+            duration.subtract(moment.duration(minutes,'minutes'));
+            const msg = [];
+            if (days > 1) {
+                msg.push(`${Math.floor(days)} روز`)
+            }
+            if (hours > 1) {
+                msg.push(`${Math.floor(hours)} ساعت`)
+            }
+            if (minutes > 0) {
+                msg.push(`${Math.floor(minutes)} دقیقه`)
+            }
+            return msg.join(' و ');
         },
     }
 }

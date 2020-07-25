@@ -95,7 +95,6 @@ export default {
         },
         appendFormFunctions(code) {
             const compiled = this.CompileFormJSONSchemaWithCode(this, this.formSchema, code);
-            console.log(compiled, this.formSchema);
             this[this.getFormSchemaPropName()] = {
                 fields: compiled.fields,
                 options: compiled.options,
@@ -156,8 +155,20 @@ export default {
                 })
             }
         },
+        arrayRemoveWithKey(target, value, key) {
+            let foundIndex = -1;
+            target.forEach((t, index) => {
+                if (t[key] == value) {
+                    foundIndex = index;
+                }
+            });
+            if (foundIndex) {
+                target.splice(foundIndex, 1);
+            }
+        },
         arrayMergeWithObjects(target, items, key, mode) {
             let found = false;
+            console.log('array merge', target, items, key, mode);
             target.forEach((i) => {
                 items.forEach((j) => {
                     if (i[key] == j[key]) {
@@ -171,8 +182,8 @@ export default {
                 })
             })
             if (!found && mode === 'merge') {
-                target.forEach((t) => {
-                    items.unshift(t)
+                items.forEach((t) => {
+                    target.unshift(t)
                 });
             }
         },

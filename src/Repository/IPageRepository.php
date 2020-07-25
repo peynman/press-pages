@@ -17,5 +17,13 @@ interface IPageRepository {
      * @param [type] $user
      * @return void
      */
+    public function getAllPageObjectFetchers($user);
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $user
+     * @return void
+     */
     public function getAllPageTitles($user);
 }

@@ -1,42 +1,64 @@
 <template>
-  <v-card class="d-flex flex-row col-sm-12 col-md-6 justify-space-around">
-    <v-list
-      dense
-      class
-    >
-      <v-list-item>
-        <v-list-item-avatar size="100">
-          <v-img :src="profilePic" />
-        </v-list-item-avatar>
-        <v-list-item-content style="overflow: visible;">
-          <v-list-item-title style="font-size: 1.5rem; line-height: 1.7rem;">
-            {{ titleMessage }}
-            <v-btn
-              v-if="!profileComplete"
-              large
-              text
-              color="warning"
-            >
-              پروفایل خود را تکمیل کنید
-            </v-btn>
-          </v-list-item-title>
-          <v-list-item-subtitle>{{ dateMessage }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
-    <v-list-item-action class="my-1 d-flex flex-column">
-      <v-progress-circular
-        :value="timeRemainingPercent"
-        size="100"
-        class="mx-auto mb-3"
+  <v-col
+    cols="12"
+    :md="field.md ? field.md : 6"
+    :lg="field.lg ? field.lg : 6"
+    :sm="field.sm ? field.sm : 6"
+    :xs="field.xs ? field.xs : 6"
+  >
+    <v-card :class="`d-flex flex-row rounded-product-card grey lighten-4 ${field.class ? field.class : ''}`">
+      <v-list
+        dense
+        class=" grey lighten-4"
       >
-        {{ timeRemainingDays }} روز
-      </v-progress-circular>
-      <v-list-item-subtitle style="flex: 1">
-        {{ field.time_message }}
-      </v-list-item-subtitle>
-    </v-list-item-action>
-  </v-card>
+        <v-list-item>
+          <v-list-item-action
+            class="my-1 d-flex flex-column"
+            style="min-width: 130px;"
+          >
+            <v-progress-circular
+              :value="timeRemainingPercent"
+              size="100"
+              class="mx-auto"
+            >
+              <span>
+                {{ timeRemainingDays }} روز</span>
+              <v-list-item-subtitle style="flex: 1; position: absolute; margin-top: 115px;">
+                {{ field.time_message }}
+              </v-list-item-subtitle>
+            </v-progress-circular>
+          </v-list-item-action>
+          <v-list-item-avatar size="100">
+            <v-img
+              :src="profilePic"
+              class="my-auto"
+            />
+          </v-list-item-avatar>
+          <v-list-item-content
+            style="overflow: visible;"
+            class="ms-2"
+          >
+            <v-list-item-title style="font-size: 1.5rem; line-height: 1.7rem;">
+              {{ titleMessage }}
+              <v-btn
+                v-if="!profileComplete"
+                large
+                text
+                color="warning"
+                class="no-letter-spacing my-auto ms-2"
+                :href="field.profileUrl ? field.profileUrl : '/me/forms/1'"
+              >
+                پروفایل خود را تکمیل کنید
+              </v-btn>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ dateMessage }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+  </v-col>
 </template>
 
 <script>
@@ -69,12 +91,12 @@ export default {
         profilePic() {
             if (
                 this.profileComplete &&
-        this.profile.profile &&
-        this.profile.profile.startsWith("data:")
+                this.profile.profile &&
+                this.profile.profile.startsWith("data:")
             ) {
                 return this.profile.profile;
             } else {
-                return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+                return this.field.avatar ? this.field.avatar : "/images/avatar.png";
             }
         },
         dateMessage() {

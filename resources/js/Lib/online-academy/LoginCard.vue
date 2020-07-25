@@ -25,6 +25,11 @@
 
 <script>
 export default {
-    name: "VfLoginCardInput"
+    name: "VfLoginCardInput",
+    props: {
+        field: Object,
+        value: Object,
+        id: String,
+    }
 };
 </script>

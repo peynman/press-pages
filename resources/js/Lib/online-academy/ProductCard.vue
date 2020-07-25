@@ -1,5 +1,6 @@
 <template>
   <v-col
+    v-resize="onResize"
     cols="12"
     :lg="field.lg ? field.lg : 3"
     :md="field.md ? field.md : 4"
@@ -34,7 +35,7 @@
             </v-img>
             <!-- product title -->
             <v-card-title
-              href=""
+              v-if="!field.compactMode || !isSM"
               style="word-break: break-word;"
             >
               <v-badge
@@ -51,14 +52,21 @@
                 >{{ product.title }}</a>
               </v-badge>
             </v-card-title>
-            <div class="ps-5">
+            <!-- product subtitle -->
+            <div
+              v-if="!field.compactMode || !isSM"
+              class="ps-5"
+            >
               <vf-paragraph-input
                 :field="{'readonly': true}"
                 :value="product.subtitle"
               />
             </div>
             <!-- product details -->
-            <v-card-text class="text--primary pa-0 mb-1">
+            <v-card-text
+              v-if="!field.compactMode || !isSM"
+              class="text--primary pa-0 mb-1"
+            >
               <ProductCategories :product="product" />
               <div class="d-flex flex-column">
                 <!-- teacher -->
@@ -69,7 +77,10 @@
                 <ProductPrice :product="product" />
               </div>
             </v-card-text>
-            <ProductActions :product="product" />
+            <ProductActions
+              :product="product"
+              :field="{compact: field.compactMode && isSM}"
+            />
           </v-card>
         </template>
       </v-hover>
@@ -123,7 +134,8 @@ export default {
         }
         return {
             product,
-            loading: false
+            loading: false,
+            isSM: window.innerWidth < 768,
         };
     },
     computed: {
@@ -131,13 +143,20 @@ export default {
             return this.$store.state.user;
         },
         isLive () {
-            return this.product.data['live-streams'] && this.product.data['live-streams'] > 0;
+            return (this.product.data['live-streams'] && this.product.data['live-streams'] > 0) === true;
         },
         liveStreamsMessage () {
             const onlines = this.product.data['live-streams'];
             return `کلاس آنلاین`;
         }
     },
+    methods: {
+        onResize () {
+            if (window.innerWidth < 768) {
+                this.isSM = true;
+            }
+        }
+    }
 };
 </script>
 

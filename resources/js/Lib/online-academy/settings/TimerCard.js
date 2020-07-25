@@ -21,6 +21,11 @@ export default class TimerCardSettings extends BaseInputSettings {
             time_message: TextSettings('time message'),
             startTime: TextSettings('start date'),
             endTime: TextSettings('end date'),
+            avatar: TextSettings('Avatar placeholder url'),
+            xs: TextSettings('X-Small cols'),
+            sm: TextSettings('Small cols'),
+            md: TextSettings('Medium cols'),
+            lg: TextSettings('Large cols'),
         }
     }
 }

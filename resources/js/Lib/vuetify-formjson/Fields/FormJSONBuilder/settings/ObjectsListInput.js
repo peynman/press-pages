@@ -44,12 +44,12 @@ export default class ObjectsListInputSettings extends BaseInputSettings {
                 'hide-search': true,
                 columns: [
                     {
-                        column: 'id',
-                        title: 'ID'
+                        id: 'id',
+                        label: 'ID'
                     },
                     {
-                        column: 'title',
-                        title: 'Title'
+                        id: 'title',
+                        label: 'Title'
                     }
                 ],
                 crud: {
@@ -68,14 +68,6 @@ export default class ObjectsListInputSettings extends BaseInputSettings {
                                 class: 'col-6 pe-0 ps-0',
                                 label: 'Title'
                             },
-                            props: {
-                                options: {
-                                    type: 'row'
-                                },
-                                fields: {
-                                    'v-on': createEventsDatatableInputForSettingsForm('Item events', api.VCheckbox.events)
-                                }
-                            }
                         }
                     },
                 }

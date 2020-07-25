@@ -3,7 +3,7 @@
 namespace Larapress\Pages\Services;
 
 use Illuminate\Support\Facades\Log;
-use Larapress\CRUD\Base\IReportSource;
+use Larapress\CRUD\Services\IReportSource;
 use Larapress\CRUD\Repository\IRoleRepository;
 use Larapress\Pages\Services\PageVisitEvent;
 use Larapress\Reports\Services\BaseReportSource;

@@ -33,7 +33,9 @@ export const customComponents = {
     'vf-group-single-exp': () => import(/* webpackChunkName: "group-single-exp"*/ './Fields/GroupSingleExpansion.vue'),
     'vf-group-tabs': () => import(/* webpackChunkName: "gorup-tabs"*/ './Fields/GroupTabs.vue'),
     'vf-group-treeview': () => import(/* webpackChunkName: "group-treeview"*/ './Fields/GroupTreeview.vue'),
-    'vf-file-upload-input': () => import(/* webpackChunkName: "file-upload"*/ './Fields/FileUpload.vue')
+    'vf-file-upload-input': () => import(/* webpackChunkName: "file-upload"*/ './Fields/FileUpload.vue'),
+    'vf-stackedit-input': () => import(/* webpackChunkName: "stackedit-input"*/ './Fields/StackEdit/StackEdit.vue'),
+    'vf-reports-chart-input': () => import(/* webpackChunkName: "reports-chart"*/ './Fields/Reports/Chart.vue'),
 }
 
 export default {

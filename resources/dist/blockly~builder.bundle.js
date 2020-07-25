@@ -350,6 +350,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CategoryApp", function() { return CategoryApp; });
 /* harmony default export */ __webpack_exports__["default"] = (function (Blockly) {
   // get app state at a path
+  Blockly.Blocks.app_get_random_string = {
+    init: function init() {
+      this.appendValueInput('len').setCheck('Number').appendField('generate random string with length');
+      this.setOutput(true, 'String');
+      this.setColour(110);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.app_get_random_string = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'len', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    return ['this.getRandomString(' + argument0 + ')', Blockly.JavaScript.ORDER_FUNCTION_CALL];
+  }; // get app state at a path
+
+
   Blockly.Blocks.app_register_channel = {
     init: function init() {
       this.appendValueInput('EVENT').setCheck('String').setAlign(Blockly.ALIGN_RIGHT).appendField('Listen for event ');
@@ -369,6 +385,23 @@ __webpack_require__.r(__webpack_exports__);
     var innerCode = Blockly.JavaScript.statementToCode(block, 'onEvent');
     var variableEvent = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('event'), Blockly.Variables.NAME_TYPE);
     return "this.registerChannelListener(".concat(argument1, ", ").concat(argument0, ", (e) => { this.blockly.").concat(variableEvent, " = e; ").concat(innerCode, "\n})\n");
+  }; // show snackbar
+
+
+  Blockly.Blocks.app_show_snackbar = {
+    init: function init() {
+      this.appendValueInput('message').setCheck('String').setAlign(Blockly.ALIGN_RIGHT).appendField('');
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(110);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.app_show_snackbar = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    return "this.showSnack(".concat(argument0, ")\n");
   }; // get app state at a path
 
 
@@ -741,6 +774,23 @@ __webpack_require__.r(__webpack_exports__);
   Blockly.JavaScript.app_append_form_sources = function (block) {
     var argument0 = Blockly.JavaScript.valueToCode(block, 'XML', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
     return "this.appendFormSources(".concat(argument0, ")\n");
+  }; // append to form values
+
+
+  Blockly.Blocks.app_append_form_values = {
+    init: function init() {
+      this.appendValueInput('XML').setCheck('String').appendField('merge to form values');
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(110);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.app_append_form_values = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'XML', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    return "this.appendFormValues(".concat(argument0, ")\n");
   }; // reset form schema
 
 
@@ -832,9 +882,75 @@ __webpack_require__.r(__webpack_exports__);
   Blockly.JavaScript.app_console_log = function (block) {
     var argument0 = Blockly.JavaScript.valueToCode(block, 'LOG', Blockly.JavaScript.ORDER_ASSIGNMENT) || 'this';
     return "console.log(".concat(argument0, ")\n");
+  }; // app window alert
+
+
+  Blockly.Blocks.app_window_alert = {
+    init: function init() {
+      this.appendValueInput('message').setCheck('String').appendField('window alert');
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(110);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.app_window_alert = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    return "window.alert(".concat(argument0, ")\n");
+  }; // app open new tab
+
+
+  Blockly.Blocks.app_open_new_tab = {
+    init: function init() {
+      this.appendValueInput('message').setCheck('String').appendField('window open in new tab');
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(110);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.app_open_new_tab = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    return "window.open(".concat(argument0, ")\n");
+  }; // app propet
+
+
+  Blockly.Blocks.app_ask = {
+    init: function init() {
+      this.appendValueInput('message').setCheck('String').appendField('window ask');
+      this.setOutput(true, 'String');
+      this.setColour(110);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.app_ask = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    return ["window.prompt(".concat(argument0, ")"), Blockly.JavaScript.ORDER_FUNCTION_CALL];
+  }; // app propet
+
+
+  Blockly.Blocks.app_confirm = {
+    init: function init() {
+      this.appendValueInput('message').setCheck('String').appendField('window confrim');
+      this.setOutput(true, 'Boolean');
+      this.setColour(110);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.app_confirm = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    return ["window.confirm(".concat(argument0, ")"), Blockly.JavaScript.ORDER_FUNCTION_CALL];
   };
 });
-var CategoryApp = "\n<category id=\"catApp\" colour=\"110\" name=\"App\">\n    <block type=\"app_register_channel\"></block>\n    <block type=\"app_new_filtered_from_state\"></block>\n    <block type=\"app_get_route_path_parts\"></block>\n    <block type=\"app_append_form_blockly_code\"></block>\n    <block type=\"app_append_form_options\"></block>\n    <block type=\"app_append_form_sources\"></block>\n    <block type=\"app_reset_form_schema\"></block>\n    <block type=\"app_get_from_state\"></block>\n    <block type=\"app_form_value_at_path\"></block>\n    <block type=\"app_form_response_alert\"></block>\n    <block type=\"app_form_values\"></block>\n    <block type=\"app_form_schema_at_path\"></block>\n    <block type=\"app_append_form_schema_at_path\"></block>\n    <block type=\"app_form_validations\"></block>\n    <block type=\"app_form_remove_validations\"></block>\n    <block type=\"app_set_form_schema_at_path\"></block>\n    <block type=\"app_set_form_value_at_path\"></block>\n    <block type=\"app_append_form_value_at_path\"></block>\n    <block type=\"app_make_template_form_schema_at_path\"></block>\n    <block type=\"app_clear_template_form_schema_at_path\"></block>\n    <block type=\"app_change_state\"></block>\n    <block type=\"app_commit_mutation\"></block>\n    <block type=\"app_go_to_page\"></block>\n    <block type=\"app_load_schema\"></block>\n    <block type=\"app_auth_user\"></block>\n    <block type=\"app_show_alert\"></block>\n    <block type=\"app_console_log\"></block>\n</category>\n";
+var CategoryApp = "\n<category id=\"catApp\" colour=\"110\" name=\"App\">\n    <block type=\"app_register_channel\"></block>\n    <block type=\"app_new_filtered_from_state\"></block>\n    <block type=\"app_get_route_path_parts\"></block>\n    <block type=\"app_append_form_blockly_code\"></block>\n    <block type=\"app_append_form_options\"></block>\n    <block type=\"app_append_form_sources\"></block>\n    <block type=\"app_append_form_values\"></block>\n    <block type=\"app_reset_form_schema\"></block>\n    <block type=\"app_get_from_state\"></block>\n    <block type=\"app_form_value_at_path\"></block>\n    <block type=\"app_form_response_alert\"></block>\n    <block type=\"app_form_values\"></block>\n    <block type=\"app_form_schema_at_path\"></block>\n    <block type=\"app_append_form_schema_at_path\"></block>\n    <block type=\"app_form_validations\"></block>\n    <block type=\"app_form_remove_validations\"></block>\n    <block type=\"app_set_form_schema_at_path\"></block>\n    <block type=\"app_set_form_value_at_path\"></block>\n    <block type=\"app_append_form_value_at_path\"></block>\n    <block type=\"app_make_template_form_schema_at_path\"></block>\n    <block type=\"app_clear_template_form_schema_at_path\"></block>\n    <block type=\"app_change_state\"></block>\n    <block type=\"app_commit_mutation\"></block>\n    <block type=\"app_go_to_page\"></block>\n    <block type=\"app_load_schema\"></block>\n    <block type=\"app_auth_user\"></block>\n    <block type=\"app_show_alert\"></block>\n    <block type=\"app_console_log\"></block>\n    <block type=\"app_get_random_string\"></block>\n    <block type=\"app_window_alert\"></block>\n    <block type=\"app_open_new_tab\"></block>\n    <block type=\"app_ask\"></block>\n    <block type=\"app_confirm\"></block>\n</category>\n";
 
 /***/ }),
 
@@ -848,6 +964,9 @@ var CategoryApp = "\n<category id=\"catApp\" colour=\"110\" name=\"App\">\n    <
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CategoryObject", function() { return CategoryObject; });
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ __webpack_exports__["default"] = (function (Blockly) {
   // json stringify
   Blockly.Blocks.obj_json_stringify = {
@@ -960,6 +1079,27 @@ __webpack_require__.r(__webpack_exports__);
     var argument3 = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ASSIGNMENT) || '`id`';
     var dropdownMode = block.getFieldValue('MODE');
     return "this.arrayMergeWithObjects(".concat(argument0, ", ").concat(argument2, ", ").concat(argument3, ", '").concat(dropdownMode, "')\n");
+  }; // array remove
+
+
+  Blockly.Blocks.arr_remove_with_key = {
+    init: function init() {
+      this.appendValueInput('OBJ').setCheck('Array').appendField(new Blockly.FieldDropdown([['merge', 'merge'], ['replace', 'replace']]), 'MODE').appendField('in array');
+      this.appendValueInput('VAL').setCheck('String').setAlign(Blockly.ALIGN_RIGHT).appendField('remove item with value');
+      this.appendValueInput('KEY').setCheck('String').setAlign(Blockly.ALIGN_RIGHT).appendField('at key propery(id)');
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setColour(260);
+      this.setTooltip('');
+      this.setHelpUrl('');
+    }
+  };
+
+  Blockly.JavaScript.arr_remove_with_key = function (block) {
+    var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
+    var argument3 = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ASSIGNMENT) || '`id`';
+    return "this.arrayRemoveWithKey(".concat(argument0, ", ").concat(argument2, ", ").concat(argument3, ")\n");
   }; // append nested
 
 
@@ -1096,7 +1236,8 @@ __webpack_require__.r(__webpack_exports__);
     var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || '';
     var branch = Blockly.JavaScript.statementToCode(block, 'DO');
     branch = Blockly.JavaScript.addLoopTrap(branch, block);
-    return "let indexer = 0;\nlet target = ".concat(argument0, ";\nfor (const prop in target) {\n  this.blockly.").concat(varKey, " = prop;\n  this.blockly.").concat(varVal, " = target[prop];\n  this.blockly.").concat(varIdx, " = indexer;\n").concat(branch, ";\n  indexer++;\n}\n");
+    var indexer = Math.floor(Math.random() * 1000000);
+    return "let indexer".concat(indexer, " = 0;\nlet target").concat(indexer, " = ").concat(argument0, ";\nfor (const prop in target").concat(indexer, ") {\n  this.blockly.").concat(varKey, " = prop;\n  this.blockly.").concat(varVal, " = target").concat(indexer, "[prop];\n  this.blockly.").concat(varIdx, " = indexer").concat(indexer, ";\n").concat(branch, ";\n  indexer").concat(indexer, "++;\n}\n");
   };
 });
 var CategoryObject = "\n<category id=\"catObj\" colour=\"105\" name=\"Object\">\n    <block type=\"obj_create_new\"></block>\n    <block type=\"obj_set_key_value\"></block>\n    <block type=\"obj_get_nested\"></block>\n    <block type=\"obj_set_nested\"></block>\n    <block type=\"obj_assign\"></block>\n    <block type=\"obj_is_set_nested\"></block>\n    <block type=\"obj_json_stringify\"></block>\n    <block type=\"obj_json_parse\"></block>\n    <block type=\"obj_foreach_nested\"></block>\n    <block type=\"obj_append_nested\"></block>\n</category>\n";
@@ -1360,13 +1501,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       deep: true,
       handler: function handler() {
         this.devalue = this.value;
-      }
-    },
-    'field.props': {
-      deep: true,
-      handler: function handler() {
-        console.log('updated', this.field);
-        this.$forceUpdate();
       }
     }
   }

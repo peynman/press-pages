@@ -1,7 +1,13 @@
 <template>
   <component
-    :is="!field.compact ? 'VCardActions' : 'div'"
+    :is="!field.compact ? 'VCardActions' : 'VCardActions'"
+    class="justify-center"
   >
+    <ProductPrice
+      v-if="field.compact"
+      :product="product"
+      :field="{noIcon: true}"
+    />
     <v-btn
       v-if="hasPrice"
       v-show="!isParentInCart"
@@ -33,10 +39,11 @@
 <script>
 import { UserCartEditor } from "./mixins";
 import { VCardActions } from 'vuetify/lib';
-
+import ProductPrice from './ProductPrice.vue';
 export default {
     components: {
         VCardActions,
+        ProductPrice,
     },
     mixins: [UserCartEditor],
     props: {

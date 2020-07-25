@@ -97,6 +97,72 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                         },
                     }
                 }
+            } else if (type === 'objects-map') {
+                extras['decorator'] = {
+                    options: {
+                        formClass: 'ma-0 pa-0'
+                    },
+                    fields: {
+                        label: {
+                            type: 'input',
+                            input: 'text',
+                            label: 'Decorator Label',
+                        },
+                        labels: {
+                            type: 'input',
+                            input: 'text',
+                            label: 'Decorator Property Names',
+                            props: {
+                                hint: 'comma separated property names'
+                            }
+                        },
+                    }
+                }
+                extras['nested-path-key'] = {
+                    type: 'input',
+                    input: 'text',
+                    label: 'Nested Path',
+                    class: 'col-12 ma-0 pa-0',
+                }
+                extras['map'] = {
+                    type: 'input',
+                    input: 'datatable',
+                    label: 'Objects',
+                    columns: [
+                        {
+                            id: 'id',
+                            label: 'ID'
+                        },
+                        {
+                            id: 'title',
+                            label: 'Title'
+                        },
+                        {
+                            id: 'color',
+                            label: 'Color'
+                        }
+                    ],
+                    'hide-search': false,
+                    props: {
+                        'show-select': true,
+                    },
+                    crud: {
+                        create: {
+                            fields: {
+                                id: TextSettings('ID'),
+                                title: TextSettings('Title'),
+                                color: {
+                                    type:'input',
+                                    input: 'color',
+                                    label: 'Color',
+                                }
+                            },
+                            options: {
+                                type: 'col',
+                            }
+                        }
+                    }
+                }
             } else if (type === 'amount') {
                 extras['currency'] = TextSettings('Currency')
                 extras['show_type'] = CheckboxSettings('Show type')
@@ -178,6 +244,10 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     {
                         id: 'amount',
                         title: 'Currency/Amount',
+                    },
+                    {
+                        id: 'objects-map',
+                        title: 'Objects Map',
                     },
                     {
                         id: 'custom',

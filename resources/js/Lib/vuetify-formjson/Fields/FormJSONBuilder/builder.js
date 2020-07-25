@@ -36,6 +36,9 @@ import GroupTreeviewSettings from './settings/GroupTreeview'
 import GroupSettings from './settings/Group'
 import DatatableColumnSettings from './settings/DatatableColumn'
 
+import ChartSettings       from './settings/reports/ChartSettings'
+
+
 /**
  * A mixin component for FormJSON Builder
  *  implements all necessary methods and properties for
@@ -83,6 +86,7 @@ export default {
             'AdminBar': new AdminBarTemplateSettings(),
             'AppBar': new AppBarTemplateSettings(),
             'vf-pagination-input': new PaginationSettings(),
+            'vf-reports-chart-input': new ChartSettings(),
         }
 
         const FormBuilderInputsList = []

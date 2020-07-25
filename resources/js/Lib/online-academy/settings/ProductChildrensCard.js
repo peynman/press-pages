@@ -17,6 +17,7 @@ export default class ProductChildrensCardSettings extends BaseInputSettings {
     getInputProperties() {
         return {
             ...CommonInputEssentials,
+            emptyMessage: TextSettings('Empty message'),
             xs: TextSettings('X-Small cols'),
             sm: TextSettings('Small cols'),
             md: TextSettings('Medium cols'),

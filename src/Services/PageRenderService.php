@@ -12,7 +12,7 @@ use Larapress\Pages\Models\Page;
 use Larapress\CRUD\ICRUDUser;
 use Larapress\Profiles\Repository\Domain\IDomainRepository;
 use Illuminate\Routing\Route;
-use Larapress\CRUD\Base\ICRUDService;
+use Larapress\CRUD\Services\ICRUDService;
 use Larapress\ECommerce\Services\Banking\IBankingService;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Http\Response;

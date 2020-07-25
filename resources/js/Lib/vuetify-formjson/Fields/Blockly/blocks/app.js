@@ -58,16 +58,6 @@ export default function (Blockly) {
                 .setCheck('String')
                 .setAlign(Blockly.ALIGN_RIGHT)
                 .appendField('')
-            this.appendValueInput('CHANNEL')
-                .setCheck('String')
-                .setAlign(Blockly.ALIGN_RIGHT)
-                .appendField('on channel')
-            this.appendStatementInput('onEvent')
-                .setCheck(null)
-                .setAlign(Blockly.ALIGN_RIGHT)
-                .appendField('on trigger')
-                .appendField(new Blockly.FieldVariable('event'), 'event')
-                .appendField('do')
             this.setPreviousStatement(true, null)
             this.setNextStatement(true, null)
             this.setColour(110)
@@ -75,15 +65,10 @@ export default function (Blockly) {
             this.setHelpUrl('')
         }
     }
-    Blockly.JavaScript.app_register_channel = function (block) {
-        const argument0 = Blockly.JavaScript.valueToCode(block, 'CHANNEL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
-        const argument1 = Blockly.JavaScript.valueToCode(block, 'EVENT', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
-        const innerCode = Blockly.JavaScript.statementToCode(block, 'onEvent')
-        const variableEvent = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('event'), Blockly.Variables.NAME_TYPE)
-
-        return `this.registerChannelListener(${argument1}, ${argument0}, (e) => { this.blockly.${variableEvent} = e; ${innerCode}\n})\n`
+    Blockly.JavaScript.app_show_snackbar = function (block) {
+        const argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.showSnack(${argument0})\n`
     }
-
 
     // get app state at a path
     Blockly.Blocks.app_new_filtered_from_state = {
@@ -661,6 +646,59 @@ export default function (Blockly) {
         var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         return `window.alert(${argument0})\n`
     }
+
+    // app open new tab
+    Blockly.Blocks.app_open_new_tab = {
+        init: function () {
+            this.appendValueInput('message')
+                .setCheck('String')
+                .appendField('window open in new tab')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_open_new_tab = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `window.open(${argument0})\n`
+    }
+
+    // app propet
+    Blockly.Blocks.app_ask = {
+        init: function () {
+            this.appendValueInput('message')
+                .setCheck('String')
+                .appendField('window ask')
+            this.setOutput(true, 'String')
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_ask = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return [`window.prompt(${argument0})`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    }
+
+
+    // app propet
+    Blockly.Blocks.app_confirm = {
+        init: function () {
+            this.appendValueInput('message')
+                .setCheck('String')
+                .appendField('window confrim')
+            this.setOutput(true, 'Boolean')
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_confirm = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return [`window.confirm(${argument0})`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    }
 }
 
 export const CategoryApp =
@@ -696,5 +734,8 @@ export const CategoryApp =
     <block type="app_console_log"></block>
     <block type="app_get_random_string"></block>
     <block type="app_window_alert"></block>
+    <block type="app_open_new_tab"></block>
+    <block type="app_ask"></block>
+    <block type="app_confirm"></block>
 </category>
 `

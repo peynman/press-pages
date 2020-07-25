@@ -8,6 +8,11 @@
 @import "../../node_modules/video.js/dist/video-js.min.css";
 @import "./videojs-skin.scss";
 
+.no-letter-spacing {
+    letter-spacing: 0 !important;
+}
+
+
 .ribbon {
     position: relative;
     display: inline-block;

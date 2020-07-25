@@ -11,6 +11,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./resources/js/Lib/online-academy/mixins.js");
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
+/* harmony import */ var _ProductPrice_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ProductPrice.vue */ "./resources/js/Lib/online-academy/ProductPrice.vue");
 //
 //
 //
@@ -43,11 +44,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    VCardActions: vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VCardActions"]
+    VCardActions: vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["VCardActions"],
+    ProductPrice: _ProductPrice_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   mixins: [_mixins__WEBPACK_IMPORTED_MODULE_0__["UserCartEditor"]],
   props: {
@@ -303,9 +312,15 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    !_vm.field.compact ? "VCardActions" : "div",
-    { tag: "component" },
+    !_vm.field.compact ? "VCardActions" : "VCardActions",
+    { tag: "component", staticClass: "justify-center" },
     [
+      _vm.field.compact
+        ? _c("ProductPrice", {
+            attrs: { product: _vm.product, field: { noIcon: true } }
+          })
+        : _vm._e(),
+      _vm._v(" "),
       _vm.hasPrice
         ? _c(
             "v-btn",

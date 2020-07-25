@@ -4,7 +4,7 @@ import {
     BaseInputSettings,
     TextSettings,
     CheckboxSettings
-} from '../../../vuetify-formjson/Fields/FormJSONBuilder/settings/comon'
+} from '../comon'
 
 
 export default class ChartSettings extends BaseInputSettings {
