@@ -65,7 +65,7 @@
             <!-- product details -->
             <v-card-text
               v-if="!field.compactMode || !isSM"
-              class="text--primary pa-0 mb-1"
+              class="text--primary pa-0 mb-1 pb-2"
             >
               <ProductCategories :product="product" />
               <div class="d-flex flex-column">
@@ -78,6 +78,7 @@
               </div>
             </v-card-text>
             <ProductActions
+              v-if="!field.noHover || !product.available"
               :product="product"
               :field="{compact: field.compactMode && isSM}"
             />

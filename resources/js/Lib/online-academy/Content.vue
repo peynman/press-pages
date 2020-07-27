@@ -4,8 +4,8 @@
     fluid
   >
     <v-row
-      align="start"
-      justify="start"
+      :align="align ? align : 'start'"
+      :justify="justify ? justify : 'start'"
     >
       <slot name="default" />
     </v-row>
@@ -15,5 +15,9 @@
 <script>
 export default {
     name: 'VfAppContent',
+    props: {
+        justify: String,
+        align: String,
+    }
 }
 </script>

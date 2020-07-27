@@ -16,6 +16,7 @@ use Larapress\CRUD\Services\ICRUDService;
 use Larapress\ECommerce\Services\Banking\IBankingService;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Session;
 use Larapress\Profiles\Repository\Form\IFormRepository;
 
 class PageRenderService implements IPageRenderService
@@ -83,7 +84,8 @@ class PageRenderService implements IPageRenderService
         /** @var  IProfileUser|ICRUDUser */
         $user = Auth::user();
         if (!$this->checkUserAccessToPage($user, $page)) {
-            return redirect('/signin')->with('endpoint', $request->path());
+            Session::put('endpoint', $request->path());
+            return redirect('/signin');
         }
 
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);

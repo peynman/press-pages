@@ -165,6 +165,7 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                 }
             } else if (type === 'amount') {
                 extras['currency'] = TextSettings('Currency')
+                extras['emptyMessage'] = TextSettings('Emppty message')
                 extras['show_type'] = CheckboxSettings('Show type')
                 extras['positive'] = TextSettings('Positive value')
                 extras['negative'] = TextSettings('Negative value')

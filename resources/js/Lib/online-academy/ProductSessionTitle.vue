@@ -24,11 +24,11 @@
         برگزار شد
       </v-chip>
       <v-chip
-        v-if="startTime.isValid() && !isEnded && !isStarted"
+        v-if="startTime.isValid() && !isEnded && !isStarted && remainTime !== ''"
         dense
         small
       >
-        {{ remainTime }}
+        {{ remainTime }} تا شروع کلاس
       </v-chip>
       <v-chip
         v-for="(badge, index) in badges"
@@ -98,10 +98,10 @@ export default {
             return moment(this.session.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm:ssZ', true);
         },
         isStarted () {
-            return this.session.data.types?.livestream?.status === 'live';
+            return this.session.data.types?.livestream?.status === 'live' || this.session.data.types?.ac_meeting?.status === 'live';
         },
         isEnded () {
-            return this.session.data.types?.livestream?.status === 'ended';
+            return this.session.data.types?.livestream?.status === 'ended' || this.session.data.types?.ac_meeting?.status === 'ended';
         },
         remainTime () {
             let duration = moment.duration(this.startTime.diff(moment()));
@@ -111,13 +111,8 @@ export default {
                 return this.startTime.locale('fa').format('dddd jDD jMMMM ساعت HH:mm')
             }
 
-            duration.subtract(moment.duration(days,'days'));
-            //Get hours and subtract from duration
-            const hours = duration.hours();
-            duration.subtract(moment.duration(hours,'hours'));
-            //Get Minutes and subtract from duration
-            const minutes = duration.minutes();
-            duration.subtract(moment.duration(minutes,'minutes'));
+            const hours = duration.asHours();
+            const minutes = duration.asMinutes();
             const msg = [];
             if (days > 1) {
                 msg.push(`${Math.floor(days)} روز`)

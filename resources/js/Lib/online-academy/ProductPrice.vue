@@ -26,7 +26,7 @@
     >
       {{ getProductPriceString(product) }}
       <v-chip
-        v-if="productPrice.takhfif && product.takhfif !== '' && !product.available"
+        v-if="productPrice.takhfif && product.takhfif !== ''"
         dense
         dark
         x-small
@@ -57,7 +57,7 @@ export default {
             return this.getProductPrice(this.product);
         },
         hasPrice() {
-            return this.product.data?.pricing?.length > 0
+            return this.product.data?.pricing?.length > 0 && (!this.product.available ||  this.getProductPriceValue(this.product)?.amount == 0);
         }
     },
 }

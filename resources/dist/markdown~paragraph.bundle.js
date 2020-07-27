@@ -3504,6 +3504,17 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 /***/ }),
 
 /***/ 10:
+/*!************************!*\
+  !*** crypto (ignored) ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 11:
 /*!**********************!*\
   !*** util (ignored) ***!
   \**********************/
@@ -3514,21 +3525,10 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 
 /***/ }),
 
-/***/ 11:
-/*!************************!*\
-  !*** buffer (ignored) ***!
-  \************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-
 /***/ 12:
-/*!************************!*\
-  !*** buffer (ignored) ***!
-  \************************/
+/*!**********************!*\
+  !*** util (ignored) ***!
+  \**********************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3580,10 +3580,10 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 
 /***/ }),
 
-/***/ 2:
-/*!**********************!*\
-  !*** util (ignored) ***!
-  \**********************/
+/***/ 17:
+/*!************************!*\
+  !*** buffer (ignored) ***!
+  \************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3591,10 +3591,10 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 
 /***/ }),
 
-/***/ 3:
-/*!**********************!*\
-  !*** util (ignored) ***!
-  \**********************/
+/***/ 18:
+/*!************************!*\
+  !*** buffer (ignored) ***!
+  \************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3625,9 +3625,9 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 /***/ }),
 
 /***/ 6:
-/*!************************!*\
-  !*** buffer (ignored) ***!
-  \************************/
+/*!**********************!*\
+  !*** util (ignored) ***!
+  \**********************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3636,9 +3636,9 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 /***/ }),
 
 /***/ 7:
-/*!************************!*\
-  !*** buffer (ignored) ***!
-  \************************/
+/*!**********************!*\
+  !*** util (ignored) ***!
+  \**********************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -3648,7 +3648,7 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 
 /***/ 8:
 /*!************************!*\
-  !*** crypto (ignored) ***!
+  !*** buffer (ignored) ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
@@ -3658,9 +3658,9 @@ var MermaidPlugin = function MermaidPlugin(md, options) {
 /***/ }),
 
 /***/ 9:
-/*!**********************!*\
-  !*** util (ignored) ***!
-  \**********************/
+/*!************************!*\
+  !*** buffer (ignored) ***!
+  \************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 

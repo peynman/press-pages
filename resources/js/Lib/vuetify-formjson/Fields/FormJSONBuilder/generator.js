@@ -168,7 +168,6 @@ export default {
         },
         arrayMergeWithObjects(target, items, key, mode) {
             let found = false;
-            console.log('array merge', target, items, key, mode);
             target.forEach((i) => {
                 items.forEach((j) => {
                     if (i[key] == j[key]) {
@@ -242,6 +241,22 @@ export default {
         },
         getFormSchemaPropName() {
             return 'formSchema'
+        },
+        safeFilter(o, callback) {
+            if (o) {
+                if (Array.isArray(o)) {
+                    return o.filter((i) => callback(i));
+                } else {
+                    const out = [];
+                    for (const l in o) {
+                        if (callback(o[l])) {
+                            out.push(o[l]);
+                        }
+                    }
+                    return out;
+                }
+            }
+            return [];
         },
         webRequest(data) {
             console.log(data)

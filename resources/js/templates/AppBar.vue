@@ -1,5 +1,7 @@
 <template>
-  <v-main :id="id">
+  <v-main
+    :id="id"
+  >
     <v-navigation-drawer
       v-model="drawer"
       temporary
@@ -279,6 +281,7 @@
     <v-container
       class="align-start"
       fluid
+      style="min-height: 50%;"
     >
       <v-row
         align="start"
@@ -290,7 +293,7 @@
         >
           <vuetify-formjson
             v-model="formModel"
-            v-bind="this[this.getFormSchemaPropName()]"
+            v-bind="formSchema"
           />
         </v-col>
       </v-row>
@@ -406,11 +409,11 @@ export default {
                         title: "تراکنش های من",
                         href: "/me/carts"
                     });
-                    navs.push({
-                        icon: "mdi-gift",
-                        title: "اعتبار هدیه",
-                        href: "/me/forward"
-                    });
+                    // navs.push({
+                    //     icon: "mdi-gift",
+                    //     title: "اعتبار هدیه",
+                    //     href: "/me/forward"
+                    // });
                     navs.push({
                         icon: "mdi-credit-card",
                         inputs: {

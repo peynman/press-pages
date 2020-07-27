@@ -20,6 +20,7 @@
     <div id="App"></div>
     <script>
         window.PageConfig = {!! json_encode($config) !!};
+        window.SessionData = {!! json_encode(session()->all()) !!},
         window.echoConfig = {
             protocol: window.location.protocol.startsWith('https') ? 'https':'http',
             host: window.location.hostname,

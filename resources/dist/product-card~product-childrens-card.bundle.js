@@ -238,9 +238,9 @@ __webpack_require__.r(__webpack_exports__);
       return this.getProductPrice(this.product);
     },
     hasPrice: function hasPrice() {
-      var _this$product$data, _this$product$data$pr;
+      var _this$product$data, _this$product$data$pr, _this$getProductPrice;
 
-      return ((_this$product$data = this.product.data) === null || _this$product$data === void 0 ? void 0 : (_this$product$data$pr = _this$product$data.pricing) === null || _this$product$data$pr === void 0 ? void 0 : _this$product$data$pr.length) > 0;
+      return ((_this$product$data = this.product.data) === null || _this$product$data === void 0 ? void 0 : (_this$product$data$pr = _this$product$data.pricing) === null || _this$product$data$pr === void 0 ? void 0 : _this$product$data$pr.length) > 0 && (!this.product.available || ((_this$getProductPrice = this.getProductPriceValue(this.product)) === null || _this$getProductPrice === void 0 ? void 0 : _this$getProductPrice.amount) == 0);
     }
   }
 });
@@ -440,9 +440,7 @@ var render = function() {
                   _vm._s(_vm.getProductPriceString(_vm.product)) +
                   "\n    "
               ),
-              _vm.productPrice.takhfif &&
-              _vm.product.takhfif !== "" &&
-              !_vm.product.available
+              _vm.productPrice.takhfif && _vm.product.takhfif !== ""
                 ? _c(
                     "v-chip",
                     {

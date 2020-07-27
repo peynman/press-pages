@@ -1,5 +1,8 @@
 <template>
-  <v-card shaped>
+  <v-card
+    shaped
+    :class="`vf-input ${ field.class ? field.class : ''}`"
+  >
     <v-row class="align-center justify-center">
       <v-col
         cols="12"
@@ -7,9 +10,10 @@
         md="6"
       >
         <v-img
-          max-width="300"
+          :max-width="field.maxWidth ? field.maxWidth : '300px'"
+          :max-height="field.maxHeight ? field.maxHeight : '100%'"
           class="ma-auto"
-          src="/storage/images/logo-big.jpeg"
+          :src="field.image"
         />
       </v-col>
       <v-col
@@ -17,7 +21,11 @@
         sm="12"
         md="6"
       >
-        <slot />
+        <vf-fields-renderer
+          v-model="devalue"
+          :fields="field.content"
+          :options="field.options"
+        />
       </v-col>
     </v-row>
   </v-card>
@@ -30,6 +38,20 @@ export default {
         field: Object,
         value: Object,
         id: String,
+    },
+    emits: ['input'],
+    data: (vm) => {
+        return {
+            devalue: vm.value,
+        }
+    },
+    watch: {
+        devalue: {
+            deeep: true,
+            handle() {
+                this.$emit('input', this.devalue);
+            }
+        }
     }
 };
 </script>

@@ -1,5 +1,7 @@
 import {
-    BaseInputSettings
+    BaseInputSettings,
+    TextSettings,
+    CheckboxSettings
 } from './comon'
 
 export default class GroupExpansionSettings extends BaseInputSettings {

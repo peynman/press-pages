@@ -70,7 +70,7 @@ export default function (Blockly) {
         return `this.showSnack(${argument0})\n`
     }
 
-    // get app state at a path
+    // duplicate object from state
     Blockly.Blocks.app_new_filtered_from_state = {
         init: function () {
             this.appendValueInput('PATH')
@@ -101,6 +101,7 @@ export default function (Blockly) {
         return [`this.duplicateObjectAndFilter(${argument0}, (k, v) => {\nthis.blockly.${vKey} = k; this.blockly.${vValue} = v; ${innerCode}\n return this.blockly.${vInclude}\n})`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
     }
 
+
     // get app state at a path
     Blockly.Blocks.app_get_from_state = {
         init: function () {
@@ -116,6 +117,24 @@ export default function (Blockly) {
     Blockly.JavaScript.app_get_from_state = function (block) {
         var argument0 = Blockly.JavaScript.valueToCode(block, 'path', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         return ['this.getStateFromNestedPath(' + argument0 + ')', Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    }
+
+
+    // get window at a path
+    Blockly.Blocks.app_get_from_window = {
+        init: function () {
+            this.appendValueInput('path')
+                .setCheck('String')
+                .appendField('Get window value at path')
+            this.setOutput(true, ['Array', 'String', 'Object', 'Number', 'Boolean'])
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_get_from_window = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'path', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return ['this.getNestedPathValue(window, ' + argument0 + ')', Blockly.JavaScript.ORDER_FUNCTION_CALL]
     }
 
     // change app state at a path
@@ -713,6 +732,7 @@ export const CategoryApp =
     <block type="app_append_form_values"></block>
     <block type="app_reset_form_schema"></block>
     <block type="app_get_from_state"></block>
+    <block type="app_get_from_window"></block>
     <block type="app_form_value_at_path"></block>
     <block type="app_form_response_alert"></block>
     <block type="app_form_values"></block>

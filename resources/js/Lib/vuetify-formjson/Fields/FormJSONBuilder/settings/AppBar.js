@@ -15,27 +15,8 @@ export default class AppBarTemplateSettings extends BaseInputSettings {
 
     getInputProperties () {
         return {
-            labels: {
-                options: {
-                    type: 'col',
-                    formClass: 'pa-0'
-                },
-                fields: {
-                    signin: TextSettings('Sign in string'),
-                    singup: TextSettings('Sign up string'),
-                    tel: TextSettings('Phone number'),
-
-                },
-            },
-            links: {
-                options: {
-                    type: 'col',
-                    formClass: 'pa-0'
-                },
-                fields: {
-
-                },
-            },
+            align: TextSettings('Align content'),
+            justify: TextSettings('Justify content'),
         }
     }
 }

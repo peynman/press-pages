@@ -1,14 +1,32 @@
 <template>
-  <v-footer dark padless>
-    <v-card flat tile class="grey darken1-1 white--text text-center pt-2">
+  <v-footer
+    dark
+    padless
+  >
+    <v-card
+      flat
+      tile
+      class="grey darken1-1 white--text text-center pt-2"
+    >
       <v-card-text class="white--text pt-0">
         <v-row>
-          <v-col cols="12" md="6" justify-start class="text-start">
+          <v-col
+            cols="12"
+            md="6"
+            justify-start
+            class="text-start"
+          >
             <v-row>
-              <v-col cols="4" class="justify-center">
-                  <v-img src="../../../images/logo-big.jpeg"></v-img>
+              <v-col
+                cols="4"
+                class="justify-center"
+              >
+                <v-img src="../../../images/logo-big.jpeg" />
               </v-col>
-              <v-col cols="8" class="justify-center">
+              <v-col
+                cols="8"
+                class="justify-center"
+              >
                 «درباره ی تخته سیاه»
                 هولدینگ تخته سیاه مجموعه ای است‌ که از سال ۱۳۸۳ فعالیت خود را در قالب چاپ کتاب های آموزشی در زمینه ی کنکور آغاز کرده است و‌ تا به امروز بیش‌ از ۱۰۰۰ عنوان کتاب مختلف به چاپ رسانده است که بسیاری از این عناوین مثل کتاب های ژنتیک،گیاهی،تاریخ ادبیات،ریاضیات جامع و ... بارها و بارها تجدید چاپ شده اند.
                 در حال حاضر این هولدینگ دارای شاخه های زیر میباشد:
@@ -19,8 +37,15 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-col cols="12" md="6" class="justify-center">
-            <v-list dense class="grey darken1-1">
+          <v-col
+            cols="12"
+            md="6"
+            class="justify-center"
+          >
+            <v-list
+              dense
+              class="grey darken1-1"
+            >
               <v-list-item>راه‌های ارتباطی</v-list-item>
               <v-list-item>دفتر مرکزی: تهران - تهران - انقلاب -خیابان 12 فروردین - خیابان وحید نظری - پلاک 99</v-list-item>
               <v-list-item>تلفن تماس: ۰۹۳۶۱۲۲۲۱۲۰</v-list-item>
@@ -31,12 +56,12 @@
               :src="item"
               max-height="150px"
               max-width="150px"
-            ></v-img>
+            />
           </v-col>
         </v-row>
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-card-text class="white--text">
         {{ new Date().getFullYear() }} —
@@ -48,17 +73,17 @@
 
 <script>
 export default {
-  name: "app-footer",
-  data: () => ({
-    imageBank: ["/logo.png"],
-    svgs: [
-      {
-        name: "insta",
-        image: "/logo.png",
-        ref: ""
-      },
-      { name: "insta3", image: "../../../public/logo.png" }
-    ]
-  })
+    name: "AppFooter",
+    data: () => ({
+        imageBank: ["/logo.png"],
+        svgs: [
+            {
+                name: "insta",
+                image: "/logo.png",
+                ref: ""
+            },
+            { name: "insta3", image: "../../../public/logo.png" }
+        ]
+    })
 };
 </script>

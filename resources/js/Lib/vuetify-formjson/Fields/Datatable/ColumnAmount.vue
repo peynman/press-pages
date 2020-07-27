@@ -1,7 +1,6 @@
 <template>
   <span>
     {{ amountString }}&nbsp;
-    {{ column.currency }}
     <v-chip
       v-if="column.show_type"
       dense
@@ -29,11 +28,17 @@ export default {
             }
         },
         amountString () {
-            const v = Math.abs(this.getNestedPathValue(this.item, this.column.id));
-            if (isNaN(v)) {
-                return this.getNestedPathValue(this.item, this.column.id);
+            const val = this.getNestedPathValue(this.item, this.column.id);
+            console.log(val);
+            if (val) {
+                const v = Math.abs(this.getNestedPathValue(this.item, this.column.id));
+                if (isNaN(v)) {
+                    return this.getNestedPathValue(this.item, this.column.id);
+                }
+                return v.toLocaleString('fa-IR').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' ' + this.column.currency
+            } else {
+                return this.column.emptyMessage ? this.column.emptyMessage : '';
             }
-            return v.toLocaleString('fa-IR').replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         },
     }
 };

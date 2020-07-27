@@ -24,8 +24,6 @@ export default class FieldsRenderSettings extends BaseInputSettings {
         ]
     }
 
-
-
     getInputProperties (item) {
         return {
             id: {
@@ -35,6 +33,7 @@ export default class FieldsRenderSettings extends BaseInputSettings {
                 class: 'col-12 ma-0 ps-0 pe-0',
                 updateKeyCodes: [13]
             },
+            hidden: CheckboxSettings('Hidden'),
             options: {
                 options: {
                     type: 'row',

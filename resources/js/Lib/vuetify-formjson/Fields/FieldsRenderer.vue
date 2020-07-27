@@ -1,6 +1,7 @@
 <template>
   <component
     :is="getRootComponent()"
+    v-show="!options || options.hidden !== true"
     :class="`${options && options.formClass ? options.formClass : ''}`"
     v-bind="getRootComponentProps()"
   >

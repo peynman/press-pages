@@ -16,11 +16,6 @@
 
 <script>
 export default {
-    components: {
-        'ProductVideoLink': () => import(/* webpackChunkName: "video-link"*/ './ProductVideoLink.vue'),
-        'VfVideoPlayerInput': () => import(/* webpackChunkName: "video-player"*/ './VideoPlayer.vue'),
-        'VfLivestreamInput': () => import(/* webpackChunkName: "live-window"*/ './LivestreamWindow.vue'),
-    },
     props: {
         session: Object,
         id: String,
@@ -43,38 +38,66 @@ export default {
                 switch (type.name) {
                 case 'vod_link':
                     contents.push({
-                        component: 'ProductVideoLink',
+                        component: 'vf-product-video-link-input',
                         props: {
-                            product: this.session,
+                            field: {
+                                label: this.session.data.title,
+                                url: this.session.data.types?.vod_link.url,
+                                width: this.session.data.types?.vod_link.width,
+                                height: this.session.data.types?.vod_link.height,
+                                isYoutube: this.session.data.types?.vod_link.tag !== 'kavimo',
+                            },
+                            id: 'session-' + this.session.id  +'-v-link',
                         }
                     });
                     break;
                 case 'vod_hls':
                     contents.push({
-                        component: 'VfVideoPlayerInput',
+                        component: 'vf-video-player-input',
                         props: {
                             field: {
                                 label: this.session.data.title,
                                 url: '/vod/' + this.session.id + '/link/' + this.session.data.types.vod_hls.file_id + '/stream',
                                 ...this.session.data.types.vod_hls,
                             },
-                            id: 'session-' + this.session.id  +'-link-' + this.session.data.types.vod_hls.file_id,
+                            id: 'session-' + this.session.id  +'-hls-' + this.session.data.types.vod_hls.file_id,
                         }
                     });
                     break;
                 case 'livestream':
-                    if (this.session.data.types.livestream?.status === 'live') {
+                    if (this.session.data.types?.livestream?.status === 'live') {
                         contents.push({
-                            component: 'VfLivestreamInput',
+                            component: 'vf-livesstream-input',
                             props: {
                                 field: {
-                                    ...this.session
+                                    ...this.session,
+                                    ...this.session.data.types?.livestream,
+                                    extras : this.session.children.filter(c => c.types.filter((t) => t.name === 'ac_meeting').length > 0).map((c) => ({
+                                        ...c,
+                                        ...c.data.types.ac_meeting,
+                                    }))
+                                },
+                            }
+                        });
+                    }
+                    break;
+                case 'ac_meeting':
+                    if (this.session.data.types?.ac_meeting?.status === 'live') {
+                        contents.push({
+                            component: 'vf-ac-session-link-input',
+                            props: {
+                                field: {
+                                    label: this.session.data.title,
+                                    ...this.session,
+                                    ac_session_id: this.session.id,
+                                    ...this.session.data.types?.ac_meeting,
                                 },
                             }
                         });
                     }
                     break;
                 case 'file_pdf':
+
                     break;
                 }
             }

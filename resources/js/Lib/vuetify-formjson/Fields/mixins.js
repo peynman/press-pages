@@ -20,37 +20,37 @@ export default {
             if (this.field.validations) {
                 for (const rule in this.field.validations) {
                     switch (rule) {
-                        case 'required':
-                            if (this.field.validations[rule]) {
-                                rules.push((value) => !!value || 'پر کردن این قسمت الزامی است')
-                            }
-                            break;
-                        case 'minLength':
-                            if (isNumber(this.field.validations[rule])) {
-                                rules.push((value) => value.length >= this.field.validations[rule] || 'حداقل تعداد کاراکتر ها ' + this.field.validations[rule] + ' است ' )
-                            }
-                            break;
-                        case 'maxLength':
-                            if (isNumber(this.field.validations[rule])) {
-                                rules.push((value) => value.length <= this.field.validations[rule] || 'جداکثر تعداد کاراکتر ها ' + this.field.validations[rule] + ' است ' )
-                            }
-                            break;
-                        case 'numeric':
-                            if (this.field.validations[rule]) {
-                                rules.push((value) => !isNaN(parseFloat(value)) && isFinite(value) || 'مقدار ورودی باید عدد باشد، لطفا مقدار مورد نظر را با حروف انگلیسی وارد کنید')
-                            }
-                            break;
-                        case 'ascii':
-                            if (this.field.validations[rule]) {
-                                rules.push((value) => /^[\x00-\x7F]*$/.test(value) || 'لطفا این قسمت را با حروف انگلیسی پر کنید')
-                            }
-                            break;
-                        case 'farsi':
-                            if (this.field.validations[rule]) {
-                                rules.push((value) => /^[\u0600-\u06FF ]*$/.test(value) || 'لطفا این قسمت را با حروف فارسی پر کنید')
-                            }
-                            break;
+                    case 'required':
+                        if (this.field.validations[rule]) {
+                            rules.push((value) => !!value || 'پر کردن این قسمت الزامی است')
                         }
+                        break;
+                    case 'minLength':
+                        if (isNumber(this.field.validations[rule])) {
+                            rules.push((value) => value.length >= this.field.validations[rule] || 'حداقل تعداد کاراکتر ها ' + this.field.validations[rule] + ' است ' )
+                        }
+                        break;
+                    case 'maxLength':
+                        if (isNumber(this.field.validations[rule])) {
+                            rules.push((value) => value.length <= this.field.validations[rule] || 'جداکثر تعداد کاراکتر ها ' + this.field.validations[rule] + ' است ' )
+                        }
+                        break;
+                    case 'numeric':
+                        if (this.field.validations[rule]) {
+                            rules.push((value) => !isNaN(parseFloat(value)) && isFinite(value) || 'مقدار ورودی باید عدد باشد، لطفا مقدار مورد نظر را با حروف انگلیسی وارد کنید')
+                        }
+                        break;
+                    case 'ascii':
+                        if (this.field.validations[rule]) {
+                            rules.push((value) => /^[\x00-\x7F]*$/.test(value) || 'لطفا این قسمت را با حروف انگلیسی پر کنید')
+                        }
+                        break;
+                    case 'farsi':
+                        if (this.field.validations[rule]) {
+                            rules.push((value) => /^[\u0600-\u06FF ]*$/.test(value) || 'لطفا این قسمت را با حروف فارسی پر کنید')
+                        }
+                        break;
+                    }
                 }
             }
 

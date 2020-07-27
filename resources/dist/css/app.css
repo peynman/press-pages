@@ -470,7 +470,7 @@ This set of fonts are used in this project under the license: (.....)
   width: 50px !important;
 }
 
-/* (ignored) *//* (ignored) */var map = {
+var map = {
 	"./fa": "./node_modules/moment/locale/fa.js",
 	"./fa.js": "./node_modules/moment/locale/fa.js"
 };
@@ -493,7 +493,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./node_modules/moment/locale sync recursive [/\\\\](fa(\\.js)?)$";/* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) */var map = {
+webpackContext.id = "./node_modules/moment/locale sync recursive [/\\\\](fa(\\.js)?)$";/* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) *//* (ignored) */var map = {
 	"./locale": "./node_modules/moment-mini/locale/locale.js",
 	"./locale.js": "./node_modules/moment-mini/locale/locale.js"
 };

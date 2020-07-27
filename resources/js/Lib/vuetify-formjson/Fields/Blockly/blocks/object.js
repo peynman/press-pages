@@ -63,7 +63,6 @@ export default function (Blockly) {
         return [`this.getNestedPathValue(${argument0}, ${argument1})\n`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
     }
 
-
     // object assign
     Blockly.Blocks.obj_assign = {
         init: function () {
@@ -84,6 +83,57 @@ export default function (Blockly) {
         var argument0 = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         return [`Object.assign(${argument0}, ${argument2})\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
+    }
+
+
+    // array contains value
+    Blockly.Blocks.arr_contains = {
+        init: function () {
+            this.appendValueInput('ARR')
+                .setCheck('Array')
+                .appendField('Array')
+            this.appendValueInput('VAL')
+                .setCheck(['Object', 'String', 'Number', 'Array', 'Boolean'])
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('contains value')
+            this.setOutput(true, 'Boolean')
+            this.setColour(260)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.arr_contains = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'ARR', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return [`${argument0} && Array.isArray(${argument0}) && ${argument0}.includes(${argument2})\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
+    }
+
+
+    // array contains object with value
+    Blockly.Blocks.arr_contains_obj = {
+        init: function () {
+            this.appendValueInput('ARR')
+                .setCheck('Array')
+                .appendField('Array')
+            this.appendValueInput('VAL')
+                .setCheck(['Object', 'String', 'Number', 'Array', 'Boolean'])
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('contains value')
+            this.appendValueInput('KEY')
+                .setCheck(['Object', 'String', 'Number', 'Array', 'Boolean'])
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('at key')
+            this.setOutput(true, 'Boolean')
+            this.setColour(260)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.arr_contains_obj = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'ARR', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument1 = Blockly.JavaScript.valueToCode(block, 'VAL', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return [`(this.safeFilter(${argument0}, (i) => (this.getNestedPathValue(i, ${argument2}) == ${argument1})).length > 0)\n`, Blockly.JavaScript.ORDER_ASSIGNMENT]
     }
 
     // array push

@@ -1,5 +1,13 @@
 <template>
   <v-card>
+    <v-alert
+      :value="hasAlert"
+      :type="alertType"
+      dismissible
+      class="ma-2"
+    >
+      {{ alertMessage }}
+    </v-alert>
     <v-card-title>
       <v-icon
         large
@@ -10,7 +18,7 @@
       {{ field.label }}
     </v-card-title>
     <v-card-text>
-      <v-simple-table>
+      <v-simple-table v-if="!field.singleCartMode">
         <template #default>
           <thead>
             <tr>
@@ -23,7 +31,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="(item, index) in user.current_cart.items"
+              v-for="(item, index) in targetCartItems"
               :key="`${id}-app-bar-cart-items-${index}`"
             >
               <td>{{ title(item) }}</td>
@@ -66,7 +74,13 @@
           </tbody>
         </template>
       </v-simple-table>
-      <v-row v-if="user.current_cart.items.length > 0">
+      <v-row v-else>
+        <v-col cols="12">
+          <strong>{{ targetCart.data.periodic_pay.product.title }}</strong> - &nbsp;&nbsp;
+          پرداخت قسط {{ targetCart.data.periodic_pay.index }} از {{ targetCart.data.periodic_pay.total }} قسط به مبلغ {{ priceTagString }}
+        </v-col>
+      </v-row>
+      <v-row v-if="targetCartItems.length > 0 || field.singleCartMode">
         <v-col
           cols="12"
           md="6"
@@ -99,7 +113,7 @@
         </v-col>
       </v-row>
       <div
-        v-if="user.current_cart.items.length == 0"
+        v-if="targetCartItems.length == 0 && !field.singleCartMode"
         class="text-center ma-3"
       >
         سبد خرید شما خالی است
@@ -108,6 +122,7 @@
     <v-card-text>
       <v-row>
         <v-col
+          v-if="!field.hideTakhfif"
           cols="12"
           md="2"
           sm="3"
@@ -117,6 +132,7 @@
           <strong>کد تخفیف دارم</strong>
         </v-col>
         <v-col
+          v-if="!field.hideTakhfif"
           cols="12"
           md="4"
           sm="9"
@@ -138,6 +154,7 @@
                 outlined
                 dense
                 color="primary"
+                class="no-letter-spacing"
                 @click="checkCode()"
               >
                 اعمال کد
@@ -180,12 +197,12 @@
     </v-card-text>
     <v-card-actions>
       <v-btn
-        class="ma-auto my-5 pa-3"
+        class="ma-auto my-5 pa-3 no-letter-spacing"
         color="success"
         rounded
         large
         outlined
-        :disabled="user.current_cart.items.length == 0"
+        :disabled="targetCartItems.length == 0 && !field.singleCartMode"
         :loading="loadingBtn"
         @click="goToBank()"
       >
@@ -217,6 +234,21 @@ export default {
         giftCode: null
     }),
     computed: {
+        hasAlert () {
+            return window.SessionData.answer != null;
+        },
+        alertMessage () {
+            return window.SessionData.answer?.message;
+        },
+        alertType () {
+            return window.SessionData.answer?.type ?? 'error';
+        },
+        targetCart () {
+            return this.field.cart ? this.field.cart : this.user.current_cart;
+        },
+        targetCartItems () {
+            return this.targetCart.items ?? [];
+        },
         gateways: function() {
             const gateways = [];
             if (this.field.gateways) {
@@ -243,26 +275,13 @@ export default {
         totalPrice: function() {
             let price = this.totalPriceVal;
             return (
-                price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                price.toLocaleString('fa-IR').replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
         " " +
         this.$store.state.currencies[1]
             );
         },
         totalPriceVal: function() {
-            let price = 0;
-            this.user.current_cart.items.forEach(it => {
-                if (this.periodic[it.id]) {
-                    price += parseInt(
-                        it.data.price_periodic.sort((a, b) => a.priority > b.priority)[0]
-                            .amount
-                    );
-                } else {
-                    const v = this.getProductPriceValue(it);
-                    if (v) {
-                        price += parseInt(v.amount);
-                    }
-                }
-            });
+            let price = this.priceTag;
 
             if (this.giftCode?.amount) {
                 price -= parseInt(this.giftCode.amount);
@@ -276,12 +295,41 @@ export default {
 
             return price;
         },
+        priceTag: function () {
+            let price = 0;
+            if (this.field.singleCartMode) {
+                price = parseInt(this.targetCart.amount);
+            } else {
+                this.targetCartItems.forEach(it => {
+                    if (this.periodic[it.id]) {
+                        price += parseInt(
+                            it.data.price_periodic.sort((a, b) => a.priority > b.priority)[0]
+                                .amount
+                        );
+                    } else {
+                        const v = this.getProductPriceValue(it);
+                        if (v) {
+                            price += parseInt(v.amount);
+                        }
+                    }
+                });
+            }
+
+            return price;
+        },
+        priceTagString () {
+            return (
+                this.priceTag.toLocaleString('fa-IR').replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+        " " +
+        this.$store.state.currencies[1]
+            );
+        },
         giftPrice() {
             if (this.giftCode?.amount) {
                 return (
-          this.giftCode?.amount
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                    this.giftCode?.amount
+                        .toLocaleString('fa-IR')
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           " " +
           this.$store.state.currencies[1]
                 );
@@ -290,8 +338,8 @@ export default {
         },
         balance() {
             return (
-                this.user.balance.amount
-                    .toString()
+                parseInt(this.user.balance.amount)
+                    .toLocaleString('fa-IR')
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
         " " +
         this.user.balance.currency.title
@@ -306,13 +354,12 @@ export default {
             }
         }
     },
-    mounted() {},
     methods: {
         goToBank() {
             const host = this.$store.state.host;
             this.loadingBtn = true;
             this.axios({
-                url: "/api/me/current-cart/update",
+                url: "/api/me/" + this.targetCart.id + "/update",
                 method: "POST",
                 headers: host.getWebAuthHeaders({ Accept: "application/json" }),
                 data: {
@@ -333,7 +380,7 @@ export default {
               "/bank-gateways/" +
               this.gateways[this.gatewayIndex].id +
               "/redirect/" +
-              this.user.current_cart.id;
+              this.targetCart.id + "?return_to=" + window.location.pathname;
                     }
                 })
                 .catch(error => {

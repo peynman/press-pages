@@ -44,7 +44,7 @@
           <v-row
             no-gutters
           >
-            <VfVideoPlayerInput
+            <vf-video-player-input
               :field="mainPlayerField"
             />
           </v-row>
@@ -55,7 +55,7 @@
               cols="12"
               sm="6"
             >
-              <VfVideoPlayerInput
+              <vf-video-player-input
                 :field="player"
               />
             </v-col>
@@ -66,10 +66,7 @@
               <v-card>
                 <v-card-title>تخته ارتباط</v-card-title>
                 <v-card-text>
-                  <vf-stackedit-input
-                    v-model="boardContent"
-                    :field="{}"
-                  />
+                  s
                 </v-card-text>
               </v-card>
             </v-col>
@@ -83,9 +80,6 @@
 <script>
 export default {
     name: 'VfLivestreamInput',
-    components: {
-        'VfVideoPlayerInput': () => import(/* webpackChunkName: "video-player"*/ './VideoPlayer.vue'),
-    },
     props: {
         // field is the product model in db
         // with its original role in formjson
@@ -100,22 +94,20 @@ export default {
     computed: {
         extraPlayers () {
             const extras = [];
-            this.field.children?.forEach((f) => {
-                if (f.types.map((t) => t.name).includes('livestream')) {
-                    extras.push({
-                        url: f.data.types.livestream.is_remote ? f.data.types.livestream.key : '/livestream/live/' + f.data.types.livestream.key + '.m3u8',
-                        modePlain: true,
-                        class: '',
-                        height: '320px',
-                    })
-                }
+            this.field.extras?.forEach((f) => {
+                extras.push({
+                    url: f.is_remote ? f.key : '/livestream/live/' + f.key + '.m3u8',
+                    modePlain: true,
+                    autoPlay: true,
+                    class: '',
+                    height: '320px',
+                })
             })
             return extras;
         },
         mainPlayerField () {
-            console.log(this.field.data.types.livestream.is_remote);
             const field = {
-                url: this.field.data.types.livestream.is_remote ? this.field.data.types.livestream.key : '/livestream/live/' + this.field.data.types.livestream.key + '.m3u8',
+                url: this.field.is_remote ? this.field.key : '/livestream/live/' + this.field.key + '.m3u8',
                 modePlain: true,
                 autoPlay: true,
                 class: ''
