@@ -2,8 +2,15 @@
   <div :class="`vf-input ${field.class ? field.class : ''}`">
     <v-btn
       outlined
-      @click="onVerifyACMeeting"
+      class="no-letter-spacing"
+      @click="onStartDownload"
     >
+      <v-icon
+        v-if="field.icon"
+        class="me-1"
+      >
+        {{ field.icon }}
+      </v-icon>
       {{ field.label }}
     </v-btn>
   </div>
@@ -18,12 +25,8 @@ export default {
         id: String
     },
     methods: {
-        onVerifyACMeeting () {
-            const host = this.$store.state.host;
-            host.axios({
-                method: 'POST',
-                url: '/api/adobe-connect/verify/' + this.field.ac_meeting.id,
-            })
+        onStartDownload () {
+            window.open(`/session/${this.field.session_id}/${this.field.file_type}/${this.field.file_id}/download`)
         }
     }
 }

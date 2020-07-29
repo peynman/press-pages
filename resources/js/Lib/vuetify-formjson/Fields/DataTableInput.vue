@@ -17,13 +17,14 @@
       class="ma-0 pa-0"
     >
       <v-btn
-        v-if="field.table && field.table['reports-url']"
+        v-if="!field['hide-settings']"
         x-small
         icon
-        :href="field.table['reports-url']"
+        :color="showSettings ? 'warning':'secondary'"
+        @click="showSettings = !showSettings"
       >
         <v-icon small>
-          mdi-chart-pie
+          {{ showSettings ? 'mdi-close' : 'mdi-format-header-1' }}
         </v-icon>
       </v-btn>
       <v-btn
@@ -35,6 +36,16 @@
       >
         <v-icon small>
           {{ showFilters ? 'mdi-close' : 'mdi-filter-plus-outline' }}
+        </v-icon>
+      </v-btn>
+      <v-btn
+        v-if="field.table && field.table['reports-url']"
+        x-small
+        icon
+        :href="field.table['reports-url']"
+      >
+        <v-icon small>
+          mdi-chart-pie
         </v-icon>
       </v-btn>
       <vf-datatable-dialog-create
@@ -90,6 +101,35 @@
         @accept="onRemoveSelected()"
       />
     </v-toolbar>
+    <v-expand-transition>
+      <v-card
+        v-show="showSettings"
+        flat
+        class="mb-2"
+      >
+        <v-divider />
+        <vf-fields-renderer
+          v-model="customSettings"
+          :value="customSettings"
+          :fields="tableSettingsFields"
+          :options="tableSettingsOptions"
+        />
+        <v-divider />
+        <v-card-actions class="d-flex flex-row justify-start">
+          <v-spacer />
+          <v-btn
+            :color="settingsSavedRecently ? 'green':'secondary'"
+            outlined
+            small
+            dense
+            class="my-auto"
+            @click="saveSettings()"
+          >
+            ذخیره تنظیمات
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-expand-transition>
     <v-expand-transition v-if="field.crud && field.crud.filters">
       <v-card
         v-show="showFilters"
@@ -271,6 +311,7 @@ export default {
         showCreate: false,
         showSearch: false,
         showFilters: false,
+        showSettings: false,
         loading: false,
         editMode: false,
         loadingId: 0,
@@ -285,6 +326,7 @@ export default {
         expandTemplate: null,
         expandTemplateDefaultMetadata: null,
         customFilters: {},
+        customSettings: {},
         exportLoading: false,
     }),
     computed: {
@@ -293,6 +335,9 @@ export default {
             if (this.field.columns) {
                 for (const indexer in this.field.columns) {
                     const h = this.field.columns[indexer];
+                    if (this.customSettings.hidden && this.customSettings.hidden[h.id]) {
+                        continue;
+                    }
                     headers.push({
                         text: h.label,
                         value: h.id,
@@ -361,7 +406,36 @@ export default {
                     : this.response.error,
                 messages: this.response.data.errors
             };
-        }
+        },
+        tableSettingsFields () {
+            const fields = {};
+            if (this.field.columns) {
+                const objects = [];
+                for (const indexer in this.field.columns) {
+                    const c = this.field.columns[indexer];
+                    objects.push({
+                        id: c.id,
+                        title: c.label,
+                    });
+                }
+                fields.hidden = {
+                    type: 'input',
+                    label: 'حذف نمایش سطون',
+                    input: 'objects-list',
+                    objects: objects,
+                    decorator: {
+                        label: ':title'
+                    }
+                }
+
+            };
+            return fields;
+        },
+        tableSettingsOptions () {
+            return {
+                type: 'col',
+            }
+        },
     },
     watch: {
         devalue: {
@@ -393,6 +467,9 @@ export default {
         }
     },
     mounted() {
+        if (this.field.table?.query?.url) {
+            this.customSettings = JSON.parse(localStorage.getItem('crud.datatable.' + this.field.table.query.url));
+        }
         this.updateTable();
     },
     methods: {
@@ -579,6 +656,12 @@ export default {
         updateSearch(ev) {
             if (ev.keyCode === 13) {
                 this.updateTable();
+            }
+        },
+        saveSettings() {
+            if (this.field.table?.query?.url) {
+                localStorage.setItem('crud.datatable.' + this.field.table.query.url, JSON.stringify(this.customSettings));
+                this.settingsSavedRecently = true;
             }
         }
     }

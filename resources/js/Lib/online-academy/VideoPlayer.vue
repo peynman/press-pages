@@ -11,7 +11,11 @@
       class="no-letter-spacing"
       @click="dialog = true"
     >
-      <v-icon>mdi-play</v-icon> {{ field.label }}
+      <v-icon
+        class="me-1"
+      >
+        mdi-play
+      </v-icon> {{ field.label }}
     </v-btn>
     <v-dialog
       v-if="!field.modePlain"
@@ -81,8 +85,14 @@ export default {
         dialog () {
             this.$nextTick(() => {
                 // console.log(vjs);
-                if (!this.player) {
-                    this.player = videojs(`${this.id}-videojs-player`);
+                if (this.dialog) {
+                    if (!this.player) {
+                        this.player = videojs(`${this.id}-videojs-player`);
+                    }
+                } else {
+                    if (this.player) {
+                        this.player.dispose();
+                    }
                 }
                 // this.player.hlsQualitySelector({
                 //     displayCurrentQuality: true,
@@ -98,12 +108,6 @@ export default {
                     this.player.play();
                 }
             }
-        }
-    },
-    unmounted() {
-        if (this.player) {
-            console.log('dispose');
-            this.player.dispose();
         }
     },
 }

@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import ProductPrice from './ProductPrice.vue'
 import ProductActions from './ProductActions.vue'
 import moment from 'moment-jalaali'
 
@@ -75,7 +74,6 @@ Object.getPrototypeOf(moment.localeData())._jMonths= [
 
 export default {
     components: {
-        ProductPrice,
         ProductActions,
     },
     props: {
@@ -84,10 +82,11 @@ export default {
     },
     computed: {
         badges () {
-            return this.session.types.filter((t) => ['vod_hls', 'vod_link']
+            return this.session.types.filter((t) => ['vod_hls', 'vod_link', 'file_pdf']
                 .includes(t.name)).map(
                 (t) => ({
-                    title: 'فایل ضبظ شده',
+                    title: t.name === 'file_pdf' ? 'جزوه'
+                        : 'فایل ضبظ شده',
                     color: 'primary',
                 }))
         },

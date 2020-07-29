@@ -17,6 +17,8 @@ window.ExtraFormJSONComponents = {
     'vf-livesstream-input': () => import(/* webpackChunkName: "live-window"*/ './online-academy/LivestreamWindow.vue'),
     'vf-product-download-link-input': () => import(/* webpackChunkName: "product-download-link"*/ './online-academy/ProductDownloadLink.vue'),
     'vf-ac-session-link-input': () => import(/* webpackChunkName: "ac-session-link"*/ './online-academy/AcSessionLink.vue'),
+    'vf-image-input': () => import(/* webpackChunkName: "image-input"*/ './online-academy/ImageInput.vue'),
+    'vf-week-calendar-input': () => import(/* webpackChunkName: "image-input"*/ './online-academy/WeekCalendar.vue'),
 }
 
 import ProductCardSettings from './online-academy/settings/ProductCard'
@@ -32,6 +34,8 @@ import LivestreamWindowSettings from './online-academy/settings/LiveStreamWindow
 import VideoPlayerSettings from './online-academy/settings/VideoPlayer'
 import LiveStreamWindowSettings from './online-academy/settings/LiveStreamWindow'
 import ACSessionLinkSettings from './online-academy/settings/AcSessionLink'
+import ImageInputSettings from './online-academy/settings/ImageInput'
+import WeekCalendarSettings from './online-academy/settings/WeekCalendar'
 
 window.ExtraFormJSONSettings = {
     'vf-product-card-input': new ProductCardSettings(),
@@ -42,8 +46,11 @@ window.ExtraFormJSONSettings = {
     'vf-login-card-input': new LoginCardSettings(),
     'vf-cart-history-input': new CartHistorySettings(),
     'vf-product-video-link-input': new ProductVideoLinkSettings(),
+    'vf-product-download-link-input': new ProductDownloadLinkSettings(),
     'vf-video-player-input': new VideoPlayerSettings(),
     'vf-livesstream-input': new LiveStreamWindowSettings(),
+    'vf-image-input': new ImageInputSettings(),
+    'vf-week-calendar-input': new WeekCalendarSettings(),
 };
 
 for (const name in window.ExtraFormJSONComponents) {

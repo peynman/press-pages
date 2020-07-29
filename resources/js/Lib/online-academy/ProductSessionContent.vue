@@ -32,74 +32,95 @@ export default {
             return this.session.data.types.session?.sendForm;
         },
         contents () {
-            const contents = [];
-            for (const t in this.session.types) {
-                const type = this.session.types[t];
-                switch (type.name) {
-                case 'vod_link':
-                    contents.push({
-                        component: 'vf-product-video-link-input',
-                        props: {
-                            field: {
-                                label: this.session.data.title,
-                                url: this.session.data.types?.vod_link.url,
-                                width: this.session.data.types?.vod_link.width,
-                                height: this.session.data.types?.vod_link.height,
-                                isYoutube: this.session.data.types?.vod_link.tag !== 'kavimo',
-                            },
-                            id: 'session-' + this.session.id  +'-v-link',
-                        }
-                    });
-                    break;
-                case 'vod_hls':
-                    contents.push({
-                        component: 'vf-video-player-input',
-                        props: {
-                            field: {
-                                label: this.session.data.title,
-                                url: '/vod/' + this.session.id + '/link/' + this.session.data.types.vod_hls.file_id + '/stream',
-                                ...this.session.data.types.vod_hls,
-                            },
-                            id: 'session-' + this.session.id  +'-hls-' + this.session.data.types.vod_hls.file_id,
-                        }
-                    });
-                    break;
-                case 'livestream':
-                    if (this.session.data.types?.livestream?.status === 'live') {
+            const getSessionContent = function(session) {
+                const contents = [];
+                for (const t in session.types) {
+                    const type = session.types[t];
+                    switch (type.name) {
+                    case 'vod_link':
                         contents.push({
-                            component: 'vf-livesstream-input',
+                            component: 'vf-product-video-link-input',
                             props: {
                                 field: {
-                                    ...this.session,
-                                    ...this.session.data.types?.livestream,
-                                    extras : this.session.children.filter(c => c.types.filter((t) => t.name === 'ac_meeting').length > 0).map((c) => ({
-                                        ...c,
-                                        ...c.data.types.ac_meeting,
-                                    }))
+                                    label: session.data.title,
+                                    url: session.data.types?.vod_link.url,
+                                    width: session.data.types?.vod_link.width,
+                                    height: session.data.types?.vod_link.height,
+                                    isYoutube: session.data.types?.vod_link.tag !== 'kavimo',
                                 },
+                                id: 'session-' + session.id  +'-v-link',
                             }
                         });
-                    }
-                    break;
-                case 'ac_meeting':
-                    if (this.session.data.types?.ac_meeting?.status === 'live') {
+                        break;
+                    case 'vod_hls':
                         contents.push({
-                            component: 'vf-ac-session-link-input',
+                            component: 'vf-video-player-input',
                             props: {
                                 field: {
-                                    label: this.session.data.title,
-                                    ...this.session,
-                                    ac_session_id: this.session.id,
-                                    ...this.session.data.types?.ac_meeting,
+                                    label: session.data.title,
+                                    url: '/vod/' + session.id + '/link/' + session.data.types.vod_hls.file_id + '/stream',
+                                    ...session.data.types.vod_hls,
                                 },
+                                id: 'session-' + session.id  +'-hls-' + session.data.types.vod_hls.file_id,
                             }
                         });
+                        break;
+                    case 'livestream':
+                        if (session.data.types?.livestream?.status === 'live') {
+                            contents.push({
+                                component: 'vf-livesstream-input',
+                                props: {
+                                    field: {
+                                        ...session,
+                                        ...session.data.types?.livestream,
+                                        extras : session.children.filter(c => c.types.filter((t) => t.name === 'ac_meeting').length > 0).map((c) => ({
+                                            ...c,
+                                            ...c.data.types.ac_meeting,
+                                        }))
+                                    },
+                                }
+                            });
+                        }
+                        break;
+                    case 'ac_meeting':
+                        if (session.data.types?.ac_meeting?.status === 'live') {
+                            contents.push({
+                                component: 'vf-ac-session-link-input',
+                                props: {
+                                    field: {
+                                        label: session.data.title,
+                                        ...session,
+                                        ac_session_id: session.id,
+                                        ...session.data.types?.ac_meeting,
+                                    },
+                                }
+                            });
+                        }
+                        break;
+                    case 'file_pdf':
+                        contents.push({
+                            component: 'vf-product-download-link-input',
+                            props: {
+                                field: {
+                                    label: session.data.title,
+                                    ...session,
+                                    session_id: session.id,
+                                    ...session.data.types?.file_pdf,
+                                    icon: 'mdi-file-document-edit',
+                                    file_type: 'pdf',
+                                },
+                            }
+                        })
+                        break;
                     }
-                    break;
-                case 'file_pdf':
-
-                    break;
                 }
+                return contents;
+            }
+            const contents = getSessionContent(this.session);
+            if (this.session.children) {
+                this.session.children.forEach((child) => {
+                    contents.push(...getSessionContent(child))
+                });
             }
             return contents;
         },

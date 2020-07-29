@@ -30,6 +30,7 @@
     "/group-exp.bundle.js": "/group-exp.bundle.js",
     "/group-single-exp.bundle.js": "/group-single-exp.bundle.js",
     "/group-treeview.bundle.js": "/group-treeview.bundle.js",
+    "/image-input.bundle.js": "/image-input.bundle.js",
     "/image-upload.bundle.js": "/image-upload.bundle.js",
     "/json-input.bundle.js": "/json-input.bundle.js",
     "/live-window.bundle.js": "/live-window.bundle.js",

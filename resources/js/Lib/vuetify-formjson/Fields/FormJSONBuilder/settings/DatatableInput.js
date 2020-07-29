@@ -132,6 +132,7 @@ export default class DatatableInputSettings extends BaseInputSettings {
             'hide-remove': CheckboxSettings('Can not Remove'),
             'hide-filters': CheckboxSettings('Can not Filter'),
             'hide-search': CheckboxSettings('Can not Search'),
+            'hide-settings': CheckboxSettings('Can not change settings'),
             props: {
                 options: {
                     type: 'row',

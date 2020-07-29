@@ -10,7 +10,11 @@
       class="no-letter-spacing"
       @click="dialog = true"
     >
-      <v-icon>mdi-play</v-icon> {{ field.label }}
+      <v-icon
+        class="me-1"
+      >
+        mdi-play
+      </v-icon> {{ field.label }}
     </v-btn>
     <v-dialog
       v-if="!isModePlain"

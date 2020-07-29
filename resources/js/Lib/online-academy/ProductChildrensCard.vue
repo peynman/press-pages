@@ -69,6 +69,9 @@ export default {
             return this.field.children?.filter((child) => child.types.map((t) => t.name).includes('session')).sort((a, b) => (a.priority))
         },
     },
+    mounted() {
+
+    }
 }
 </script>
 

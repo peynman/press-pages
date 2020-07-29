@@ -14,6 +14,8 @@
     <v-dialog
       v-model="dialog"
       fullscreen
+      class="grey lighten-4"
+      style="width: 100%; height: 100%;"
     >
       <v-toolbar
         dense
@@ -59,18 +61,18 @@
                 :field="player"
               />
             </v-col>
-            <v-col
-              cols="12"
-              sm="6"
-            >
-              <v-card>
-                <v-card-title>تخته ارتباط</v-card-title>
-                <v-card-text>
-                  s
-                </v-card-text>
-              </v-card>
-            </v-col>
           </v-row>
+          <iframe
+            :src="field.chat_frame"
+            width="100%"
+            :height="field.chat_height ? field.chat_height :'450'"
+            allowtransparency="yes"
+            allow="autoplay"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+            scrolling="auto"
+          />
         </v-sheet>
       </v-lazy>
     </v-dialog>
