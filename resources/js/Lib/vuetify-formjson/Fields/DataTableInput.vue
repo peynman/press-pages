@@ -335,7 +335,7 @@ export default {
             if (this.field.columns) {
                 for (const indexer in this.field.columns) {
                     const h = this.field.columns[indexer];
-                    if (this.customSettings.hidden && this.customSettings.hidden[h.id]) {
+                    if (this.customSettings && this.customSettings.hidden && this.customSettings.hidden[h.id]) {
                         continue;
                     }
                     headers.push({
@@ -468,7 +468,10 @@ export default {
     },
     mounted() {
         if (this.field.table?.query?.url) {
-            this.customSettings = JSON.parse(localStorage.getItem('crud.datatable.' + this.field.table.query.url));
+            const settings = JSON.parse(localStorage.getItem('crud.datatable.' + this.field.table.query.url));
+            if (settings) {
+                this.customSettings = settings;
+            }
         }
         this.updateTable();
     },
