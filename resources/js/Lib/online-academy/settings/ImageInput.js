@@ -21,6 +21,7 @@ export default class ImageInputSettings extends BaseInputSettings {
         return {
             ...CommonInputEssentials,
             src: TextSettings('Image src'),
+            href: TextSettings('Href'),
             width: TextSettings('Image width'),
             height: TextSettings('Image height'),
             maxWidth: TextSettings('Max Image width'),

@@ -50,6 +50,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -315,6 +325,32 @@ var render = function() {
     !_vm.field.compact ? "VCardActions" : "VCardActions",
     { tag: "component", staticClass: "justify-center" },
     [
+      _c(
+        "v-btn",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value:
+                _vm.hasPrice &&
+                _vm.product.freeDetailLink &&
+                !_vm.product.noHover,
+              expression:
+                "hasPrice && product.freeDetailLink && !product.noHover"
+            }
+          ],
+          staticClass: "no-letter-spacing",
+          attrs: {
+            small: "",
+            outlined: "",
+            rounded: "",
+            href: "/products/" + _vm.product.id + "/details"
+          }
+        },
+        [_vm._v("\n    مشاهده رایگان این جلسه\n  ")]
+      ),
+      _vm._v(" "),
       _vm.field.compact
         ? _c("ProductPrice", {
             attrs: { product: _vm.product, field: { noIcon: true } }

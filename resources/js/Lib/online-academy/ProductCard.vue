@@ -74,7 +74,7 @@
                 <!-- time & date -->
                 <ProductTime :product="product" />
                 <!-- price -->
-                <ProductPrice :product="product" />
+                <ProductPrice :product="{...product, noHover: field.noHover}" />
               </div>
             </v-card-text>
             <ProductActions
@@ -122,6 +122,7 @@ export default {
         };
         const courseProduct = this.field?.data?.types?.course;
         if (courseProduct) {
+            console.log(courseProduct);
             product = {
                 ...product,
                 subtitle: courseProduct.paragraph,
@@ -131,6 +132,7 @@ export default {
                 isOnline: false,
                 registered: false,
                 once: this.field.data.singleSale,
+                ...courseProduct,
             };
         }
         return {

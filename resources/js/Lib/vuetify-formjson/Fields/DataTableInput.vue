@@ -312,6 +312,7 @@ export default {
         showSearch: false,
         showFilters: false,
         showSettings: false,
+        settingsSavedRecently: false,
         loading: false,
         editMode: false,
         loadingId: 0,

@@ -3,6 +3,16 @@
     :is="!field.compact ? 'VCardActions' : 'VCardActions'"
     class="justify-center"
   >
+    <v-btn
+      v-show="hasPrice && product.freeDetailLink && !product.noHover"
+      small
+      outlined
+      rounded
+      :href="`/products/${product.id}/details`"
+      class="no-letter-spacing"
+    >
+      مشاهده رایگان این جلسه
+    </v-btn>
     <ProductPrice
       v-if="field.compact"
       :product="product"
