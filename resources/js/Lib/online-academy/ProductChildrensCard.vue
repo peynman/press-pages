@@ -67,6 +67,7 @@ export default {
     computed: {
         sessions() {
             return this.field.children?.filter((child) => child.types.map((t) => t.name).includes('session')).sort((a, b) => (a.priority))
+                .map((c) => ({...c}))
         },
     },
     mounted() {

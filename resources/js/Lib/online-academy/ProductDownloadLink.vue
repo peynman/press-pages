@@ -26,7 +26,11 @@ export default {
     },
     methods: {
         onStartDownload () {
-            window.open(`/session/${this.field.session_id}/${this.field.file_type}/${this.field.file_id}/download`)
+            window.open(
+                this.field.file_type === 'url' ?
+                    this.field.file_id :
+                    `/session/${this.field.session_id}/${this.field.file_type}/${this.field.file_id}/download`
+            )
         }
     }
 }

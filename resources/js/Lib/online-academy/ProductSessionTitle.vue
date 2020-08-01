@@ -1,15 +1,22 @@
 <template>
   <div class="d-flex flex-row">
     <div
-      class="ma-auto"
+      class="ma-auto d-flex flex-row"
     >
-      {{ session.data.title }}
-
+      <div class="d-flex flex-column me-2">
+        <label
+          v-if="showParent"
+          style="margin-bottom: 10px;"
+        >
+          {{ parentTitle }}
+        </label>
+        {{ session.data.title }}
+      </div>
       <v-chip
         v-if="isStarted"
         dense
         small
-        class="green"
+        class="green my-auto"
         dark
       >
         آنلاین
@@ -18,7 +25,7 @@
         v-if="isEnded"
         dense
         small
-        class="secondary"
+        class="secondary my-auto"
         dark
       >
         برگزار شد
@@ -27,8 +34,9 @@
         v-if="startTime.isValid() && !isEnded && !isStarted && remainTime !== ''"
         dense
         small
+        class="my-auto"
       >
-        {{ remainTime }} تا شروع کلاس
+        {{ remainTime }}
       </v-chip>
       <v-chip
         v-for="(badge, index) in badges"
@@ -36,6 +44,7 @@
         :color="badge.color"
         small
         dense
+        class="my-auto"
       >
         {{ badge.title }}
       </v-chip>
@@ -81,6 +90,12 @@ export default {
         id: String
     },
     computed: {
+        showParent () {
+            return this.session.parent != null;
+        },
+        parentTitle () {
+            return this.session.parent?.data?.title;
+        },
         badges () {
             return this.session.types.filter((t) => ['vod_hls', 'vod_link', 'file_pdf']
                 .includes(t.name)).map(
@@ -106,11 +121,12 @@ export default {
             let duration = moment.duration(this.startTime.diff(moment()));
             //Get Days and subtract from duration
             const days = duration.asDays();
-            if (days > 2) {
+            const hours = duration.asHours();
+
+            if (hours > 10) {
                 return this.startTime.locale('fa').format('dddd jDD jMMMM ساعت HH:mm')
             }
 
-            const hours = duration.asHours();
             const minutes = duration.asMinutes();
             const msg = [];
             if (days > 1) {
@@ -120,9 +136,12 @@ export default {
                 msg.push(`${Math.floor(hours)} ساعت`)
             }
             if (minutes > 0) {
-                msg.push(`${Math.floor(minutes)} دقیقه`)
+                msg.push(`${Math.floor(minutes % 60)} دقیقه`)
             }
-            return msg.join(' و ');
+            return msg.join(' و ')
+            + (
+                msg.length > 0 ? ' مانده تا شروع کلاس' : ''
+            );
         },
     }
 }

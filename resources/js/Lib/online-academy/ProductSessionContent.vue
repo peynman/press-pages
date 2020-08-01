@@ -107,7 +107,7 @@ export default {
                                     session_id: session.id,
                                     ...session.data.types?.file_pdf,
                                     icon: 'mdi-file-document-edit',
-                                    file_type: 'pdf',
+                                    file_type: session.data.types?.file_pdf?.linked_file ? 'url' : 'pdf',
                                 },
                             }
                         })

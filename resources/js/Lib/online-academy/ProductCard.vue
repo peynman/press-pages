@@ -17,9 +17,8 @@
             <!-- title image -->
             <v-img
               class="white--text align-end"
-              height="275px"
               :src="product.image"
-              width="100%"
+              width="contain"
             >
               <v-fade-transition>
                 <v-overlay
