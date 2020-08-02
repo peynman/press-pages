@@ -77,7 +77,6 @@
       </video>
     </div>
   </div>
-  </div>
 </template>
 
 <script>
@@ -130,7 +129,7 @@ export default {
     },
     mounted () {
         if (this.field.modePlain) {
-            if (!this.player) {
+            if (!this.player && !this.field.modeFrame) {
                 this.player = videojs(`${this.id}-videojs-player`);
                 if (this.field.autoPlay) {
                     this.player.play();
@@ -140,8 +139,3 @@ export default {
     },
 }
 </script>
-          </template></div></iframe>
-      </div>
-    </div>
-  </div>
-</template>

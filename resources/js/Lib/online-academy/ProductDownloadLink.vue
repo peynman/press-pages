@@ -4,7 +4,7 @@
       v-for="(item, index) in downloadItems"
       :key="`${id}-downlowd-item-${index}`"
       outlined
-      class="no-letter-spacing mx-1"
+      class="no-letter-spacing ma-1"
       @click="onStartDownload(item)"
     >
       <v-icon
