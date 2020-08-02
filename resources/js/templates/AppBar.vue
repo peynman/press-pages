@@ -234,7 +234,7 @@
           fab
           small
           class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.instagram : '#'}`"
+          :href="`${options.links && options.links.instagram ? options.links.instagram : 'https://www.instagram.com/onlineacademy.ir/'}`"
         >
           <v-icon small>
             mdi-instagram
@@ -246,7 +246,7 @@
           fab
           small
           class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.youtube : '#'}`"
+          :href="`${options.links && options.links.instagram ? options.links.youtube : 'https://www.aparat.com/onlineacademy'}`"
         >
           <v-icon small>
             mdi-youtube
@@ -258,7 +258,7 @@
           fab
           small
           class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.whatsapp : '#'}`"
+          :href="`${options.links && options.links.instagram ? options.links.whatsapp : ''}`"
         >
           <v-icon small>
             mdi-whatsapp
@@ -270,7 +270,7 @@
           fab
           small
           class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.telegram : '#'}`"
+          :href="`${options.links && options.links.instagram ? options.links.telegram : 'http://telegram.me/online_academyir'}`"
         >
           <v-icon small>
             mdi-telegram
@@ -465,20 +465,20 @@ export default {
                     });
                 }
             }
-            navs.push(
-                ...[
-                    {
-                        icon: "mdi-police-badge",
-                        title: "قوانین و مقررات",
-                        href: "/terms"
-                    },
-                    {
-                        icon: "mdi-information",
-                        title: "درباره ما",
-                        href: "/about"
-                    }
-                ]
-            );
+            // navs.push(
+            //     ...[
+            //         {
+            //             icon: "mdi-police-badge",
+            //             title: "قوانین و مقررات",
+            //             href: "/terms"
+            //         },
+            //         {
+            //             icon: "mdi-information",
+            //             title: "درباره ما",
+            //             href: "/about"
+            //         }
+            //     ]
+            // );
             return navs;
         }
     },

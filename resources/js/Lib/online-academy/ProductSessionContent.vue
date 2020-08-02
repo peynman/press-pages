@@ -102,7 +102,7 @@ export default {
                             component: 'vf-product-download-link-input',
                             props: {
                                 field: {
-                                    label: session.data.title,
+                                    label: 'جزوه',
                                     ...session,
                                     session_id: session.id,
                                     ...session.data.types?.file_pdf,

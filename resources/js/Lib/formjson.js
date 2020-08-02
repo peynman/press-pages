@@ -8,17 +8,16 @@ window.ExtraFormJSONComponents = {
     'vf-login-card-input': () => import(/* webpackChunkName: "login-card"*/ './online-academy/LoginCard.vue'),
     'vf-timer-card-input': () => import(/* webpackChunkName: "timer-card"*/  './online-academy/TimerCard.vue'),
     'vf-app-content': () => import(/* webpackChunkName: "app-content"*/  './online-academy/Content.vue'),
-    'vf-product-childrens-card-input': () => import(/* webpackChunkName: "product-childrens-card"*/  './online-academy/ProductChildrensCard.vue'),
-    'vf-login-card-input': () => import(/* webpackChunkName: "login-card"*/ './online-academy/LoginCard.vue'),
-    'vf-support-card-input': () => import(/* webpackChunkName: "login-card"*/ './online-academy/SupportCard.vue'),
+    'vf-product-childrens-card-input': () => import(/* webpackChunkName: "product-childrens-card1"*/  './online-academy/ProductChildrensCard.vue'),
+    'vf-support-card-input': () => import(/* webpackChunkName: "support-card"*/ './online-academy/SupportCard.vue'),
     'vf-cart-history-input': () => import(/* webpackChunkName: "cart-history"*/ './online-academy/CartHistory.vue'),
     'vf-product-video-link-input': () => import(/* webpackChunkName: "video-link"*/ './online-academy/ProductVideoLink.vue'),
-    'vf-video-player-input': () => import(/* webpackChunkName: "video-player"*/ './online-academy/VideoPlayer.vue'),
-    'vf-livesstream-input': () => import(/* webpackChunkName: "live-window"*/ './online-academy/LivestreamWindow.vue'),
-    'vf-product-download-link-input': () => import(/* webpackChunkName: "product-download-link"*/ './online-academy/ProductDownloadLink.vue'),
+    'vf-video-player-input': () => import(/* webpackChunkName: "video-player1"*/ './online-academy/VideoPlayer.vue'),
+    'vf-livesstream-input': () => import(/* webpackChunkName: "live-window1"*/ './online-academy/LivestreamWindow.vue'),
+    'vf-product-download-link-input': () => import(/* webpackChunkName: "product-download-link1"*/ './online-academy/ProductDownloadLink.vue'),
     'vf-ac-session-link-input': () => import(/* webpackChunkName: "ac-session-link"*/ './online-academy/AcSessionLink.vue'),
     'vf-image-input': () => import(/* webpackChunkName: "image-input"*/ './online-academy/ImageInput.vue'),
-    'vf-week-calendar-input': () => import(/* webpackChunkName: "image-input"*/ './online-academy/WeekCalendar.vue'),
+    'vf-week-calendar-input': () => import(/* webpackChunkName: "week-calendar-input"*/ './online-academy/WeekCalendar.vue'),
 }
 
 import ProductCardSettings from './online-academy/settings/ProductCard'

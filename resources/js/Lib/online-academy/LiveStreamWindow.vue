@@ -52,27 +52,39 @@
           </v-row>
           <v-row>
             <v-col
-              v-for="(player, index) in extraPlayers"
-              :key="`${id}-extra-player-${index}`"
               cols="12"
-              sm="6"
+              xsm="12"
+              md="6"
             >
-              <vf-video-player-input
-                :field="player"
+              <v-col
+                v-for="(player, index) in extraPlayers"
+                :key="`${id}-extra-player-${index}`"
+                cols="12"
+                sm="12"
+              >
+                <vf-video-player-input
+                  :field="player"
+                />
+              </v-col>
+            </v-col>
+            <v-col
+              cols="12"
+              xsm="12"
+              md="6"
+            >
+              <iframe
+                :src="field.chat_frame"
+                width="100%"
+                :height="field.chat_height ? field.chat_height :'450'"
+                allowtransparency="yes"
+                allow="autoplay"
+                frameborder="0"
+                marginheight="0"
+                marginwidth="0"
+                scrolling="auto"
               />
             </v-col>
           </v-row>
-          <iframe
-            :src="field.chat_frame"
-            width="100%"
-            :height="field.chat_height ? field.chat_height :'450'"
-            allowtransparency="yes"
-            allow="autoplay"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            scrolling="auto"
-          />
         </v-sheet>
       </v-lazy>
     </v-dialog>
@@ -101,6 +113,7 @@ export default {
                     url: f.is_remote ? f.key : '/livestream/live/' + f.key + '.m3u8',
                     modePlain: true,
                     autoPlay: true,
+                    modeFrame: !f.is_remote || f.key?.endsWith('.m3u8') ? false: true,
                     class: '',
                     height: '320px',
                 })
@@ -112,6 +125,7 @@ export default {
                 url: this.field.is_remote ? this.field.key : '/livestream/live/' + this.field.key + '.m3u8',
                 modePlain: true,
                 autoPlay: true,
+                modeFrame: !this.field.is_remote || this.field.key?.endsWith('.m3u8') ? false: true,
                 class: ''
             };
             return field;

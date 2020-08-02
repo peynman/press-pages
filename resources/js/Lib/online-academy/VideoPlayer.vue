@@ -21,8 +21,49 @@
       v-if="!field.modePlain"
       v-model="dialog"
     >
+      <div v-if="field.modeFrame">
+        <div class="h_iframe-aparat_embed_frame">
+          <span style="display: block;padding-top: 57%" />
+          <iframe
+            scrolling="no"
+            allowFullScreen="true"
+            webkitallowfullscreen="true"
+            mozallowfullscreen="true"
+            :src="videoSrc"
+          />
+        </div>
+      </div>
+      <div v-else>
+        <video
+          v-if="dialog"
+          :id="`${id}-videojs-player`"
+          controls
+          :poster="videoPoster"
+          class="video-js vjs-sublime-skin"
+          :style="`min-width: ${videoWidth}; min-height: ${videoHeight}`"
+        >
+          <source
+            :src="videoSrc"
+            type="application/x-mpegURL"
+          >
+        </video>
+      </div>
+    </v-dialog>
+    <div v-if="field.modeFrame">
+      <div class="h_iframe-aparat_embed_frame">
+        <span style="display: block;padding-top: 57%" />
+        <iframe
+          scrolling="no"
+          allowFullScreen="true"
+          webkitallowfullscreen="true"
+          mozallowfullscreen="true"
+          :src="videoSrc"
+        />
+      </div>
+    </div>
+    <div v-else>
       <video
-        v-if="dialog"
+        v-if="field.modePlain"
         :id="`${id}-videojs-player`"
         controls
         :poster="videoPoster"
@@ -34,20 +75,8 @@
           type="application/x-mpegURL"
         >
       </video>
-    </v-dialog>
-    <video
-      v-if="field.modePlain"
-      :id="`${id}-videojs-player`"
-      controls
-      :poster="videoPoster"
-      class="video-js vjs-sublime-skin"
-      :style="`min-width: ${videoWidth}; min-height: ${videoHeight}`"
-    >
-      <source
-        :src="videoSrc"
-        type="application/x-mpegURL"
-      >
-    </video>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -84,9 +113,8 @@ export default {
     watch: {
         dialog () {
             this.$nextTick(() => {
-                // console.log(vjs);
                 if (this.dialog) {
-                    if (!this.player) {
+                    if (!this.player && !this.field.modeFrame) {
                         this.player = videojs(`${this.id}-videojs-player`);
                     }
                 } else {
@@ -112,3 +140,8 @@ export default {
     },
 }
 </script>
+          </template></div></iframe>
+      </div>
+    </div>
+  </div>
+</template>

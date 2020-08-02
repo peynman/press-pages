@@ -1,9 +1,11 @@
 <template>
   <div :class="`vf-input ${field.class ? field.class : ''}`">
     <v-btn
+      v-for="(item, index) in downloadItems"
+      :key="`${id}-downlowd-item-${index}`"
       outlined
-      class="no-letter-spacing"
-      @click="onStartDownload"
+      class="no-letter-spacing mx-1"
+      @click="onStartDownload(item)"
     >
       <v-icon
         v-if="field.icon"
@@ -11,7 +13,7 @@
       >
         {{ field.icon }}
       </v-icon>
-      {{ field.label }}
+      {{ field.label }} <span v-if="downloadItems.length > 1">- شماره {{ index + 1 }}</span>
     </v-btn>
   </div>
 </template>
@@ -24,13 +26,18 @@ export default {
         value: Object,
         id: String
     },
+    computed: {
+        downloadItems () {
+            if (this.field.file_type === 'url') {
+                return this.field.file_id.split(',');
+            }
+
+            return [`/session/${this.field.session_id}/${this.field.file_type}/${this.field.file_id}/download`]
+        }
+    },
     methods: {
-        onStartDownload () {
-            window.open(
-                this.field.file_type === 'url' ?
-                    this.field.file_id :
-                    `/session/${this.field.session_id}/${this.field.file_type}/${this.field.file_id}/download`
-            )
+        onStartDownload (url) {
+            window.open(url);
         }
     }
 }

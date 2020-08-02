@@ -48,7 +48,8 @@
             >
               <v-list-item>راه‌های ارتباطی</v-list-item>
               <v-list-item>دفتر مرکزی: تهران - تهران - انقلاب -خیابان 12 فروردین - خیابان وحید نظری - پلاک 99</v-list-item>
-              <v-list-item>تلفن تماس: ۰۹۳۶۱۲۲۲۱۲۰</v-list-item>
+              <v-list-item>تلفن تماس: ۶۶۴۰۰۳۰۰</v-list-item>
+              <v-list-item>خط پیامکی: ۳۰۰۰۴۸۴۶</v-list-item>
             </v-list>
             <v-img
               v-for="item in imageBank"

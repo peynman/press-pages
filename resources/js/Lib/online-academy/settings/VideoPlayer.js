@@ -25,6 +25,7 @@ export default class VideoPlayerSettings extends BaseInputSettings {
             poster_url: TextSettings('Poster url'),
             autoPlay: CheckboxSettings('Autoplay'),
             modePlain: CheckboxSettings('Video Player mode plain'),
+            modeFrame: CheckboxSettings('Video player mode iFrame'),
         }
     }
 }

@@ -53,10 +53,12 @@
           </v-btn>
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title class="ms-2">
+          <v-list-item-title class="ms-2 wrap-text">
             {{ field.label }}
           </v-list-item-title>
-          <v-list-item-subtitle> {{ field.message }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="wrap-text">
+            {{ field.message }}
+          </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-card>
@@ -73,7 +75,7 @@ export default {
     },
     computed: {
         imagePic() {
-            return this.field.image ? this.field.image : "/images/avatar.png";
+            return this.field.img ? this.field.img : "/images/avatar.png";
         },
     }
 };
