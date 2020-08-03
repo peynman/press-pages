@@ -23,12 +23,13 @@
     >
       <div v-if="field.modeFrame">
         <div class="h_iframe-aparat_embed_frame">
-          <span style="display: block;padding-top: 57%" />
           <iframe
+            style="width:100%; min-height: 390px;"
             scrolling="no"
             allowFullScreen="true"
             webkitallowfullscreen="true"
             mozallowfullscreen="true"
+            frameborder="0"
             :src="videoSrc"
           />
         </div>
@@ -51,12 +52,13 @@
     </v-dialog>
     <div v-if="field.modeFrame">
       <div class="h_iframe-aparat_embed_frame">
-        <span style="display: block;padding-top: 57%" />
         <iframe
+          style="width:100%; min-height: 390px;"
           scrolling="no"
           allowFullScreen="true"
           webkitallowfullscreen="true"
           mozallowfullscreen="true"
+          frameborder="0"
           :src="videoSrc"
         />
       </div>

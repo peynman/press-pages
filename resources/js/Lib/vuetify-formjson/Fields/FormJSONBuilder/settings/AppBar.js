@@ -1,7 +1,8 @@
 import {
     CommonInputEssentials,
     BaseInputSettings,
-    TextSettings
+    TextSettings,
+    CheckboxSettings
 } from './comon'
 
 export default class AppBarTemplateSettings extends BaseInputSettings {
@@ -15,8 +16,12 @@ export default class AppBarTemplateSettings extends BaseInputSettings {
 
     getInputProperties () {
         return {
-            align: TextSettings('Align content'),
-            justify: TextSettings('Justify content'),
+            contClass: TextSettings('Container Class'),
+            fluid: CheckboxSettings('Container fluid'),
+            rowClass: TextSettings('Row Class'),
+            colClass: TextSettings('Col Class'),
+            rowAlign: TextSettings('Row Align'),
+            rowJustify: TextSettings('Row Justify'),
         }
     }
 }

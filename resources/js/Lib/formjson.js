@@ -18,6 +18,7 @@ window.ExtraFormJSONComponents = {
     'vf-ac-session-link-input': () => import(/* webpackChunkName: "ac-session-link"*/ './online-academy/AcSessionLink.vue'),
     'vf-image-input': () => import(/* webpackChunkName: "image-input"*/ './online-academy/ImageInput.vue'),
     'vf-week-calendar-input': () => import(/* webpackChunkName: "week-calendar-input"*/ './online-academy/WeekCalendar.vue'),
+    'vf-rev-slider-input': () => import(/* webpackChunkName: "rev-slider"*/ './online-academy/RevSlider.vue'),
 }
 
 import ProductCardSettings from './online-academy/settings/ProductCard'
@@ -35,6 +36,7 @@ import LiveStreamWindowSettings from './online-academy/settings/LiveStreamWindow
 import ACSessionLinkSettings from './online-academy/settings/AcSessionLink'
 import ImageInputSettings from './online-academy/settings/ImageInput'
 import WeekCalendarSettings from './online-academy/settings/WeekCalendar'
+import RevSliderSettings from './online-academy/settings/RevSlider'
 
 window.ExtraFormJSONSettings = {
     'vf-product-card-input': new ProductCardSettings(),
@@ -50,6 +52,7 @@ window.ExtraFormJSONSettings = {
     'vf-livesstream-input': new LiveStreamWindowSettings(),
     'vf-image-input': new ImageInputSettings(),
     'vf-week-calendar-input': new WeekCalendarSettings(),
+    'vf-rev-slider-input': new RevSliderSettings(),
 };
 
 for (const name in window.ExtraFormJSONComponents) {

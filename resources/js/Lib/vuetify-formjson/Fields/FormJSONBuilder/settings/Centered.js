@@ -15,6 +15,9 @@ export default class CenteredTemplateSettings extends BaseInputSettings {
 
     getInputProperties () {
         return {
+            contClass: TextSettings('Container class'),
+            rowClass : TextSettings('Row class'),
+            colClass : TextSettings('Col class'),
             'x-lg': {
                 type: 'input',
                 input: 'text',

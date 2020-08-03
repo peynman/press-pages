@@ -279,17 +279,18 @@
       </v-slide-x-transition>
     </v-app-bar>
     <v-container
-      class="align-start"
-      fluid
+      :class="`${options && options.contClass ? options.contClass : 'align-start'}`"
+      :fluid="options && options.fluid === false ? options.fluid : true"
       style="min-height: 50%;"
     >
       <v-row
-        align="start"
-        justify="center"
+        :align="options && options.rowAlign ? options.rowAlign : 'start'"
+        :justify="options && options.rowJustify ? options.rowJustify : 'center'"
+        :class="options && options.rowClass ? options.rowClass : ''"
       >
         <v-col
           cols="12"
-          v-bind="options"
+          :class="options && options.colClass ? options.colClass : ''"
         >
           <vuetify-formjson
             v-model="formModel"
