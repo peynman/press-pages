@@ -108,7 +108,7 @@ export default {
     computed: {
         extraPlayers () {
             const extras = [];
-            this.field.extras?.forEach((f) => {
+            this.field.children?.forEach((f) => {
                 extras.push({
                     url: f.is_remote ? f.key : '/livestream/live/' + f.key + '.m3u8',
                     modePlain: true,

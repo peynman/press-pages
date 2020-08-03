@@ -73,10 +73,6 @@ export default {
                                     field: {
                                         ...session,
                                         ...session.data.types?.livestream,
-                                        extras : session.children.filter(c => c.types.filter((t) => t.name === 'ac_meeting').length > 0).map((c) => ({
-                                            ...c,
-                                            ...c.data.types.ac_meeting,
-                                        }))
                                     },
                                 }
                             });
