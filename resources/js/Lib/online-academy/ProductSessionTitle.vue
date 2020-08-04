@@ -112,10 +112,12 @@ export default {
             return moment(this.session.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm:ssZ', true);
         },
         isStarted () {
-            return this.session.data.types?.livestream?.status === 'live' || this.session.data.types?.ac_meeting?.status === 'live';
+            return this.session.data.types?.livestream?.status === 'live' ||
+                    this.session.data.types?.ac_meeting?.status === 'live';
         },
         isEnded () {
-            return this.session.data.types?.livestream?.status === 'ended' || this.session.data.types?.ac_meeting?.status === 'ended';
+            return this.session.data.types?.livestream?.status === 'ended' ||
+                     this.session.data.types?.ac_meeting?.status === 'ended';
         },
         remainTime () {
             let duration = moment.duration(this.startTime.diff(moment()));

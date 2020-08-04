@@ -11,6 +11,7 @@
       v-if="hasForm"
       :field="fileUpload"
     />
+    <span class="mt-2" v-if="alreadySentForm > 0">شما قبلا {{ alreadySentForm.toLocaleString('fa-IR') }} فایل تکلیف ارسال کرده اید</span>
   </div>
 </template>
 
@@ -29,7 +30,10 @@ export default {
             }
         },
         hasForm () {
-            return this.session.data.types.session?.sendForm;
+            return this.session.data.types?.session?.sendForm;
+        },
+        alreadySentForm() {
+            return parseInt(this.session.sent_forms?.data?.values?.file_ids?.length);
         },
         contents () {
             const getSessionContent = function(session) {
@@ -70,6 +74,7 @@ export default {
                             contents.push({
                                 component: 'vf-livesstream-input',
                                 props: {
+                                    id: 'session-' + session.id,
                                     field: {
                                         ...session,
                                         ...session.data.types?.livestream,

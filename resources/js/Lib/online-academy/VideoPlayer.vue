@@ -41,7 +41,7 @@
           controls
           :poster="videoPoster"
           class="video-js vjs-sublime-skin"
-          :style="`min-width: ${videoWidth}; min-height: ${videoHeight}`"
+          :style="`min-width: ${videoWidth}; min-height: ${videoHeight}; max-width: 100%;`"
         >
           <source
             :src="videoSrc"
@@ -50,33 +50,34 @@
         </video>
       </div>
     </v-dialog>
-    <div v-if="field.modeFrame">
-      <div class="h_iframe-aparat_embed_frame">
-        <iframe
-          style="width:100%; min-height: 390px;"
-          scrolling="no"
-          allowFullScreen="true"
-          webkitallowfullscreen="true"
-          mozallowfullscreen="true"
-          frameborder="0"
-          :src="videoSrc"
-        />
-      </div>
-    </div>
-    <div v-else>
-      <video
-        v-if="field.modePlain"
-        :id="`${id}-videojs-player`"
-        controls
-        :poster="videoPoster"
-        class="video-js vjs-sublime-skin"
-        :style="`min-width: ${videoWidth}; min-height: ${videoHeight}`"
-      >
-        <source
-          :src="videoSrc"
-          type="application/x-mpegURL"
-        >
-      </video>
+    <div v-if="field.modePlain">
+        <div v-if="field.modeFrame">
+            <div class="h_iframe-aparat_embed_frame">
+                <iframe
+                style="width:100%; min-height: 390px;"
+                scrolling="no"
+                allowFullScreen="true"
+                webkitallowfullscreen="true"
+                mozallowfullscreen="true"
+                frameborder="0"
+                :src="videoSrc"
+                />
+            </div>
+        </div>
+        <div v-else>
+            <video
+                :id="`${id}-videojs-player`"
+                controls
+                :poster="videoPoster"
+                class="video-js vjs-sublime-skin"
+                :style="`min-width: ${videoWidth}; min-height: ${videoHeight}; max-width: 100%`"
+            >
+                <source
+                :src="videoSrc"
+                type="application/x-mpegURL"
+                >
+            </video>
+        </div>
     </div>
   </div>
 </template>
@@ -113,29 +114,32 @@ export default {
     },
     watch: {
         dialog () {
+            if (this.player && !this.dialog) {
+                // this.player.dispose();
+                this.player = null;
+            }
             this.$nextTick(() => {
                 if (this.dialog) {
                     if (!this.player && !this.field.modeFrame) {
                         this.player = videojs(`${this.id}-videojs-player`);
-                    }
-                } else {
-                    if (this.player) {
-                        this.player.dispose();
+                        this.player.crossOrigin = 'anonymous';
                     }
                 }
-                // this.player.hlsQualitySelector({
-                //     displayCurrentQuality: true,
-                // });
-            })
+            });
         }
     },
     mounted () {
         if (this.field.modePlain) {
             if (!this.player && !this.field.modeFrame) {
-                this.player = videojs(`${this.id}-videojs-player`);
-                if (this.field.autoPlay) {
-                    this.player.play();
-                }
+                this.$nextTick(() => {
+                    this.player = videojs(`${this.id}-videojs-player`);
+                    this.player.crossOrigin = 'anonymous';
+                    if (this.field.autoPlay) {
+                        this.$nextTick(() => {
+                            this.player.play();
+                        })
+                    }
+                });
             }
         }
     },

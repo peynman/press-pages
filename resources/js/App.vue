@@ -10,6 +10,7 @@
       v-for="(snack, index) in snacks"
       :key="index"
       v-model="snack.visible"
+      :color="snack.color"
     >
       {{ snack.message }}
       <v-btn
@@ -128,10 +129,11 @@ export default {
             }
         },
 
-        showSnack(message) {
+        showSnack(message, color = 'red') {
             this.snacks.push({
                 message,
-                visible: true
+                visible: true,
+                color,
             });
         }
     }

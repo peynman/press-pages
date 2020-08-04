@@ -7,7 +7,7 @@
       :loading="loading"
       @click="onVerifyACMeeting"
     >
-      دریافت مجوز ورود به کلاس
+      دریافت مجوز ورود به کلاس AdobeConnect
     </v-btn>
     <v-btn
       v-if="access"
