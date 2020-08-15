@@ -69,6 +69,13 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     label: 'Slot',
                     class: 'col-12 ma-0 pa-0',
                 }
+            } else if (type === 'expan-list') {
+                extras.component = {
+                    type: 'input',
+                    input: 'text',
+                    label: 'Expand Component',
+                    class: 'col-12 ma-0 pa-0',
+                }
             } else if (type === 'nested-object') {
                 extras['nested-path'] = {
                     type: 'input',
@@ -97,7 +104,7 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                         },
                     }
                 }
-            } else if (type === 'objects-map') {
+            } else if (type === 'objects-map' || type === 'bitwise-flags') {
                 extras['decorator'] = {
                     options: {
                         formClass: 'ma-0 pa-0'
@@ -122,7 +129,7 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     type: 'input',
                     input: 'text',
                     label: 'Nested Path',
-                    class: 'col-12 ma-0 pa-0',
+                    class: 'col-12 ma-0 pa-0 mb-2',
                 }
                 extras['map'] = {
                     type: 'input',
@@ -249,6 +256,10 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     {
                         id: 'objects-map',
                         title: 'Objects Map',
+                    },
+                    {
+                        id: 'bitwise-flags',
+                        title: 'Bitwise Flags',
                     },
                     {
                         id: 'custom',

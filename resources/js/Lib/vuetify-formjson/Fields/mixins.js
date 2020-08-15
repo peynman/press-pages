@@ -9,7 +9,7 @@ export default {
     computed: {
         fieldProps: function () {
             return {
-                ...this.field.props
+                ...this.field.props,
             }
         },
         eventHandlers: function () {

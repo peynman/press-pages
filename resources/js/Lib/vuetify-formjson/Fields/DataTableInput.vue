@@ -11,96 +11,8 @@
     >
       {{ alert.message }}
     </v-alert>
-    <v-toolbar
-      dense
-      flat
-      class="ma-0 pa-0"
-    >
-      <v-btn
-        v-if="!field['hide-settings']"
-        x-small
-        icon
-        :color="showSettings ? 'warning':'secondary'"
-        @click="showSettings = !showSettings"
-      >
-        <v-icon small>
-          {{ showSettings ? 'mdi-close' : 'mdi-format-header-1' }}
-        </v-icon>
-      </v-btn>
-      <v-btn
-        v-if="field.crud && field.crud.filters && !field['hide-filters']"
-        icon
-        small
-        :color="showFilters ? 'warning':'secondary'"
-        @click="showFilters = !showFilters"
-      >
-        <v-icon small>
-          {{ showFilters ? 'mdi-close' : 'mdi-filter-plus-outline' }}
-        </v-icon>
-      </v-btn>
-      <v-btn
-        v-if="field.table && field.table['reports-url']"
-        x-small
-        icon
-        :href="field.table['reports-url']"
-      >
-        <v-icon small>
-          mdi-chart-pie
-        </v-icon>
-      </v-btn>
-      <vf-datatable-dialog-create
-        v-if="((field.crud && field.crud.create) || (field.table && field.table['create-url'])) && !field['hide-create']"
-        v-model="createModel"
-        :field="field.crud.create"
-        :url="field.table && field.table['create-url'] ? field.table['create-url'] : null"
-        :force-show="showCreate"
-        :edit-mode="editMode"
-        @on-create="onCreateNew"
-        @on-cancel="onCancelNew"
-        @on-update="onUpdateNew"
-      />
-      <v-btn
-        v-if="!field['hide-search']"
-        icon
-        small
-        :color="showSearch ? 'warning' : 'secondary'"
-        @click="showSearch = !showSearch"
-      >
-        <v-icon small>
-          {{ showSearch ? 'mdi-close' : 'mdi-card-search' }}
-        </v-icon>
-      </v-btn>
-      <v-btn
-        v-if="!showSearch && field.table && field.table.query"
-        icon
-        small
-        color="secondary"
-        :loading="loading"
-        @click="updateTable()"
-      >
-        <v-icon small>
-          mdi-refresh
-        </v-icon>
-      </v-btn>
-      <label v-if="!showSearch">{{ field.label }}</label>
-      <v-text-field
-        v-show="showSearch && !field['hide-search']"
-        ref="searchField"
-        v-model="search"
-        dense
-        clearable
-        hide-details
-        placeholder="Search..."
-        @keyup.native="updateSearch($event)"
-      />
-      <vf-datatable-dialog-delete
-        v-if="selected.length > 0 && !field['hide-remove']"
-        :show-delete="showDelete"
-        :field="field"
-        :selected="selected"
-        @accept="onRemoveSelected()"
-      />
-    </v-toolbar>
+    <!-- Table Toolbar -->
+    <!-- Table Settings -->
     <v-expand-transition>
       <v-card
         v-show="showSettings"
@@ -130,6 +42,40 @@
         </v-card-actions>
       </v-card>
     </v-expand-transition>
+    <!-- Table Forms -->
+    <v-expand-transition>
+      <v-card
+        v-show="showForms"
+        flat
+        class="mb-2"
+      >
+        <v-tabs optional centered>
+            <v-tabs-slider />
+            <v-tab
+                v-for="(act, actId) in field.forms"
+                :key="`${id}-actions-tab-${actId}`"
+                :href="`#${id}-actions-${actId}`"
+                class="no-letter-spacing"
+            >
+                {{ act.label }}
+            </v-tab>
+            <v-tab-item
+                v-for="(act, actId) in field.forms"
+                :key="`${id}-actions-item-${actId}`"
+                :value="`${id}-actions-${actId}`"
+            >
+                <vf-fields-renderer
+                    :id="`${id}-actions-${actId}-fields`"
+                    v-model="customForms[actId]"
+                    :value="customForms[actId]"
+                    :options="act.options"
+                    :fields="getFormFields(actId, act.fields)"
+                />
+            </v-tab-item>
+        </v-tabs>
+      </v-card>
+    </v-expand-transition>
+    <!-- CRUD Filters -->
     <v-expand-transition v-if="field.crud && field.crud.filters">
       <v-card
         v-show="showFilters"
@@ -184,6 +130,7 @@
         </v-card-actions>
       </v-card>
     </v-expand-transition>
+    <!-- Datatable -->
     <v-data-table
       v-model="selected"
       :expanded.sync="expanded"
@@ -200,48 +147,167 @@
       }"
       :items-per-page="100"
       selectable-key
-      v-bind="fieldProps"
+      v-bind="datatableProps"
       @click:row="onToggleItem"
       v-on="eventHandlers"
     >
+      <template v-slot:top>
+            <v-toolbar
+                dense
+                flat
+                class="ma-0 pa-0"
+                >
+                <v-btn
+                    v-if="!field['hide-settings'] && field.table && field.table.query"
+                    x-small
+                    icon
+                    :color="showSettings ? 'warning':'secondary'"
+                    @click="showSettings = !showSettings"
+                >
+                    <v-icon small>
+                    {{ showSettings ? 'mdi-close' : 'mdi-settings' }}
+                    </v-icon>
+                </v-btn>
+                <v-btn
+                    v-if="hasForm"
+                    x-small
+                    icon
+                    :color="showForms ? 'warning':'secondary'"
+                    @click="showForms = !showForms"
+                >
+                    <v-icon small>{{ showForms ? 'mdi-close':'mdi-check-box-outline'}}</v-icon>
+                </v-btn>
+                <v-btn
+                    v-if="field.crud && field.crud.filters && !field['hide-filters']"
+                    icon
+                    small
+                    :color="showFilters ? 'warning':'secondary'"
+                    @click="showFilters = !showFilters"
+                >
+                    <v-icon small>
+                    {{ showFilters ? 'mdi-close' : 'mdi-filter-plus-outline' }}
+                    </v-icon>
+                </v-btn>
+                <vf-datatable-dialog-create
+                    v-if="((field.crud && field.crud.create) || (field.table && field.table['create-url'])) && !field['hide-create']"
+                    v-model="createModel"
+                    :field="field.crud.create"
+                    :url="field.table && field.table['create-url'] ? field.table['create-url'] : null"
+                    :force-show="showCreate"
+                    :edit-mode="editMode"
+                    @on-create="onCreateNew"
+                    @on-cancel="onCancelNew"
+                    @on-update="onUpdateNew"
+                />
+                <v-btn
+                    v-if="field.table && field.table['reports-url'] && !field['hide-reports']"
+                    x-small
+                    icon
+                    :href="field.table['reports-url']"
+                >
+                    <v-icon small>
+                    mdi-chart-pie
+                    </v-icon>
+                </v-btn>
+                <v-btn
+                    v-if="!field['hide-search']"
+                    icon
+                    small
+                    :color="showSearch ? 'warning' : 'secondary'"
+                    @click="showSearch = !showSearch"
+                >
+                    <v-icon small>
+                    {{ showSearch ? 'mdi-close' : 'mdi-card-search' }}
+                    </v-icon>
+                </v-btn>
+                <v-btn
+                    v-if="!showSearch && field.table && field.table.query"
+                    icon
+                    small
+                    color="secondary"
+                    :loading="loading"
+                    @click="updateTable()"
+                >
+                    <v-icon small>
+                    mdi-refresh
+                    </v-icon>
+                </v-btn>
+                <label v-if="!showSearch">{{ field.label }}</label>
+                <v-text-field
+                    v-show="showSearch && !field['hide-search']"
+                    ref="searchField"
+                    v-model="search"
+                    dense
+                    clearable
+                    hide-details
+                    placeholder="Search..."
+                    @keyup.native="updateSearch($event)"
+                />
+                <vf-datatable-dialog-delete
+                    v-if="selected.length > 0 && !field['hide-remove'] && (!field.table || !field.table.query)"
+                    :show-delete="showDelete"
+                    :field="field"
+                    :selected="selected"
+                    @accept="onRemoveSelected()"
+                />
+                </v-toolbar>
+      </template>
       <template v-slot:item.data-table-select="{item, isSelected, select}">
-        <v-simple-checkbox
-          class="d-inline"
-          :value="isSelected"
-          @input="select($event)"
-        />
-        <v-btn
-          v-if="!field['hide-remove']"
-          icon
-          x-small
-          color="red"
-          @click="onRemoveSelected(item)"
-        >
-          <v-icon x-small>
-            mdi-playlist-remove
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-if="!field['hide-edit']"
-          icon
-          x-small
-          @click="onOpenEditDialog(item)"
-        >
-          <v-icon x-small>
-            mdi-playlist-edit
-          </v-icon>
-        </v-btn>
+        <div class="d-flex flex-row justify-center align-center">
+            <v-simple-checkbox
+            class="d-inline"
+            :value="isSelected"
+            @input="select($event)"
+            />
+            <v-btn
+            v-if="!field['hide-remove'] && (!field.table || !field.table.query)"
+            icon
+            x-small
+            color="red"
+            class="d-inline"
+            @click="onRemoveSelected(item)"
+            >
+            <v-icon x-small>
+                mdi-playlist-remove
+            </v-icon>
+            </v-btn>
+            <v-btn
+            v-if="!field['hide-edit'] && (!field.table || !field.table.query)"
+            icon
+            x-small
+            class="d-inline"
+            @click="onOpenEditDialog(item)"
+            >
+            <v-icon x-small>
+                mdi-playlist-edit
+            </v-icon>
+            </v-btn>
+        </div>
       </template>
       <template
         v-for="template in templates"
-        #[getTemplateSlot(template)]="{item}"
+        #[`item.${template.column.id}`]="{item}"
       >
+      <td :colspan="1" class="pa-0 ma-0">
         <component
           :is="template.component"
           :key="`${id}-${template.column.id}`"
           :item="item"
           :column="template.column"
+          @on-event="template.onEvent"
         />
+      </td>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+      <td :colspan="colSpans" class="pa-0 ma-0" style="background: white;">
+            <component
+                v-if="item.expand"
+                :is="item.expand.component"
+                :key="`${id}-expand-${item.id}`"
+                :id="`${id}-expand-${item.id}`"
+                :field="item"
+            />
+        </td>
       </template>
       <template
         v-for="header in headers"
@@ -276,6 +342,9 @@ import ColumnHoverList from "./Datatable/ColumnHoverList.vue";
 import ColumnDatetime from "./Datatable/ColumnDatetime.vue";
 import ColumnAmount from "./Datatable/ColumnAmount.vue";
 import ColumnObjectsMap from './Datatable/ColumnObjectsMap.vue';
+import ColumnBitwiseFlags from './Datatable/ColumnBitwiseFlags.vue';
+
+import clonedeep from "lodash.clonedeep";
 
 export default {
     name: "VfDatatableInput",
@@ -294,6 +363,7 @@ export default {
         ColumnActions,
         ColumnExpandableLinks,
         ColumnObjectsMap,
+        ColumnBitwiseFlags
     },
     mixins: [BaseComponent],
     props: {
@@ -304,32 +374,44 @@ export default {
             default: () => []
         }
     },
-    data: vm => ({
-        createModel: {},
-        showAlert: false,
-        showDelete: false,
-        showCreate: false,
-        showSearch: false,
-        showFilters: false,
-        showSettings: false,
-        settingsSavedRecently: false,
-        loading: false,
-        editMode: false,
-        loadingId: 0,
-        search: "",
-        selected: [],
-        expanded: [],
-        options: {},
-        total: vm.value.length,
-        response: null,
-        sortBy: null,
-        sortDesc: null,
-        expandTemplate: null,
-        expandTemplateDefaultMetadata: null,
-        customFilters: {},
-        customSettings: {},
-        exportLoading: false,
-    }),
+    data: vm => {
+        const customForms = {};
+        if (vm.field.forms) {
+            for (const actid in vm.field.forms) {
+                customForms[actid] = {}
+            }
+        }
+        return {
+            createModel: {},
+            showAlert: false,
+            showDelete: false,
+            showCreate: false,
+            showSearch: false,
+            showFilters: false,
+            showSettings: false,
+            showForms: false,
+            settingsSavedRecently: false,
+            loading: false,
+            editMode: false,
+            loadingId: 0,
+            search: "",
+            selected: [],
+            expanded: [],
+            options: {},
+            total: vm.value.length,
+            response: null,
+            sortBy: null,
+            sortDesc: null,
+            expandTemplate: null,
+            expandTemplateDefaultMetadata: null,
+            customFilters: {},
+            customSettings: {},
+            exportLoading: false,
+            extraProps: {},
+            editModelIndex: -1,
+            customForms,
+        }
+    },
     computed: {
         headers: function() {
             const headers = [];
@@ -358,7 +440,8 @@ export default {
                     const h = this.field.columns[indexer];
                     const template = {
                         component: ColumnSimple,
-                        column: h
+                        column: h,
+                        onEvent: () => {}
                     };
                     switch (h.type) {
                     case "actions":
@@ -369,6 +452,30 @@ export default {
                         break;
                     case "expan-list":
                         template.component = ColumnExpandableLinks;
+                        template.onEvent = (en, e) => {
+                            switch (en) {
+                                case 'expand':
+                                    const item = e[0];
+                                    const existsIndex = this.expanded.map((i) => i.id).indexOf(item.id);
+                                    if (existsIndex >= 0) {
+                                        this.expanded.splice(existsIndex, 1);
+                                    } else {
+                                        let expandComponent = null;
+                                        switch (h.component) {
+                                            case 'remote-table':
+                                            break;
+                                            default:
+                                            expandComponent = h.component;
+                                        }
+                                        item.expand = {
+                                            component: expandComponent,
+                                            column: h,
+                                        }
+                                        this.expanded.push(item);
+                                    }
+                                break;
+                            }
+                        }
                         break;
                     case "hover-list":
                         template.component = ColumnHoverList;
@@ -382,6 +489,9 @@ export default {
                     case 'objects-map':
                         template.component = ColumnObjectsMap;
                         break;
+                    case 'bitwise-flags':
+                        template.component = ColumnBitwiseFlags;
+                        break;
                     default:
                         break;
                     }
@@ -390,6 +500,9 @@ export default {
                 }
             }
             return templates;
+        },
+        colSpans () {
+            return this.templates.length;
         },
         alert: function() {
             if (!this.response) {
@@ -409,7 +522,16 @@ export default {
             };
         },
         tableSettingsFields () {
-            const fields = {};
+            const fields = {
+                per_page: {
+                    type: 'input',
+                    input: 'text',
+                    label: 'تعداد رکورد‌ها در صفحه',
+                    validations: {
+                        numeric: true,
+                    }
+                }
+            };
             if (this.field.columns) {
                 const objects = [];
                 for (const indexer in this.field.columns) {
@@ -424,6 +546,7 @@ export default {
                     label: 'حذف نمایش سطون',
                     input: 'objects-list',
                     objects: objects,
+                    class: 'mt-2',
                     decorator: {
                         label: ':title'
                     }
@@ -437,6 +560,15 @@ export default {
                 type: 'col',
             }
         },
+        datatableProps: function () {
+            return {
+                ...this.field.props,
+                'show-select': this.field.props && this.field.props['show-select'] ? this.field.props['show-select'] : this.showForms
+            }
+        },
+        hasForm () {
+            return !this.field['hide-forms'] && this.field.forms && Object.keys(this.field.forms).length > 0;
+        }
     },
     watch: {
         devalue: {
@@ -468,6 +600,7 @@ export default {
         }
     },
     mounted() {
+        this.customFilters = this.field['default-filters'] ?? {};
         if (this.field.table?.query?.url) {
             const settings = JSON.parse(localStorage.getItem('crud.datatable.' + this.field.table.query.url));
             if (settings) {
@@ -552,7 +685,7 @@ export default {
                     data: {
                         ref_id: this.loadingId,
                         page: this.options.page,
-                        limit: this.options.itemsPerPage,
+                        limit: this.customSettings.per_page ? this.customSettings.per_page : this.options.itemsPerPage,
                         search: this.search,
                         filters: this.customFilters,
                         sort: sort,
@@ -595,21 +728,21 @@ export default {
                 return template.slot;
             }
 
-            return "item." + template.column.id;
+            return ;
         },
         getHeaderSlot(header) {
             return "header." + header.value;
         },
         onToggleItem(item) {
-            this.toggleArray(this.expanded, item);
+            // this.toggleArray(this.expanded, item);
             // this.expandTemplate.params.metadata = this.expandTemplateDefaultMetadata;
         },
         onCloseItem(target) {
-            this.putOffArray(this.expanded, target.item);
+            // this.putOffArray(this.expanded, target.item);
         },
         onExpandItem(target) {
-            this.putOnArray(this.expanded, target.item);
-            this.expandTemplate.params.metadata = target.link.metadata;
+            // this.putOnArray(this.expanded, target.item);
+            // this.expandTemplate.params.metadata = target.link.metadata;
         },
         onRemoveSelected(item) {
             if (!item) {
@@ -623,20 +756,20 @@ export default {
             this.selected = [];
         },
         onCreateNew() {
+            const newClone = clonedeep(this.createModel);
             this.devalue.unshift({
                 id: "id#" + Math.random() * Number.MAX_SAFE_INTEGER,
-                ...this.createModel
+                ...newClone
             });
             this.showCreate = false;
         },
         onUpdateNew() {
-            this.devalue.forEach(item => {
-                if (item.id === this.createModel.id) {
-                    for (const prop in this.createModel) {
-                        item[prop] = this.createModel[prop];
-                    }
-                }
-            });
+            const newClone = clonedeep(this.createModel);
+            if (this.editModelIndex >= 0) {
+                const newValues = clonedeep(this.devalue);
+                newValues[this.editModelIndex] = newClone;
+                this.devalue = newValues;
+            }
             this.editMode = false;
             this.showCreate = false;
         },
@@ -645,6 +778,12 @@ export default {
             this.editMode = false;
         },
         onOpenEditDialog(item) {
+            this.editModelIndex = -1;
+            this.devalue.forEach((ii, i) => {
+                if (item.id === ii.id) {
+                    this.editModelIndex = i;
+                }
+            });
             this.createModel = Object.assign({}, item);
             this.editMode = true;
             this.showCreate = true;
@@ -667,6 +806,28 @@ export default {
                 localStorage.setItem('crud.datatable.' + this.field.table.query.url, JSON.stringify(this.customSettings));
                 this.settingsSavedRecently = true;
             }
+        },
+        getFormFields(id, fields) {
+            const clone = clonedeep(fields);
+            const iterateForVOn = ref => {
+                for (const prop in ref) {
+                    if (prop === "v-on") {
+                        const events = ref[prop];
+                        for (const event in events) {
+                            const handle = events[event];
+                            events[event] = e => {
+                                const values = clonedeep(this.customForms[id]);
+                                values.selected = this.selected.map((s) => s.id)
+                                handle(values, e);
+                            };
+                        }
+                    } else if (typeof ref[prop] === "object") {
+                        iterateForVOn(ref[prop]);
+                    }
+                }
+            };
+            iterateForVOn(clone);
+            return clone;
         }
     }
 };

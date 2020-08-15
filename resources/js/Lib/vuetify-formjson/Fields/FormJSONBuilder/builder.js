@@ -28,6 +28,7 @@ import FileUploadInputSettings from './settings/FileUploadInput'
 import AdminBarTemplateSettings from './settings/AdminBar'
 import AppBarTemplateSettings from './settings/AppBar'
 import CenteredTemplateSettings from './settings/Centered'
+import SimpleFileSettings from './settings/SimpleFileInput'
 
 import GroupSingleExpansionSettings from './settings/GroupSingleExpansion'
 import GroupExpansionSettings from './settings/GroupExpansion'
@@ -87,6 +88,7 @@ export default {
             'AppBar': new AppBarTemplateSettings(),
             'vf-pagination-input': new PaginationSettings(),
             'vf-reports-chart-input': new ChartSettings(),
+            'vf-simple-file-input': new SimpleFileSettings(),
         }
 
         const FormBuilderInputsList = []
@@ -144,6 +146,37 @@ export default {
         }
     },
     methods: {
+        getCopyPathAction: function (items, item) {
+            return {
+                type: 'button',
+                icon: 'mdi-map-marker-path',
+                iconProps: {
+                    small: true,
+                    color: 'secondary',
+                },
+            props: {
+                    icon: true,
+                    small: true,
+                    click: () => {
+                        const path = [];
+                        let iter = item;
+                        while (iter) {
+                            if (!iter.isRoot()) {
+                                path.push(iter.model.id);
+                                if (iter.value.slots?.slot) {
+                                    path.push(iter.value.slots.slot);
+                                }
+                            }
+                            iter = iter.parent;
+                            if (iter && iter.model.type === 'vf-fields-renderer') {
+                                path.push('fields');
+                            }
+                        }
+                        window.alert(path.reverse().join('.'));
+                    }
+                }
+            }
+        },
         getRemoveAction: function (items, item) {
             return {
                 type: 'confirm',
@@ -192,7 +225,8 @@ export default {
                 type: 'button',
                 icon: 'mdi-content-duplicate',
                 iconProps: {
-                    small: true
+                    small: true,
+                    color: 'orange',
                 },
                 props: {
                     icon: true,
@@ -213,7 +247,7 @@ export default {
                 type: 'menu',
                 iconProps: {
                     small: true,
-                    color: 'red'
+                    color: 'primary'
                 },
                 icon: 'mdi-format-vertical-align-center',
                 props: {
@@ -437,6 +471,10 @@ export default {
                                 item
                             )
                             actions.move = this.getMoveAction(
+                                this.schema.builder,
+                                item
+                            )
+                            actions.copy_path = this.getCopyPathAction(
                                 this.schema.builder,
                                 item
                             )

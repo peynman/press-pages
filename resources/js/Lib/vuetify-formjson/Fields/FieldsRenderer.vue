@@ -22,7 +22,7 @@
           :is="getComponentForField(field)"
           :ref="key"
           v-model="devalue[key]"
-          v-bind="getComponentPropsForField(field)"
+          v-bind="getComponentPropsForField(field, key)"
         />
       </component>
     </component>
@@ -33,7 +33,7 @@
       :ref="key"
       :key="`${id}-properties-${key}`"
       v-model="devalue[key]"
-      v-bind="getComponentPropsForField(field)"
+      v-bind="getComponentPropsForField(field, key)"
     />
   </component>
 </template>

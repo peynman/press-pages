@@ -1,118 +1,124 @@
 <template>
-  <v-card
-    style="border: solid 1px lightgray;"
-    :class="`vf-input ${this.field.class ? this.field.class:''}`"
-  >
-    <v-card-actions
-      dark
-      class="text-subtitle-1 pt-0"
+    <v-col
+        cols="12"
+        :class="`vf-input ${this.field.class ? this.field.class:''}`"
+        :md="field.md ? field.md : 6"
+        :lg="field.lg ? field.lg : 6"
+        :sm="field.sm ? field.sm : 6"
+        :xs="field.xs ? field.xs : 6"
     >
-      <v-list
-        dense
-        class="px-0 mx-auto"
-      >
-        <v-list-item class="px-0">
-          <v-list-item-content>
-            <v-list-item-title>{{ field.label }}</v-list-item-title>
-            <v-list-item-subtitle v-if="field.subtitle">
-              {{ field.subtitle }}
-              <v-chip
+        <v-card style="border: solid 1px lightgray;">
+            <v-card-actions
+            dark
+            class="text-subtitle-1 pt-0"
+            >
+            <v-list
                 dense
-                small
-              >
-                {{ this.duration }}
-              </v-chip>
-              <v-chip
-                v-if="field.is_windowed"
-                dense
-                small
-              >
-                {{ this.window }}
-              </v-chip>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action class="my-auto d-flex flex-row">
-            <v-btn
-              :loading="loading"
-              icon
-              small
-              @click="updateReport()"
+                class="px-0 mx-auto"
             >
-              <v-icon small>
-                mdi-refresh
-              </v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              small
-              :color="autoupdate ? 'success': 'secondary'"
-              @click="autoupdate = !autoupdate"
-            >
-              <v-icon small>
-                mdi-refresh-circle
-              </v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              small
-              @click="show = !show"
-            >
-              <v-icon small>
-                {{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-              </v-icon>
-            </v-btn>
-          </v-list-item-action>
-        </v-list-item>
-      </v-list>
-      <div class="d-flex flex-column" />
-    </v-card-actions>
-    <v-expand-transition>
-      <div v-show="show">
-        <v-divider />
-        <v-card-text class="d-flex flex-column">
-          <v-select
-            v-model="duration"
-            :items="durations"
-            label="بازه زمانی گزارش"
-            flat
-            outlined
-            rounded
-            hide-details
-            dense
-            class="mx-4 my-1"
-            item-text="id"
-            item-value="id"
-          />
-          <v-select
-            v-if="field.is_windowed"
-            v-model="window"
-            :items="windows"
-            label="پنجره تجمیع"
-            flat
-            outlined
-            rounded
-            hide-details
-            dense
-            class="mx-4 my-1"
-            item-text="id"
-            item-value="id"
-          />
-          <vf-fields-renderer
-            v-if="field.filters"
-            v-model="extraFilters"
-            :fields="field.filters"
-            :options="{ type: 'col', }"
-          />
-        </v-card-text>
-      </div>
-    </v-expand-transition>
-    <v-card-text class="pb-0">
-      <canvas
-        ref="chart"
-        style="height: 80%;"
-      />
-    </v-card-text>
-  </v-card>
+                <v-list-item class="px-0">
+                <v-list-item-content>
+                    <v-list-item-title>{{ field.label }}</v-list-item-title>
+                    <v-list-item-subtitle v-if="field.subtitle">
+                    {{ field.subtitle }}
+                    <v-chip
+                        dense
+                        small
+                    >
+                        {{ this.duration }}
+                    </v-chip>
+                    <v-chip
+                        v-if="field.is_windowed"
+                        dense
+                        small
+                    >
+                        {{ this.window }}
+                    </v-chip>
+                    </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action class="my-auto d-flex flex-row">
+                    <v-btn
+                    :loading="loading"
+                    icon
+                    small
+                    @click="updateReport()"
+                    >
+                    <v-icon small>
+                        mdi-refresh
+                    </v-icon>
+                    </v-btn>
+                    <v-btn
+                    icon
+                    small
+                    :color="autoupdate ? 'success': 'secondary'"
+                    @click="autoupdate = !autoupdate"
+                    >
+                    <v-icon small>
+                        mdi-refresh-circle
+                    </v-icon>
+                    </v-btn>
+                    <v-btn
+                    icon
+                    small
+                    @click="show = !show"
+                    >
+                    <v-icon small>
+                        {{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                    </v-icon>
+                    </v-btn>
+                </v-list-item-action>
+                </v-list-item>
+            </v-list>
+            <div class="d-flex flex-column" />
+            </v-card-actions>
+            <v-expand-transition>
+            <div v-show="show">
+                <v-divider />
+                <v-card-text class="d-flex flex-column">
+                <v-select
+                    v-model="duration"
+                    :items="durations"
+                    label="بازه زمانی گزارش"
+                    flat
+                    outlined
+                    rounded
+                    hide-details
+                    dense
+                    class="mx-4 my-1"
+                    item-text="id"
+                    item-value="id"
+                />
+                <v-select
+                    v-if="field.is_windowed"
+                    v-model="window"
+                    :items="windows"
+                    label="پنجره تجمیع"
+                    flat
+                    outlined
+                    rounded
+                    hide-details
+                    dense
+                    class="mx-4 my-1"
+                    item-text="id"
+                    item-value="id"
+                />
+                <vf-fields-renderer
+                    v-if="field.filters"
+                    v-model="extraFilters"
+                    :fields="field.filters"
+                    :options="{ type: 'col', }"
+                />
+                </v-card-text>
+            </div>
+            </v-expand-transition>
+            <v-card-text class="pb-0">
+            <canvas
+                ref="chart"
+                style="height: 80%;"
+            />
+            </v-card-text>
+        </v-card>
+    </v-col>
 </template>
 
 <script>
@@ -248,22 +254,7 @@ export default {
                 return [];
             }
 
-            const backgroundColor = [
-                "rgba(54, 162, 235, 0.2)",
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 206, 86, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(153, 102, 255, 0.2)",
-                "rgba(255, 159, 64, 0.2)"
-            ];
-            const borderColor = [
-                "rgba(54, 162, 235, 1)",
-                "rgba(255, 99, 132, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(153, 102, 255, 1)",
-                "rgba(255, 159, 64, 1)"
-            ];
+            const getRandomColor = () => ('#'+Math.floor(Math.random()*16777215).toString(16));
             if (this.field.report_groups && this.field.report_groups.length > 0) {
                 const groupKeys = this.field.report_groups.split(",");
                 const sets = [];
@@ -286,8 +277,8 @@ export default {
                         }
                         sets.push({
                             label: xLabel,
-                            backgroundColor: backgroundColor[indexer % 6],
-                            borderColor: borderColor[indexer % 6],
+                            backgroundColor: getRandomColor(),
+                            borderColor: getRandomColor(),
                             data: this.data
                                 .filter(i => i[key] == keyVals)
                                 .map(i => ({ y: i._value ? i._value : 0, x: moment(i._time) }))
@@ -297,6 +288,16 @@ export default {
                 });
                 return sets;
             } else {
+                const backgroundColor = [];
+                const borderColor = [];
+                function adjust(color, amount) {
+                    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+                }
+                this.data.forEach((i) => {
+                    const color = getRandomColor();
+                    backgroundColor.push(adjust(color, 20))
+                    borderColor.push(color);
+                })
                 return [
                     {
                         data: this.data.map(i => i._value),
@@ -400,18 +401,17 @@ export default {
 
             const start = moment();
             const stop = moment();
+            const am = parseInt(this.duration.substr(0, this.duration.length - 1));
             if (this.duration.endsWith("m")) {
-                const am = parseInt(this.duration.substr(0, this.duration.length - 1));
                 start.add(-1 * am, "minute");
             } else if (this.duration.endsWith("h")) {
-                const am = parseInt(this.duration.substr(0, this.duration.length - 1));
                 start.add(-1 * am, "hour");
             } else if (this.duration.endsWith("d")) {
-                const am = parseInt(this.duration.substr(0, this.duration.length - 1));
                 start.add(-1 * am, "day");
             } else if (this.duration.endsWith("s")) {
-                const am = parseInt(this.duration.substr(0, this.duration.length - 1));
                 start.add(-1 * am, "secoonds");
+            } else if (this.duration.endsWith("y")) {
+                start.add(-1 * am, "year");
             }
 
             const filters = this.field.filters ? this.extraFilters : {}

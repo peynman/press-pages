@@ -9,7 +9,9 @@ use Larapress\Pages\Repository\PageRepository;
 use Larapress\Pages\Services\DomainPageProvider;
 use Larapress\Pages\Services\IPageProvider;
 use Larapress\Pages\Services\IPageRenderService;
+use Larapress\Pages\Services\IPageService;
 use Larapress\Pages\Services\PageRenderService;
+use Larapress\Pages\Services\PageService;
 use Larapress\Profiles\Repository\Filter\FilterRepository;
 use Larapress\Profiles\Repository\Filter\IFilterRepository;
 
@@ -26,6 +28,7 @@ class PackageServiceProvider extends ServiceProvider
         $this->app->bind(IPageProvider::class, DomainPageProvider::class);
         $this->app->bind(IFilterRepository::class, FilterRepository::class);
         $this->app->bind(IPageRepository::class, PageRepository::class);
+        $this->app->bind(IPageService::class, PageService::class);
 
         $this->app->register(EventServiceProvider::class);
     }

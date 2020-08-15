@@ -45,7 +45,7 @@ class PageVisitReport implements IReportSource
                     array_merge(["_value", "_time"], $groups),
                     $fromC,
                     $toC,
-                    'aggregateWindow(every: '.$window.', fn: sum) '.(isset($options['func']) ? $options['func'] : '')
+                    'aggregateWindow(every: '.$window.', fn: sum) '.(isset($options['func']) && is_string($options['func']) ? $options['func'] : '')
                 );
             },
             'pages.visit.func' => function ($user, array $options = []) {

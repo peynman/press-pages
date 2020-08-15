@@ -5,7 +5,7 @@
  */
 
 /*!
- * vuex v3.4.0
+ * vuex v3.5.1
  * (c) 2020 Evan You
  * @license MIT
  */
@@ -1233,6 +1233,8 @@
 /*! exports provided: parseEvent, isEventOn, isEventStart, isEventOverlapping */
 
 /*! exports provided: preset */
+
+/*! exports provided: prevent, default */
 
 /*! exports provided: stack */
 
@@ -3088,6 +3090,8 @@
 
 //! Copyright (c) JS Foundation and other contributors
 
+//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
+
 //! github.com/moment/moment-timezone
 
 //! license : MIT
@@ -3098,4 +3102,8 @@
 
 //! moment.js locale configuration
 
+//! momentjs.com
+
 //! version : 0.5.31
+
+//! version : 2.27.0

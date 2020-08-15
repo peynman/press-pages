@@ -18,7 +18,7 @@ export default {
     },
     computed: {
         formId: function () {
-            return this.id ? this.id : 'vuetify-formjson-#' + Math.random() * 10000
+            return this.id ? this.id : 'vf-random-' + Math.floor(Math.random() * 10000)
         }
     },
     watch: {

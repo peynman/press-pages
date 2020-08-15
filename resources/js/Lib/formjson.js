@@ -19,6 +19,13 @@ window.ExtraFormJSONComponents = {
     'vf-image-input': () => import(/* webpackChunkName: "image-input"*/ './online-academy/ImageInput.vue'),
     'vf-week-calendar-input': () => import(/* webpackChunkName: "week-calendar-input"*/ './online-academy/WeekCalendar.vue'),
     'vf-rev-slider-input': () => import(/* webpackChunkName: "rev-slider"*/ './online-academy/RevSlider.vue'),
+    'vf-introducers-history-input': () => import(/* webpackChunkName: "intros-history"*/ './online-academy/IntroducersHistory.vue'),
+    'vf-wallet-transactions-history-input': () => import(/* webpackChunkName: "walet-history"*/ './online-academy/WalletTransactionsHistory.vue'),
+    // extra non json builder components working stand alone
+    'object-links-card': () => import(/* webpackChunkName: "extra-object-link"*/ './online-academy/Extras/ObjectLinksCard.vue'),
+    'user-links-card': () => import(/* webpackChunkName: "extra-user-link"*/ './online-academy/Extras/UserLinksCard.vue'),
+    'product-links-card': () => import(/* webpackChunkName: "extra-product-link"*/ './online-academy/Extras/ProductLinksCard.vue'),
+    'form-entry-links-card': () => import(/* webpackChunkName: "extra-form-link"*/ './online-academy/Extras/FormEntryLinksCard.vue'),
 }
 
 import ProductCardSettings from './online-academy/settings/ProductCard'
@@ -37,6 +44,8 @@ import ACSessionLinkSettings from './online-academy/settings/AcSessionLink'
 import ImageInputSettings from './online-academy/settings/ImageInput'
 import WeekCalendarSettings from './online-academy/settings/WeekCalendar'
 import RevSliderSettings from './online-academy/settings/RevSlider'
+import IntroducersHistorySettings from './online-academy/settings/IntroducersHistory'
+import WalletTransactionsHistorySettings from './online-academy/settings/WalletTransactionsHistory'
 
 window.ExtraFormJSONSettings = {
     'vf-product-card-input': new ProductCardSettings(),
@@ -53,6 +62,8 @@ window.ExtraFormJSONSettings = {
     'vf-image-input': new ImageInputSettings(),
     'vf-week-calendar-input': new WeekCalendarSettings(),
     'vf-rev-slider-input': new RevSliderSettings(),
+    'vf-introducers-history-input': new IntroducersHistorySettings(),
+    'vf-wallet-transactions-history-input': new WalletTransactionsHistorySettings(),
 };
 
 for (const name in window.ExtraFormJSONComponents) {

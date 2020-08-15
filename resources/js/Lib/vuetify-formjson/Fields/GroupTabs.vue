@@ -9,6 +9,7 @@
       :color="`${(field.slider.class ? field.slider.class : '')}`"
     />
     <v-tab
+      class="no-letter-spacing"
       v-for="(item, key) in visibleGroups"
       :key="`${id}-tab-label-${key}`"
       :href="`#${id}-tab-${key}`"

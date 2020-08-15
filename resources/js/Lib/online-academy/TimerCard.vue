@@ -9,25 +9,9 @@
     <v-card :class="`d-flex flex-row rounded-product-card grey lighten-4 ${field.class ? field.class : ''}`">
       <v-list
         dense
-        class=" grey lighten-4"
+        class=" grey lighten-4 fill-width"
       >
-        <v-list-item>
-          <v-list-item-action
-            class="my-1 d-flex flex-column"
-            style="min-width: 130px;"
-          >
-            <v-progress-circular
-              :value="timeRemainingPercent"
-              size="100"
-              class="mx-auto"
-            >
-              <span>
-                {{ timeRemainingDays }} روز</span>
-              <v-list-item-subtitle style="flex: 1; position: absolute; margin-top: 115px;">
-                {{ field.time_message }}
-              </v-list-item-subtitle>
-            </v-progress-circular>
-          </v-list-item-action>
+        <v-list-item class="fill-width">
           <v-list-item-avatar size="100">
             <v-img
               :src="profilePic"
@@ -35,26 +19,39 @@
             />
           </v-list-item-avatar>
           <v-list-item-content
-            style="overflow: visible;"
-            class="ms-2"
+            class="ms-3"
           >
-            <v-list-item-title style="font-size: 1.5rem; line-height: 1.7rem;">
-              {{ titleMessage }}
+            <v-list-item-title style="font-size: 1.3rem; line-height: 1.7rem;">
+              <span v-if="profileComplete">{{ titleMessage }}</span>
               <v-btn
                 v-if="!profileComplete"
-                large
                 text
                 color="warning"
-                class="no-letter-spacing my-auto ms-2"
-                :href="field.profileUrl ? field.profileUrl : '/me/forms/1'"
+                class="no-letter-spacing my-auto pa-0"
+                :href="profileUrl"
               >
                 پروفایل خود را تکمیل کنید
               </v-btn>
             </v-list-item-title>
-            <v-list-item-subtitle>
+            <v-list-item-subtitle class="mt-1">
               {{ dateMessage }}
             </v-list-item-subtitle>
           </v-list-item-content>
+          <v-list-item-action
+            style="min-width: 130px;"
+          >
+            <v-progress-circular
+              :value="timeRemainingPercent"
+              size="80"
+              class="mx-auto mb-2"
+            >
+              <span>
+                {{ timeRemainingDays }} روز</span>
+              <v-list-item-subtitle style="flex: 1; position: absolute; margin-top: 105px;">
+                {{ field.time_message }}
+              </v-list-item-subtitle>
+            </v-progress-circular>
+          </v-list-item-action>
         </v-list-item>
       </v-list>
     </v-card>
@@ -63,6 +60,21 @@
 
 <script>
 import moment from "moment-jalaali";
+
+Object.getPrototypeOf(moment.localeData())._jMonths= [
+    'فروردین'
+    , 'اردیبهشت'
+    , 'خرداد'
+    , 'تیر'
+    , 'مرداد'
+    , 'شهریور'
+    , 'مهر'
+    , 'آبان'
+    , 'آذر'
+    , 'دی'
+    , 'بهمن'
+    , 'اسفند'
+]
 
 export default {
     name: "VfTimerCardInput",
@@ -102,7 +114,7 @@ export default {
         dateMessage() {
             const now = moment();
             now.locale("fa");
-            return "امروز " + now.format("dddd jYYYY/jMM/jDD");
+            return "امروز " + now.format("dddd jDD jMMMM jYYYY");
         },
         timeRemainingPercent() {
             const from = this.field.startTime
@@ -123,6 +135,16 @@ export default {
             const now = moment();
             const rem = now.diff(then, "days");
             return Math.abs(rem);
+        },
+        profileUrl () {
+            const profileFormIds = {
+                support: 5,
+            }
+            const roles = this.user.roles.filter(i => Object.keys(profileFormIds).includes(i.name));
+            const profileFormId = roles && roles.length > 0 ?
+                        (profileFormIds[roles[0].name] ? profileFormIds[roles[0].name] : '1') : '1';
+            return "/me/forms/" + profileFormId;
+
         }
     }
 };

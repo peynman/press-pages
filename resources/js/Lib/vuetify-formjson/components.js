@@ -36,6 +36,7 @@ export const customComponents = {
     'vf-file-upload-input': () => import(/* webpackChunkName: "file-upload"*/ './Fields/FileUpload.vue'),
     'vf-stackedit-input': () => import(/* webpackChunkName: "stackedit-input"*/ './Fields/StackEdit/StackEdit.vue'),
     'vf-reports-chart-input': () => import(/* webpackChunkName: "reports-chart"*/ './Fields/Reports/Chart.vue'),
+    'vf-simple-file-input': () => import(/* webpackChunkName: "simple-file"*/ './Fields/SimpleFileInput.vue'),
 }
 
 export default {

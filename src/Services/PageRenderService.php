@@ -98,6 +98,9 @@ class PageRenderService implements IPageRenderService
             $user['balance'] = $balance;
             // make sure user profile ise loaded if exists
             $user['profile'] = $user->profile;
+            // make sure support user is loaded
+            $support = $user->supportUserProfile;
+            $user['support'] = !is_null($support) ? $support->data['values'] : null;
         }
 
         $this->reportPageEvents($user, $request, $route, $page);

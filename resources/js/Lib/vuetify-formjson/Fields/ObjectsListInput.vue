@@ -42,30 +42,8 @@ export default {
     }
   },
   data() {
-    const checkedIds = {};
-    if (this.field.objects) {
-      this.field.objects.forEach(o => {
-        checkedIds[o.id] = false;
-      });
-    }
-    if (this.value) {
-      if (Array.isArray(this.value)) {
-        this.value.forEach(v => {
-          checkedIds[v.id] = true;
-        });
-      } else {
-        for (const p in this.value) {
-          const v = this.value[p];
-          if (typeof v === "object") {
-            checkedIds[v.id] = true;
-          } else {
-            checkedIds[p] = v;
-          }
-        }
-      }
-    }
     return {
-      checkedIds: checkedIds
+      checkedIds: this.getCheckedIds()
     };
   },
   methods: {
@@ -98,12 +76,40 @@ export default {
         });
       }
       this.devalue = values;
+    },
+    getCheckedIds() {
+        const checkedIds = {};
+        if (this.field.objects) {
+        this.field.objects.forEach(o => {
+            checkedIds[o.id] = false;
+        });
+        }
+        if (this.value) {
+            if (Array.isArray(this.value)) {
+                this.value.forEach(v => {
+                checkedIds[v.id] = true;
+                });
+            } else {
+                for (const p in this.value) {
+                const v = this.value[p];
+                if (typeof v === "object") {
+                    checkedIds[v.id] = true;
+                } else {
+                    checkedIds[p] = v;
+                }
+                }
+            }
+        }
+        return checkedIds;
     }
   },
   watch: {
     devalue: function() {
       this.$emit("input", this.devalue);
+    },
+    value () {
+        this.checkedIds = this.getCheckedIds();
     }
-  }
+  },
 };
 </script>

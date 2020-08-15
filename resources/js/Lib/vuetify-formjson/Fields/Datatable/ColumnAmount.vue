@@ -29,7 +29,6 @@ export default {
         },
         amountString () {
             const val = this.getNestedPathValue(this.item, this.column.id);
-            console.log(val);
             if (val) {
                 const v = Math.abs(this.getNestedPathValue(this.item, this.column.id));
                 if (isNaN(v)) {

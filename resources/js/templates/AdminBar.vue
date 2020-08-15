@@ -418,9 +418,22 @@ export default {
                         }
                     ]
                 }
-            ],
-            links: [
-                { icon: "mdi-face-profile", text: "پروفایل من", href: "/me/forms/1" },
+            ]
+        };
+    },
+    computed: {
+        user() {
+            return this.$store.state.user;
+        },
+        links() {
+            const profileFormIds = {
+                support: 5,
+            }
+            const roles = this.user.roles.filter(i => Object.keys(profileFormIds).includes(i.name));
+            const profileFormId = roles && roles.length > 0 ?
+                        (profileFormIds[roles[0].name] ? profileFormIds[roles[0].name] : '1') : '1';
+            return [
+                { icon: "mdi-face-profile", text: "پروفایل من", href: "/me/forms/" + profileFormId },
                 {
                     icon: "mdi-onepassword",
                     text: "تغییر رمز عبور",
@@ -428,11 +441,7 @@ export default {
                 },
                 { icon: "mdi-exit-run", text: "خروج", href: "/logout" }
             ]
-        };
-    },
-    computed: {
-        user() {
-            return this.$store.state.user;
+
         },
         userGroups() {
             return this.groups

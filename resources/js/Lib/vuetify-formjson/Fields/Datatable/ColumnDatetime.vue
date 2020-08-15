@@ -1,18 +1,20 @@
 <template>
-  <div class="d-flex flex-column">
+  <div class="d-flex flex-column my-1">
     <v-chip
       dense
       small
-      color="secondary lighten-2"
+      color="secondary darken-2"
       dark
+      outlined
     >
       {{ dateString }}
     </v-chip>
     <v-chip
       dense
-      small
-      color="secondary lighten-4"
+      x-small
+      color="secondary lighten-2"
       dark
+      outlined
     >
       {{ timeString }}
     </v-chip>
@@ -37,7 +39,7 @@ export default {
     }),
     computed: {
         dateString() {
-            return this.mom ? this.mom.format("jYYYY-jMM-jDD") : "";
+            return this.mom ? this.mom.format("jYYYY/jMM/jDD") : "";
         },
         timeString() {
             return this.mom
@@ -50,9 +52,7 @@ export default {
             deep: true,
             handler() {
                 if (this.item[this.column.id]) {
-                    this.mom = moment(
-                        momentTz.utc(this.item[this.column.id]).tz(momentTz.tz.guess())
-                    );
+                    this.mom = moment(momentTz.utc(this.item[this.column.id]).tz(momentTz.tz.guess()));
                     this.mom.locale("fa");
                 }
             }
@@ -60,9 +60,7 @@ export default {
     },
     mounted() {
         if (this.item[this.column.id]) {
-            this.mom = moment(
-                momentTz.utc(this.item[this.column.id]).tz(momentTz.tz.guess())
-            );
+            this.mom = moment(momentTz.utc(this.item[this.column.id]).tz(momentTz.tz.guess()));
             this.mom.locale("fa");
         }
     }

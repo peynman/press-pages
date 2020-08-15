@@ -47,7 +47,6 @@
       fixed
       color="rgba(84, 84, 84, 0.74)"
       dark
-      scroll-target="#scrolling-techniques-2"
     >
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-toolbar-title>آنلاین آکادمی</v-toolbar-title>
@@ -295,6 +294,7 @@
           <vuetify-formjson
             v-model="formModel"
             v-bind="formSchema"
+            :id="`${id}-appbar`"
           />
         </v-col>
       </v-row>
@@ -342,8 +342,22 @@ export default {
             showMediaLinks: false,
             drawer: false,
             increaseWallet: {},
-            links: [
-                { icon: "mdi-face-profile", text: "پروفایل من", href: "/me/forms/1" },
+        };
+    },
+    computed: {
+        user() {
+            return this.$store.state.user;
+        },
+        links() {
+            const profileFormIds = {
+                support: 5,
+            }
+            const roles = this.user.roles.filter(i => Object.keys(profileFormIds).includes(i.name));
+            console.log(roles);
+            const profileFormId = roles && roles.length > 0 ?
+                        (profileFormIds[roles[0].name] ? profileFormIds[roles[0].name] : '1') : '1';
+            return [
+                { icon: "mdi-face-profile", text: "پروفایل من", href: "/me/forms/" + profileFormId },
                 {
                     icon: "mdi-onepassword",
                     text: "تغییر رمز عبور",
@@ -351,32 +365,20 @@ export default {
                 },
                 { icon: "mdi-exit-run", text: "خروج", href: "/logout" }
             ]
-        };
-    },
-    computed: {
-        user() {
-            return this.$store.state.user;
+
         },
         isAdmin() {
+            const adminRoles = ['super-role', 'affiliate', 'master', 'support', 'admin', 'administrator', 'accounting', 'manager'];
             return (
                 this.$store.state.user &&
-        this.$store.state.user.roles &&
-        this.$store.state.user.roles.filter(
-            i => i.name === "super-role" || i.name === "affiliate"
-        ).length > 0
+                this.$store.state.user.roles &&
+                this.$store.state.user.roles.filter(
+                    i => adminRoles.includes(i.name)
+                ).length > 0
             );
         },
         isCustomer() {
-            return (
-                this.$store.state.user &&
-        this.$store.state.user.roles &&
-        this.$store.state.user.roles.filter(
-            i =>
-                i.name === "super-role" ||
-            i.name === "affiliate" ||
-            i.name === "student"
-        ).length > 0
-            );
+            return ( this.$store.state.user && this.$store.state.user.roles );
         },
         navs() {
             const navs = [
@@ -384,6 +386,11 @@ export default {
                     icon: "mdi-home",
                     title: "خانه",
                     href: "/"
+                },
+                {
+                    icon: "mdi-store",
+                    title: "کلاس‌های ۱۴۰۰",
+                    href: "/1400"
                 }
             ];
             if (this.isAdmin) {
@@ -392,6 +399,7 @@ export default {
                     title: "پنل ادمین",
                     href: "/admin/home"
                 });
+
             }
             if (this.user) {
                 if (this.isCustomer) {
@@ -410,11 +418,11 @@ export default {
                         title: "تراکنش های من",
                         href: "/me/carts"
                     });
-                    // navs.push({
-                    //     icon: "mdi-gift",
-                    //     title: "اعتبار هدیه",
-                    //     href: "/me/forward"
-                    // });
+                    navs.push({
+                        icon: "mdi-gift",
+                        title: "اعتبار هدیه",
+                        href: "/me/forward"
+                    });
                     navs.push({
                         icon: "mdi-credit-card",
                         inputs: {
@@ -426,6 +434,7 @@ export default {
                                     type: "input",
                                     input: "text",
                                     label: "افزایش اعتبار به تومان",
+                                    class: 'no-letter-spacing',
                                     props: {
                                         solo: true,
                                         dense: true,

@@ -15,7 +15,7 @@ export default function (Blockly, crudList) {
                 .appendField('and content type')
                 .appendField(new Blockly.FieldDropdown([
                     ['JSON', 'application/json'],
-                    ['Multipart form data', 'multipart/form-data;'],
+                    ['Multipart form data', 'multipart/form-data'],
                     ['x-www Form', 'application/x-www-form-urlencoded'],
                     ['Raw', 'text']
                 ]), 'content_type')
@@ -61,8 +61,13 @@ export default function (Blockly, crudList) {
         if (valueHeaders !== '') {
             headersCode = `let askedHeaders = ${valueHeaders}\nif (!headers) { headers = {}}\nheaders['Content-Type'] = '${dropdownContentType}'\n`
         }
-        const headers = `${headersCode}\nconst headers = this.getWebAuthHeaders(askedHeaders)\n`
-        var code = `${headers}this.webRequest({\nurl: ${valueUrl},\nmethod: '${dropdownMethod}',\nheaders,\ndata: ${valueData},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
+        let headers = `${headersCode}\nconst headers = this.getWebAuthHeaders(askedHeaders)\n`
+        let value = valueData;
+        if (dropdownContentType === 'multipart/form-data') {
+            headers += `const formValues = new FormData()\n for (let prop in ${valueData}) formValues.append(prop, ${valueData}[prop]);\n`
+            value = 'formValues';
+        }
+        var code = `${headers}this.webRequest({\nurl: ${valueUrl},\nmethod: '${dropdownMethod}',\nheaders,\ndata: ${value},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
         return code
     }
 

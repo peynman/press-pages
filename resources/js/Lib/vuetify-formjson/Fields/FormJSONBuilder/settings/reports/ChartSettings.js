@@ -133,7 +133,11 @@ export default class ChartSettings extends BaseInputSettings {
                         }
                     }
                 },
-            }
+            },
+            xs: TextSettings('X-Small cols'),
+            sm: TextSettings('Small cols'),
+            md: TextSettings('Medium cols'),
+            lg: TextSettings('Large cols'),
         }
     }
 }

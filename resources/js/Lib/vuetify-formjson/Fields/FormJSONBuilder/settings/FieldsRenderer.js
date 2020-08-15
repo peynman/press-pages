@@ -33,6 +33,7 @@ export default class FieldsRenderSettings extends BaseInputSettings {
                 class: 'col-12 ma-0 ps-0 pe-0',
                 updateKeyCodes: [13]
             },
+            label: TextSettings('Label'),
             hidden: CheckboxSettings('Hidden'),
             options: {
                 options: {

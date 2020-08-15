@@ -113,7 +113,8 @@ export default {
             this.templateProps = {
                 body: data.body,
                 options: data.body?.template?.props,
-                sources: data.sources
+                sources: data.sources,
+                id: 'page'
             };
             this.template = data.body?.template?.name;
             this.loading = false;

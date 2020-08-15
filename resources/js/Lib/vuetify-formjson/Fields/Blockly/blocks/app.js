@@ -289,7 +289,7 @@ export default function (Blockly) {
         }
     }
     Blockly.JavaScript.app_form_values = function (block) {
-        return ['this.DeCompileEvents(this[this.getFormValuePropName()])', Blockly.JavaScript.ORDER_ASSIGNMENT]
+        return ['this[this.getFormValuePropName()]', Blockly.JavaScript.ORDER_ASSIGNMENT]
     }
 
     // set root form validations
@@ -702,7 +702,7 @@ export default function (Blockly) {
     }
 
 
-    // app propet
+    // app prompet
     Blockly.Blocks.app_confirm = {
         init: function () {
             this.appendValueInput('message')
@@ -718,6 +718,72 @@ export default function (Blockly) {
         var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
         return [`window.confirm(${argument0})`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
     }
+
+    // app show snack
+    Blockly.Blocks.app_show_snack = {
+        init: function () {
+            this.appendValueInput('message')
+                .setCheck('String')
+                .appendField('Show snack')
+            this.appendValueInput('color')
+                .setCheck(['String', 'Color'])
+                .appendField('with color (red)')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_show_snack = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'message', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument1 = Blockly.JavaScript.valueToCode(block, 'color', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.$store.state.host.showSnack(${argument0}, ${argument1})\n`
+    }
+
+    // app share
+    Blockly.Blocks.app_share_window = {
+        init: function () {
+            this.appendValueInput('url')
+                .setCheck('String')
+                .appendField('Share link')
+            this.appendValueInput('title')
+                .setCheck(['String'])
+                .appendField('with title')
+            this.appendValueInput('text')
+                .setCheck(['String'])
+                .appendField('with text')
+            this.setPreviousStatement(true, null)
+            this.setNextStatement(true, null)
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_share_window = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument1 = Blockly.JavaScript.valueToCode(block, 'title', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        var argument2 = Blockly.JavaScript.valueToCode(block, 'text', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return `this.shareWindow(${argument0}, ${argument1}, ${argument2})\n`
+    }
+
+
+    // app url param
+    Blockly.Blocks.app_url_param = {
+        init: function () {
+            this.appendValueInput('param')
+                .setCheck('String')
+                .appendField('get url param')
+            this.setOutput(true, ['String', 'Boolean', 'Number'])
+            this.setColour(110)
+            this.setTooltip('')
+            this.setHelpUrl('')
+        }
+    }
+    Blockly.JavaScript.app_url_param = function (block) {
+        var argument0 = Blockly.JavaScript.valueToCode(block, 'param', Blockly.JavaScript.ORDER_ASSIGNMENT) || ''
+        return [`this.getUrlParam(${argument0})`, Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    }
 }
 
 export const CategoryApp =
@@ -726,6 +792,7 @@ export const CategoryApp =
     <block type="app_register_channel"></block>
     <block type="app_new_filtered_from_state"></block>
     <block type="app_get_route_path_parts"></block>
+    <block type="app_url_param"></block>
     <block type="app_append_form_blockly_code"></block>
     <block type="app_append_form_options"></block>
     <block type="app_append_form_sources"></block>
@@ -757,5 +824,7 @@ export const CategoryApp =
     <block type="app_open_new_tab"></block>
     <block type="app_ask"></block>
     <block type="app_confirm"></block>
+    <block type="app_show_snack"></block>
+    <block type="app_share_window"></block>
 </category>
 `

@@ -26,6 +26,10 @@ export default class DatatableInputSettings extends BaseInputSettings {
                 id: 'crud',
                 title: 'CRUD Create/Edit/Filter',
             },
+            {
+                id: 'forms',
+                title: 'Datatable Form'
+            }
         ]
     }
 
@@ -133,6 +137,7 @@ export default class DatatableInputSettings extends BaseInputSettings {
             'hide-filters': CheckboxSettings('Can not Filter'),
             'hide-search': CheckboxSettings('Can not Search'),
             'hide-settings': CheckboxSettings('Can not change settings'),
+            'hide-forms': CheckboxSettings('Can not fill forms'),
             props: {
                 options: {
                     type: 'row',

@@ -14,9 +14,32 @@ const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
  |
  */
 
+ // version 1.6 vue-loader with laravel mix
+ // t's because the order of vue-loader and vuetify-loader was added by laravel-mix
+mix.extend('vuetify', new class {
+    webpackConfig (config) {
+        config.plugins.push(new VuetifyLoaderPlugin({}))
+    }
+})
+
 mix
     .options({
         extractVueStyles: false,
+        uglify: {
+            uglifyOptions: {
+                compress: {
+                    drop_console: true
+                }
+            }
+        },
+        terser: {
+            cache: false,
+            parallel: false,
+            sourceMap: false,
+            terserOptions: {
+                compress: false
+            }
+        }
     })
     .webpackConfig({
         output: {
@@ -24,7 +47,6 @@ mix
             publicPath: '/vendor/larapress-pages/',
         },
         plugins: [
-            new VuetifyLoaderPlugin({}),
             new MomentLocalesPlugin({
                 localesToKeep: ['fa']
             }),
@@ -47,8 +69,11 @@ if (mix.inProduction()) {
         'moment',
         'moment-jalaali',
         'moment-timezone',
+        'lodash.clonedeep'
     ]);
 } else {
+    // laravel-mix webpack 4 bug
+        // if extracted sources, css files are empty
     Mix.listen('configReady', config => {
         const scssRule = config.module.rules.find(r => r.test.toString() === /\.scss$/.toString())
         const scssOptions = scssRule.loaders.find(l => l.loader === 'sass-loader').options
@@ -60,3 +85,6 @@ if (mix.inProduction()) {
     })
     mix.sass('resources/sass/app.scss', 'resources/dist/css')
 }
+
+mix.vuetify();
+mix.sourceMaps();
