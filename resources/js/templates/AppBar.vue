@@ -385,7 +385,7 @@ export default {
                 {
                     icon: "mdi-home",
                     title: "خانه",
-                    href: "/"
+                    href: "/home"
                 },
                 {
                     icon: "mdi-store",
@@ -406,7 +406,7 @@ export default {
                     navs.push({
                         icon: "mdi-desk-lamp",
                         title: "میز مطالعه من",
-                        href: "/me/desktop"
+                        href: "/"
                     });
                     navs.push({
                         icon: "mdi-bookshelf",
