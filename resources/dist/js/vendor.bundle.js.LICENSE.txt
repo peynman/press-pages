@@ -3090,8 +3090,6 @@
 
 //! Copyright (c) JS Foundation and other contributors
 
-//! authors : Tim Wood, Iskren Chernev, Moment.js contributors
-
 //! github.com/moment/moment-timezone
 
 //! license : MIT
@@ -3102,8 +3100,4 @@
 
 //! moment.js locale configuration
 
-//! momentjs.com
-
 //! version : 0.5.31
-
-//! version : 2.27.0

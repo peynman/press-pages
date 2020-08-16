@@ -88,7 +88,7 @@ export default {
                 this.field.label
         },
         message() {
-            return this.user.support && this.user.support.message ? this.user.support.message : this.field.label;
+            return this.user.support && this.user.support.message ? this.user.support.message : this.field.message;
         },
         hrefTelegram () {
             return this.user.support && this.user.support.telegram_url ? this.user.support.telegram_url : this.field.hrefTelegram ? this.field.hrefTelegram : '#';

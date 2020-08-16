@@ -31,9 +31,9 @@
     @if(env('APP_ENV') === 'debug')
         <script src="{{ asset('/vendor/larapress-pages/js/app.js') }}"></script>
     @else
-        <script src="{{ asset('/vendor/larapress-pages/js/manifest.js') }}"></script>
-        <script src="{{ asset('/vendor/larapress-pages/js/vendor.bundle.js') }}"></script>
-        <script src="{{ asset('/vendor/larapress-pages/js/app.bundle.js') }}"></script>
+        <script src="{{ mix('js/manifest.js', '/vendor/larapress-pages') }}"></script>
+        <script src="{{ mix('js/vendor.bundle.js', '/vendor/larapress-pages') }}"></script>
+        <script src="{{ mix('js/app.bundle.js', '/vendor/larapress-pages') }}"></script>
     @endif
 </body>
 </html>

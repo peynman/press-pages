@@ -3,8 +3,13 @@
     "scripts": {
         "dev": "NODE_ENV=development webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch": "NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "production": "npm run dev && NODE_ENV=production webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "hot": "NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js"
+        "production": "NODE_ENV=production webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "hot": "NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "css": "NODE_ENV=css_only webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "publish": "NODE_ENV=publish_only webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "clear": "NODE_ENV=clear_only webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "build": "npm run css && npm run production",
+        "install": "npm run clear && npm run build && npm run publish"
     },
     "devDependencies": {
         "@babel/plugin-proposal-optional-chaining": "^7.11.0",
@@ -19,6 +24,8 @@
         "diff-match-patch": "^1.0.5",
         "eslint": "^7.7.0",
         "eslint-plugin-vue": "^7.0.0-beta.2",
+        "fibers": "^5.0.0",
+        "fs": "0.0.1-security",
         "hasher": "^1.2.0",
         "jquery": "^3.5.1",
         "jquery-ui": "^1.12.1",

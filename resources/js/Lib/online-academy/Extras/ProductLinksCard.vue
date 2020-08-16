@@ -55,6 +55,16 @@ export default {
                                 in_cart_id: this.field.id,
                             }
                         },
+                        {
+                            id: 'send-sms',
+                            title: 'ارسال پیامک به لیست خریداران',
+                            icon: 'mdi-cellphone-play',
+                            url: '/admin/sms-messages/send',
+                            devalue: {
+                                type: 'in_purchased_ids',
+                                ids: this.itemId,
+                            }
+                        },
                     ]);
                 }
                 if (this.field.types.map((t) => t.name).includes('session')) {
@@ -76,7 +86,7 @@ export default {
                             filters: {
                                 tags: 'course-' + this.field.id + '-taklif',
                             }
-                        }
+                        },
                     ]);
                 }
             }
