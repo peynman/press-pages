@@ -58,6 +58,7 @@
         :product="session"
         :field="{compact: true}"
       />
+      <v-btn class="my-auto" icon small dense v-if="isAdmin" :href="`/admin/products/${session.id}`" target="_blank"><v-icon small>mdi-database-edit</v-icon></v-btn>
     </div>
   </div>
 </template>
@@ -65,6 +66,7 @@
 <script>
 import ProductActions from './ProductActions.vue'
 import moment from 'moment-jalaali'
+import { UserAwareComponent } from "./mixins";
 
 Object.getPrototypeOf(moment.localeData())._jMonths= [
     'فروردین'
@@ -85,6 +87,7 @@ export default {
     components: {
         ProductActions,
     },
+    mixins: [UserAwareComponent],
     props: {
         session: Object,
         id: String
@@ -97,13 +100,27 @@ export default {
             return this.session.parent?.data?.title;
         },
         badges () {
-            return this.session.types.filter((t) => ['vod_hls', 'vod_link', 'file_pdf']
+            return this.session.types.filter((t) => ['vod_hls', 'vod_link', 'file_pdf', 'azmoon']
                 .includes(t.name)).map(
-                (t) => ({
-                    title: t.name === 'file_pdf' ? 'جزوه'
-                        : 'فایل ضبظ شده',
-                    color: 'primary',
-                }))
+                (t) => {
+                    let title = ''
+                    switch (t.name) {
+                        case 'vod_hls':
+                        case 'vod_link':
+                        title = 'فایل ضبظ شده';
+                        break;
+                        case 'file_pdf':
+                        title = 'جزوه';
+                        break;
+                        case 'azmoon':
+                        title = 'آزمون';
+                        break;
+                    }
+                    return {
+                        title: title,
+                        color: 'primary',
+                    }
+                })
         },
         startTime () {
             return moment(this.session.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm:ssZ', true);

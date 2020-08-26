@@ -13,16 +13,28 @@
         offset-y
         dark
       >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             small
             rounded
             outlined
-            color="success"
-            class="my-auto ms-1"
+            :color="profileComplete ? 'green': 'warning'"
+            class="my-auto ms-1 no-letter-spacing"
             v-on="on"
           >
-            <span class="white--text">{{ user.name }}</span>
+            <span class="white--text">{{ userNameString }}</span>
+            <v-avatar :color="profileComplete ? 'green': 'warning'" size="32px" class="ms-2" >
+                <img
+                    v-if="userAvatar"
+                    alt="Avatar"
+                    :src="userAvatar"
+                >
+                <v-icon
+                    v-if="!userAvatar"
+                    color="white"
+                    small
+                >mdi-face-recognition</v-icon>
+            </v-avatar>
           </v-btn>
         </template>
         <v-list>
@@ -289,21 +301,34 @@ export default {
                             id: "sms-messages",
                             title: "پیامک ها",
                             group: "contacts",
-                            icon: "mdi-cellphone-arrow-down"
+                            icon: "mdi-cellphone-arrow-down",
+                            extras: [
+                                {
+                                    icon: "mdi-send",
+                                    id: "send",
+                                    color: "green lighten-3",
+                                }
+                            ]
                         },
                         {
-                            id: "sms-messages/send",
-                            title: "ارسال پیامک",
+                            id: "notifications",
+                            title: "اعلان‌ها",
+                            icon: "mdi-shield-alert",
                             group: "contacts",
-                            icon: "mdi-cellphone-play",
-                            permission: 'sms-messages.send'
+                            extras: [
+                                {
+                                    icon: "mdi-send",
+                                    id: "send",
+                                    color: "green lighten-3"
+                                }
+                            ]
                         },
                         {
                             id: "phone-numbers",
                             title: "شماره های ثبت شده",
                             group: "contacts",
                             icon: "mdi-cellphone-text"
-                        }
+                        },
                     ]
                 },
                 {
@@ -396,26 +421,31 @@ export default {
                         {
                             id: "log-viewer",
                             title: "لوگ سیستم",
-                            icon: "mdi-format-page-break",
+                            icon: "mdi-math-log",
                             permission: "app.log-viewer"
                         },
                         {
                             id: "horizon",
                             title: "صف سیستم",
-                            icon: "mdi-format-list-checks",
+                            icon: "mdi-format-page-break",
                             permission: "app.horizon"
                         },
                         {
                             id: "telescope",
                             title: "تلسکوپ",
-                            icon: "mdi-format-list-checks",
+                            icon: "mdi-briefcase-search",
                             permission: "app.telescope"
                         },
                         {
                             id: "task-reports",
                             title: "گزارش تسک‌های سیستم",
                             icon: "mdi-clipboard-pulse"
-                        }
+                        },
+                        {
+                            id: "activity-logs",
+                            title: "گزارش تغییرات سیستم",
+                            icon: "mdi-format-list-checks"
+                        },
                     ]
                 }
             ]
@@ -424,6 +454,19 @@ export default {
     computed: {
         user() {
             return this.$store.state.user;
+        },
+        userNameString () {
+            if (this.user.profile?.data?.values?.firstname && this.user.profile?.data?.values?.lastname) {
+                return this.user.profile?.data?.values?.firstname + ' ' + this.user.profile?.data?.values?.lastname;
+            }
+
+            return 'تکمیل پروفایل'
+        },
+        userAvatar () {
+            return this.user.profile?.data?.values?.profile ?? false
+        },
+        profileComplete() {
+            return this.user.profile?.data?.values?.firstname != null;
         },
         links() {
             const profileFormIds = {

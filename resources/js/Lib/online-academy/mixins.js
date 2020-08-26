@@ -200,3 +200,34 @@ export const UserCartEditor = {
         }
     }
 };
+
+export const UserAwareComponent = {
+    computed: {
+        user() {
+            return this.$store.state.user;
+        },
+        isAdmin() {
+            const adminRoles = [
+                'super-role',
+                'affiliate',
+                'master',
+                'support',
+                'support-external',
+                'admin',
+                'administrator',
+                'accounting',
+                'manager'
+            ];
+            return (
+                this.$store.state.user &&
+                this.$store.state.user.roles &&
+                this.$store.state.user.roles.filter(
+                    i => adminRoles.includes(i.name)
+                ).length > 0
+            );
+        },
+        isCustomer() {
+            return ( this.$store.state.user && this.$store.state.user.roles );
+        },
+    },
+}

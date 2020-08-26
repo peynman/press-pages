@@ -34,6 +34,15 @@ export default {
                     }
                 },
                 {
+                    id: 'send-form-entry',
+                    title: 'ارسال  فرم',
+                    icon: 'mdi-clipboard-check-outline',
+                    url: '/admin/form-entries/create',
+                    devalue: {
+                        user_id: this.itemId,
+                    }
+                },
+                {
                     id: 'purchass',
                     title: 'محصولات خرید شده',
                     icon: 'mdi-cart-arrow-down',

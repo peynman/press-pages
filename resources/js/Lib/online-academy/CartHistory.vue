@@ -22,10 +22,16 @@
           <template #default>
             <thead>
               <tr>
+                <th>شناسه سبد</th>
                 <th>عنوان محصول</th>
                 <th>نوع محصول</th>
                 <th>تاریخ خرید</th>
-                <th>خرید اقساط</th>
+                <th>
+                    خرید اقساط
+                    <v-btn v-if="hasMorePeriods" dense small rounded outlined color="primary" class="ms-2 no-letter-spacing" @click="onCheckInstallmentAll()">
+                        پرداخت همه اقساط این دوره
+                    </v-btn>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -33,6 +39,7 @@
                 v-for="(item, index) in purchasedCarts"
                 :key="`${id}-app-bar-cart-items-${index}`"
               >
+                <td>{{ item.cart_id }}</td>
                 <td><a :href="`/products/${item.parent_id ? item.parent_id : item.id}/details`">{{ item.data.title }}</a></td>
                 <td>{{ getTypeString(item) }}</td>
                 <td>{{ getDateString(item) }}</td>
@@ -50,7 +57,7 @@
                       {{ item.nextPeriodDue }}
                     </span>
                     <span v-if="item.isPeriodic && !item.isPeriodicCompleted">
-                      مبلغ قایل پرداخت این قسط:
+                      مبلغ قابل پرداخت این قسط:
                       {{ getPeriodPriceString(item) }}
 
                       <v-btn
@@ -59,6 +66,7 @@
                         rounded
                         small
                         :loading="item.loading"
+                        color="primary"
                         @click="onCheckInstallments(item)"
                       >
                         پرداخت قسط
@@ -145,6 +153,19 @@ export default {
                 })
             });
             return items;
+        },
+        hasMorePeriods () {
+            const periods = [];
+            this.field.carts?.forEach((c) => {
+                const periodics = c.data.periodic_product_ids ? c.data.periodic_product_ids : [];
+                if ((c.flags & 128) === 0) {
+                    c.products.forEach((p) => {
+                        const isPeriodic = periodics.includes(p.id);
+                        periods.push(p.id);
+                    })
+                }
+            });
+            return periods.length > 0;
         }
     },
     methods: {
@@ -189,8 +210,22 @@ export default {
                 item.loading = false;
                 host.showSnack(err.message);
             })
+        },
+        onCheckInstallmentAll() {
+            const host = this.$store.state.host;
+            item.loading = true;
+            host.axios({
+                url: '/api/me/all/installments',
+                method: 'POST',
+                headers: host.getWebAuthHeaders({}),
+            }).then((response) => {
+                item.loading = false;
+                window.location = '/me/carts/' + response.data.id;
+            }).catch((err) => {
+                item.loading = false;
+                host.showSnack(err.message);
+            })
         }
-
     }
 };
 </script>

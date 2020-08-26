@@ -48,25 +48,100 @@
       color="rgba(84, 84, 84, 0.74)"
       dark
     >
+      <template v-slot:extension v-if="showMediaLinks">
+        <div class="d-flex flex-row fill-width">
+            <v-spacer></v-spacer>
+            <v-btn
+            v-show="showMediaLinks"
+            key="tra-1"
+            small
+            class="mx-2"
+            :href="`tel:${options.labels && options.labels.tel ? options.labels.tel : '+9802166400300'}`"
+            >
+            {{ options.labels && options.labels.telString ? options.labels.telString: 'تلفن تماس: ۰۲۱۶۶۴۰۰۳۰۰' }}
+            </v-btn>
+            <v-btn
+            v-show="showMediaLinks"
+            key="tra-2"
+            fab
+            small
+            class="me-1 xsbtn"
+            :href="`${options.links && options.links.instagram ? options.links.instagram : 'https://www.instagram.com/onlineacademy.ir/'}`"
+            >
+            <v-icon small>
+                mdi-instagram
+            </v-icon>
+            </v-btn>
+            <v-btn
+            v-show="showMediaLinks"
+            key="tra-4"
+            fab
+            small
+            class="me-1 xsbtn"
+            :href="`${options.links && options.links.instagram ? options.links.youtube : 'https://www.aparat.com/onlineacademy'}`"
+            >
+            <v-icon small>
+                mdi-youtube
+            </v-icon>
+            </v-btn>
+            <v-btn
+            v-show="showMediaLinks"
+            key="tra-5"
+            fab
+            small
+            class="me-1 xsbtn"
+            :href="`${options.links && options.links.instagram ? options.links.whatsapp : 'https://api.whatsapp.com/send?phone=989361222120&text=%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86%20%D8%A2%DA%A9%D8%A7%D8%AF%D9%85%DB%8C'}`"
+            >
+            <v-icon small>
+                mdi-whatsapp
+            </v-icon>
+            </v-btn>
+            <v-btn
+            v-show="showMediaLinks"
+            key="tra-6"
+            fab
+            small
+            class="me-1 xsbtn"
+            :href="`${options.links && options.links.instagram ? options.links.telegram : 'http://telegram.me/online_academyir'}`"
+            >
+            <v-icon small>
+                mdi-telegram
+            </v-icon>
+            </v-btn>
+        </div>
+      </template>
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-toolbar-title>آنلاین آکادمی</v-toolbar-title>
       <v-spacer />
-      <!-- user account/cart menu -->
+      <!-- user notifications/account/cart menu -->
       <!-- account menu -->
       <v-menu
         offset-y
         dark
+        v-if="user"
       >
         <template #activator="{ on }">
           <v-btn
             small
             rounded
             outlined
-            color="success"
+            :color="profileComplete ? 'green': 'warning'"
             class="my-auto ms-1 no-letter-spacing"
             v-on="on"
           >
-            <span class="white--text">{{ user.name }}</span>
+            <span class="white--text">{{ userNameString }}</span>
+            <v-avatar :color="profileComplete ? 'green': 'warning'" size="32px" class="ms-2" >
+                <img
+                    v-if="userAvatar"
+                    alt="Avatar"
+                    :src="userAvatar"
+                >
+                <v-icon
+                    v-if="!userAvatar"
+                    color="white"
+                    small
+                >mdi-face-recognition</v-icon>
+            </v-avatar>
           </v-btn>
         </template>
         <v-list>
@@ -83,20 +158,53 @@
           </v-list-item>
         </v-list>
       </v-menu>
+      <!-- user notifications -->
+      <v-menu
+        v-if="user && user.notifications && user.notifications.length > 0"
+        offset-y
+        dark
+      >
+        <template #activator="{ on }">
+          <v-btn
+            fab
+            small
+            class="ms-2 lighten-2 xsBtnCart"
+          >
+            <v-icon
+                color="white"
+                small
+            >mdi-clock</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="link in links"
+            :key="link.href"
+            justify="space-between"
+            :href="link.href"
+          >
+            <v-icon>{{ link.icon }}</v-icon>
+            <v-list-item-title class="mx-10">
+              {{ link.text }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <!-- carts menu -->
       <v-btn
-        v-if="user.current_cart && user.current_cart.items && user.current_cart.items.length > 0"
+        v-if="user && user.current_cart && user.current_cart.items && user.current_cart.items.length > 0"
         href="/me/current-cart"
         elevation="0"
         color="green"
         depressed
-        large
         class="ma-0 ms-1 px-5 no-letter-spacing"
-        tile
+        rounded
+        small
       >
         صفحه پرداخت
       </v-btn>
       <v-menu
-        v-if="user.current_cart && user.current_cart.items"
+        v-if="user && user.current_cart && user.current_cart.items && user.current_cart.items.length > 0"
         offset-y
         dark
         :close-on-content-click="false"
@@ -206,76 +314,13 @@
       <v-btn
         fab
         small
-        :class="`mx-2 xsbtn ${showMediaLinks ? 'indigo darken-4': 'indigo darken-4' }`"
+        :class="`ms-1 xsbtn ${showMediaLinks ? 'indigo darken-4': 'indigo darken-4' }`"
         @click="showMediaLinks = !showMediaLinks"
       >
         <v-icon small>
-          {{ showMediaLinks ? 'mdi-chevron-left' : 'mdi-phone' }}
+          {{ showMediaLinks ? 'mdi-chevron-up' : 'mdi-phone' }}
         </v-icon>
       </v-btn>
-      <v-slide-x-transition
-        group
-        tag="div"
-        class="ma-auto"
-      >
-        <v-btn
-          v-show="showMediaLinks"
-          key="tra-1"
-          small
-          class="mx-md-2"
-          :href="`tel:${options.labels && options.labels.tel ? options.labels.tel : '+9802166400300'}`"
-        >
-          {{ options.labels && options.labels.telString ? options.labels.telString: 'تلفن تماس: ۰۲۱۶۶۴۰۰۳۰۰' }}
-        </v-btn>
-        <v-btn
-          v-show="showMediaLinks"
-          key="tra-2"
-          fab
-          small
-          class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.instagram : 'https://www.instagram.com/onlineacademy.ir/'}`"
-        >
-          <v-icon small>
-            mdi-instagram
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-show="showMediaLinks"
-          key="tra-4"
-          fab
-          small
-          class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.youtube : 'https://www.aparat.com/onlineacademy'}`"
-        >
-          <v-icon small>
-            mdi-youtube
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-show="showMediaLinks"
-          key="tra-5"
-          fab
-          small
-          class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.whatsapp : ''}`"
-        >
-          <v-icon small>
-            mdi-whatsapp
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-show="showMediaLinks"
-          key="tra-6"
-          fab
-          small
-          class="me-1 xsbtn"
-          :href="`${options.links && options.links.instagram ? options.links.telegram : 'http://telegram.me/online_academyir'}`"
-        >
-          <v-icon small>
-            mdi-telegram
-          </v-icon>
-        </v-btn>
-      </v-slide-x-transition>
     </v-app-bar>
     <v-container
       :class="`${options && options.contClass ? options.contClass : 'align-start'}`"
@@ -305,7 +350,7 @@
 
 <script>
 import FormJSONRenderer from "../Lib/vuetify-formjson/Fields/FormJSONBuilder/generator";
-import { UserCartEditor } from "./../Lib/online-academy/mixins";
+import { UserCartEditor, UserAwareComponent } from "./../Lib/online-academy/mixins";
 import Footer from "./Footer";
 
 export default {
@@ -313,7 +358,7 @@ export default {
     components: {
         [Footer.name]: Footer
     },
-    mixins: [FormJSONRenderer, UserCartEditor],
+    mixins: [FormJSONRenderer, UserCartEditor, UserAwareComponent],
     props: {
         id: String,
         options: {
@@ -345,8 +390,15 @@ export default {
         };
     },
     computed: {
-        user() {
-            return this.$store.state.user;
+        userNameString () {
+            if (this.user.profile?.data?.values?.firstname && this.user.profile?.data?.values?.lastname) {
+                return this.user.profile?.data?.values?.firstname + ' ' + this.user.profile?.data?.values?.lastname;
+            }
+
+            return 'تکمیل پروفایل'
+        },
+        userAvatar () {
+            return this.user.profile?.data?.values?.profile ?? false
         },
         links() {
             const profileFormIds = {
@@ -367,40 +419,11 @@ export default {
             ]
 
         },
-        isAdmin() {
-            const adminRoles = ['super-role', 'affiliate', 'master', 'support', 'admin', 'administrator', 'accounting', 'manager'];
-            return (
-                this.$store.state.user &&
-                this.$store.state.user.roles &&
-                this.$store.state.user.roles.filter(
-                    i => adminRoles.includes(i.name)
-                ).length > 0
-            );
-        },
-        isCustomer() {
-            return ( this.$store.state.user && this.$store.state.user.roles );
+        profileComplete() {
+            return this.user.profile?.data?.values?.firstname != null;
         },
         navs() {
-            const navs = [
-                {
-                    icon: "mdi-home",
-                    title: "خانه",
-                    href: "/home"
-                },
-                {
-                    icon: "mdi-store",
-                    title: "کلاس‌های ۱۴۰۰",
-                    href: "/1400"
-                }
-            ];
-            if (this.isAdmin) {
-                navs.push({
-                    icon: "mdi-alert-outline",
-                    title: "پنل ادمین",
-                    href: "/admin/home"
-                });
-
-            }
+            const navs = [];
             if (this.user) {
                 if (this.isCustomer) {
                     navs.push({
@@ -408,6 +431,27 @@ export default {
                         title: "میز مطالعه من",
                         href: "/"
                     });
+                }
+            }
+            navs.push({
+                icon: "mdi-store",
+                title: "کلاس‌های ۱۴۰۰",
+                href: "/1400"
+            });
+            if (this.isAdmin) {
+                navs.push({
+                    icon: "mdi-alert-outline",
+                    title: "پنل ادمین",
+                    href: "/admin/home"
+                });
+            }
+            navs.push({
+                icon: "mdi-cart",
+                title: "دوره‌های آنلاین آکادمی (محصولات)",
+                href: "/home"
+            });
+            if (this.user) {
+                if (this.isCustomer) {
                     navs.push({
                         icon: "mdi-bookshelf",
                         title: "محصولات من",

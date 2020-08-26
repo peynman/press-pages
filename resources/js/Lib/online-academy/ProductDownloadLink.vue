@@ -13,7 +13,7 @@
       >
         {{ field.icon }}
       </v-icon>
-      {{ field.label }} <span v-if="downloadItems.length > 1">- شماره {{ index + 1 }}</span>
+      {{ field.label }}&nbsp;<span v-if="downloadItems.length > 1"> - شماره {{ index + 1 }} </span>
     </v-btn>
   </div>
 </template>

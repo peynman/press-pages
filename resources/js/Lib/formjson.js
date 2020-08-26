@@ -12,8 +12,9 @@ window.ExtraFormJSONComponents = {
     'vf-support-card-input': () => import(/* webpackChunkName: "support-card"*/ './online-academy/SupportCard.vue'),
     'vf-cart-history-input': () => import(/* webpackChunkName: "cart-history"*/ './online-academy/CartHistory.vue'),
     'vf-product-video-link-input': () => import(/* webpackChunkName: "video-link"*/ './online-academy/ProductVideoLink.vue'),
-    'vf-video-player-input': () => import(/* webpackChunkName: "video-player1"*/ './online-academy/VideoPlayer.vue'),
-    'vf-livesstream-input': () => import(/* webpackChunkName: "live-window1"*/ './online-academy/LivestreamWindow.vue'),
+    'vf-video-player-input': () => import(/* webpackChunkName: "video-player"*/ './online-academy/VideoPlayer.vue'),
+    'vf-livesstream-input': () => import(/* webpackChunkName: "live-window"*/ './online-academy/LivestreamWindow.vue'),
+    'vf-azmoon-input': () => import(/* webpackChunkName: "azmoon-window"*/ './online-academy/AzmoonWindow.vue'),
     'vf-product-download-link-input': () => import(/* webpackChunkName: "product-download-link1"*/ './online-academy/ProductDownloadLink.vue'),
     'vf-ac-session-link-input': () => import(/* webpackChunkName: "ac-session-link"*/ './online-academy/AcSessionLink.vue'),
     'vf-image-input': () => import(/* webpackChunkName: "image-input"*/ './online-academy/ImageInput.vue'),
@@ -46,6 +47,7 @@ import WeekCalendarSettings from './online-academy/settings/WeekCalendar'
 import RevSliderSettings from './online-academy/settings/RevSlider'
 import IntroducersHistorySettings from './online-academy/settings/IntroducersHistory'
 import WalletTransactionsHistorySettings from './online-academy/settings/WalletTransactionsHistory'
+import AzmoonWindowSettings from './online-academy/settings/AzmoonWindow'
 
 window.ExtraFormJSONSettings = {
     'vf-product-card-input': new ProductCardSettings(),
@@ -59,6 +61,7 @@ window.ExtraFormJSONSettings = {
     'vf-product-download-link-input': new ProductDownloadLinkSettings(),
     'vf-video-player-input': new VideoPlayerSettings(),
     'vf-livesstream-input': new LiveStreamWindowSettings(),
+    'vf-azmoon-input': new AzmoonWindowSettings(),
     'vf-image-input': new ImageInputSettings(),
     'vf-week-calendar-input': new WeekCalendarSettings(),
     'vf-rev-slider-input': new RevSliderSettings(),

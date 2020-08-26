@@ -7,16 +7,31 @@
       :loading="loading"
       @click="onVerifyACMeeting"
     >
-      دریافت مجوز ورود به کلاس AdobeConnect
+        <v-icon class="me-1">mdi-play</v-icon>
+        <span v-if="isEnded">دریافت مجوز نمایش از AdobeConnect</span>
+        <span v-else>دریافت مجوز ورود به کلاس AdobeConnect</span>
     </v-btn>
     <v-btn
-      v-if="access"
+      v-if="access && !isEnded"
       outlined
       class="no-letter-spacing"
       color="green"
       @click="onOpenWindow"
     >
-      ورود به کلاس AdobeConnect
+        <v-icon class="me-1">mdi-google-classroom</v-icon>
+          ورود به کلاس AdobeConnect
+    </v-btn>
+    <v-btn
+        outlined
+        class="no-letter-spacing me-2"
+        color="green"
+        v-if="access && isEnded"
+        @click="onOpenRecording(rec)"
+        v-for="(rec, index) in field.recordings"
+        :key="`${id}-recording-${index}`"
+    >
+        <v-icon class="me-1">md-play</v-icon>
+        نمایش فایل ضبط شده در AdobeConnect <span v-if="field.recordings && field.recordings.length > 1">- شماره {{ index + 1 }}</span>
     </v-btn>
   </div>
 </template>
@@ -33,6 +48,11 @@ export default {
         loading: false,
         access: null,
     }),
+    computed: {
+        isEnded () {
+            return this.field.status === 'ended'
+        }
+    },
     methods: {
         onVerifyACMeeting () {
             const host = this.$store.state.host;
@@ -43,7 +63,7 @@ export default {
                 headers: host.getWebAuthHeaders({}),
             }).then((response) => {
                 this.loading = false;
-                if (response.data.url && response.data.session) {
+                if (response.data.url && response.data.sessions) {
                     this.access = response.data;
                 }
             }).catch(err => {
@@ -52,7 +72,12 @@ export default {
             })
         },
         onOpenWindow() {
-            window.open(this.access.url + '?session=' + this.access.session);
+            window.open(this.access.url + '?session=' + this.access.sessions[this.access.server]);
+        },
+        onOpenRecording (rec) {
+            const url = new URL(rec);
+            const server = url.protocol + '//' + url.host;
+            window.open(rec + '?session=' + this.access.sessions[server]);
         }
     }
 }

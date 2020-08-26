@@ -85,6 +85,7 @@ export default {
                         this.formSchema.fields['crud-datatable']['hide-create'] = true;
                         this.formSchema.fields['crud-datatable']['hide-settings'] = true;
                         this.formSchema.fields['crud-datatable']['hide-reports'] = true;
+                        this.formSchema.fields['crud-datatable']['hide-removable-filters'] = true;
                         this.formSchema.fields['crud-datatable']['default-filters'] = link.filters
                     }
 

@@ -19,6 +19,7 @@ export default class SupportCardSettings extends BaseInputSettings {
         return {
             ...CommonInputEssentials,
             message: TextSettings('Support message'),
+            no_support_message: TextSettings('No Support message'),
             img: TextSettings('Support Image'),
             xs: TextSettings('X-Small cols'),
             sm: TextSettings('Small cols'),

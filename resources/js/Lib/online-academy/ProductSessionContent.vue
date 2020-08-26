@@ -46,15 +46,32 @@ export default {
                             component: 'vf-product-video-link-input',
                             props: {
                                 field: {
-                                    label: session.data.title,
-                                    url: session.data.types?.vod_link.url,
-                                    width: session.data.types?.vod_link.width,
-                                    height: session.data.types?.vod_link.height,
-                                    isYoutube: session.data.types?.vod_link.tag !== 'kavimo',
+                                    label: session.data.types?.vod_link?.label ? session.data.types?.vod_link?.label : 'مشاهده آفلاین نسخه HD',
+                                    url: session.data.types?.vod_link?.url,
+                                    width: session.data.types?.vod_link?.width,
+                                    height: session.data.types?.vod_link?.height,
+                                    isYoutube: session.data.types?.vod_link?.tag !== 'kavimo',
                                 },
                                 id: 'session-' + session.id  +'-v-link',
                             }
                         });
+                        if (session.data.types?.vod_link.extras) {
+                            session.data.types?.vod_link.extras.forEach((extra, index) => {
+                                contents.push({
+                                    component: 'vf-product-video-link-input',
+                                    props: {
+                                        field: {
+                                            label: extra.label ? extra.label : 'مشاهده آفلاین نسخه Adobe Connect',
+                                            url: extra.url,
+                                            width: extra.width,
+                                            height: extra.height,
+                                            isYoutube: extra.tag !== 'kavimo',
+                                        },
+                                        id: 'session-' + session.id  +'-v-link-extra-' + index,
+                                    }
+                                });
+                            })
+                        }
                         break;
                     case 'vod_hls':
                         contents.push({
@@ -84,7 +101,7 @@ export default {
                         }
                         break;
                     case 'ac_meeting':
-                        if (session.data.types?.ac_meeting?.status === 'live') {
+                        if (['live', 'ended'].indexOf(session.data.types?.ac_meeting?.status) >= 0) {
                             contents.push({
                                 component: 'vf-ac-session-link-input',
                                 props: {
@@ -103,14 +120,46 @@ export default {
                             component: 'vf-product-download-link-input',
                             props: {
                                 field: {
-                                    label: 'جزوه',
+                                    label: session.data.types?.file_pdf?.title ? session.data.types?.file_pdf?.title : 'جزوه',
                                     ...session,
                                     session_id: session.id,
                                     ...session.data.types?.file_pdf,
-                                    icon: 'mdi-file-document-edit',
+                                    icon: 'mdi-adobe-acrobat',
                                     file_type: session.data.types?.file_pdf?.linked_file ? 'url' : 'pdf',
                                 },
                             }
+                        })
+                        if (session.data.types?.file_pdf?.extras) {
+                            session.data.types?.file_pdf?.extras.forEach((extra, i) => {
+                                contents.push({
+                                    component: 'vf-product-download-link-input',
+                                    props: {
+                                        field: {
+                                            label: extra.title ? extra.title : 'جزوه - شماره ' + (i+1),
+                                            ...session,
+                                            session_id: session.id,
+                                            ...extra,
+                                            icon: 'mdi-adobe-acrobat',
+                                            file_type: extra.linked_file ? 'url' : 'pdf',
+                                        },
+                                    }
+                                })
+                            })
+                        }
+                        break;
+                    case 'azmoon':
+                        contents.push({
+                            component: 'vf-azmoon-input',
+                                props: {
+                                    field: {
+                                        label: session.data.types?.file_pdf?.title ? session.data.types?.file_pdf?.title : 'جزوه',
+                                        ...session,
+                                        session_id: session.id,
+                                        ...session.data.types?.file_pdf,
+                                        icon: 'mdi-file-document-edit',
+                                        file_type: session.data.types?.file_pdf?.linked_file ? 'url' : 'pdf',
+                                    },
+                                }
                         })
                         break;
                     }

@@ -253,8 +253,10 @@ export default {
             if (!this.data) {
                 return [];
             }
-
-            const getRandomColor = () => ('#'+Math.floor(Math.random()*16777215).toString(16));
+            function adjust(color, amount) {
+                return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+            }
+            const getRandomColor = () => ('#'+Math.floor(Math.random()*16777215).toString(16)+'55');
             if (this.field.report_groups && this.field.report_groups.length > 0) {
                 const groupKeys = this.field.report_groups.split(",");
                 const sets = [];
@@ -275,10 +277,11 @@ export default {
                                 xLabel = this.getDecorableLabel(flabel);
                             }
                         }
+                        const color = getRandomColor();
                         sets.push({
                             label: xLabel,
-                            backgroundColor: getRandomColor(),
-                            borderColor: getRandomColor(),
+                            backgroundColor: color,
+                            borderColor: adjust(color, 20),
                             data: this.data
                                 .filter(i => i[key] == keyVals)
                                 .map(i => ({ y: i._value ? i._value : 0, x: moment(i._time) }))
@@ -290,9 +293,6 @@ export default {
             } else {
                 const backgroundColor = [];
                 const borderColor = [];
-                function adjust(color, amount) {
-                    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
-                }
                 this.data.forEach((i) => {
                     const color = getRandomColor();
                     backgroundColor.push(adjust(color, 20))

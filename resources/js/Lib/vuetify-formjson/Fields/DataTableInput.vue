@@ -34,7 +34,7 @@
             outlined
             small
             dense
-            class="my-auto"
+            class="my-auto no-letter-spacing"
             @click="saveSettings()"
           >
             ذخیره تنظیمات
@@ -97,8 +97,8 @@
             outlined
             small
             dense
-            class="my-auto"
-            @click="updateTable()"
+            class="my-auto no-letter-spacing"
+            @click="updateFilters()"
           >
             اعمال فیلتر
           </v-btn>
@@ -108,12 +108,22 @@
             outlined
             small
             dense
-            class="my-auto"
+            class="my-auto no-letter-spacing"
             @click="resetFilters()"
           >
             حذف فیلتر‌ها
           </v-btn>
           <v-spacer />
+          <v-btn
+            :color="filtersSavedRecently ? 'green':'secondary'"
+            outlined
+            small
+            dense
+            class="my-auto no-letter-spacing"
+            @click="saveFilters()"
+          >
+            ذخیره فیلتر‌
+          </v-btn>
           <v-btn
             v-if="field.table['export-url']"
             color="secondary"
@@ -122,7 +132,7 @@
             outlined
             small
             dense
-            class="my-auto"
+            class="my-auto no-letter-spacing"
             @click="downloadExport()"
           >
             دانلود کامل گزارش
@@ -243,6 +253,17 @@
                     placeholder="Search..."
                     @keyup.native="updateSearch($event)"
                 />
+                <v-spacer></v-spacer>
+                <v-btn
+                    v-if="customFilters && hasFilters && !field['hide-removable-filters']"
+                    small
+                    outlined
+                    color="warning"
+                    @click="resetFilters()"
+                    class="my-auto no-letter-spacing"
+                >
+                    نمایش بدون فیلتر جدول
+                </v-btn>
                 <vf-datatable-dialog-delete
                     v-if="selected.length > 0 && !field['hide-remove'] && (!field.table || !field.table.query)"
                     :show-delete="showDelete"
@@ -381,6 +402,34 @@ export default {
                 customForms[actid] = {}
             }
         }
+
+        let customFilters = vm.field['default-filters'] ?? {};
+        let customSettings = {}
+        if (vm.field.table?.query?.url) {
+            const settings = JSON.parse(localStorage.getItem('crud.datatable.' + vm.field.table.query.url));
+            if (settings) {
+                customSettings = settings;
+            }
+
+            const filters = JSON.parse(localStorage.getItem('crud.datatable.filters.' + vm.field.table.query.url));
+            if (filters && Object.keys(filters).length > 0) {
+                customFilters = filters;
+            }
+        }
+
+        let hasFilters = false;
+        Object.keys(customFilters).forEach((k) => {
+            if (customFilters[k]) {
+                if (Array.isArray(customFilters[k]) && customFilters[k].length > 0) {
+                    hasFilters = true;
+                } else if (typeof customFilters[k] === 'object' && Object.keys(customFilters[k]).length > 0) {
+                    hasFilters = true;
+                } else {
+                    hasFilters = true;
+                }
+            }
+        })
+
         return {
             createModel: {},
             showAlert: false,
@@ -391,25 +440,29 @@ export default {
             showSettings: false,
             showForms: false,
             settingsSavedRecently: false,
+            filtersSavedRecently: false,
             loading: false,
             editMode: false,
             loadingId: 0,
             search: "",
             selected: [],
             expanded: [],
-            options: {},
             total: vm.value.length,
             response: null,
             sortBy: null,
             sortDesc: null,
             expandTemplate: null,
             expandTemplateDefaultMetadata: null,
-            customFilters: {},
-            customSettings: {},
+            customFilters: customFilters,
+            hasFilters: hasFilters,
+            customSettings: customSettings,
             exportLoading: false,
             extraProps: {},
             editModelIndex: -1,
             customForms,
+            options: {
+                itemsPerPage: customSettings?.per_page ?? 100,
+            },
         }
     },
     computed: {
@@ -600,13 +653,6 @@ export default {
         }
     },
     mounted() {
-        this.customFilters = this.field['default-filters'] ?? {};
-        if (this.field.table?.query?.url) {
-            const settings = JSON.parse(localStorage.getItem('crud.datatable.' + this.field.table.query.url));
-            if (settings) {
-                this.customSettings = settings;
-            }
-        }
         this.updateTable();
     },
     methods: {
@@ -721,6 +767,11 @@ export default {
         },
         resetFilters() {
             this.customFilters = {};
+            this.hasFilters = false;
+            this.updateTable();
+        },
+        updateFilters() {
+            this.hasFilters = true;
             this.updateTable();
         },
         getTemplateSlot(template) {
@@ -805,6 +856,12 @@ export default {
             if (this.field.table?.query?.url) {
                 localStorage.setItem('crud.datatable.' + this.field.table.query.url, JSON.stringify(this.customSettings));
                 this.settingsSavedRecently = true;
+            }
+        },
+        saveFilters() {
+            if (this.field.table?.query?.url) {
+                localStorage.setItem('crud.datatable.filters.' + this.field.table.query.url, JSON.stringify(this.customFilters));
+                this.filtersSavedRecently = true;
             }
         },
         getFormFields(id, fields) {

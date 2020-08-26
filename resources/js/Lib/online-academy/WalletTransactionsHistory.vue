@@ -74,7 +74,7 @@ export default {
         getDateString (item) {
             const at = moment(momentTz.utc(item.updated_at).tz(momentTz.tz.guess()));
             at.locale("fa");
-            return at.format('jYYYY/jMM/jDD HH:mm')
+            return  at.format("jYYYY/jMM/jDD") + ' ' + at.format("dddd") + " " + at.format("HH:mm")
         }
     }
 };

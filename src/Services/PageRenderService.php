@@ -97,7 +97,7 @@ class PageRenderService implements IPageRenderService
             $user['current_cart'] = $currentCart;
             $user['balance'] = $balance;
             // make sure user profile ise loaded if exists
-            $user['profile'] = $user->profile;
+            $user->makeVisible('profile');
             // make sure support user is loaded
             $support = $user->supportUserProfile;
             $user['support'] = !is_null($support) ? $support->data['values'] : null;

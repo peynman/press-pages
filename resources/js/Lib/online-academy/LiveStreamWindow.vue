@@ -1,46 +1,73 @@
 <template>
   <div :class="`vf-input ${field.class ? field.class:''}`">
-    <v-btn
-      outlined
-      primary
-      rouned
-      class="no-letter-spacing"
-      @click="dialog = true"
+    <v-system-bar color="primary" dark style="position: fixed; left: 0; right: 0; bottom: 0; z-index: 2;"
+          v-if="minmized"
     >
-      <v-icon class="mx-2">
-        mdi-google-classroom
-      </v-icon> ورود به کلاس
-    </v-btn>
+          <span>{{ field.data.title }}</span>
+          <v-spacer></v-spacer>
+          <v-btn
+            icon
+            small
+            dense
+            @click="minmized = !minmized"
+            >
+              <v-icon small>{{ minmized ? 'mdi-window-maximize':'mdi-window-minimize' }}</v-icon>
+        </v-btn>
+        <v-btn
+            icon
+            small
+            dense
+            :disabled="minmized"
+            @click="dialog = false"
+        >
+              <v-icon small>mdi-close</v-icon>
+        </v-btn>
+    </v-system-bar>
     <v-dialog
+      v-if="!minmized"
       v-model="dialog"
-      fullscreen
+      fullscreen hide-overlay
       class="grey lighten-4"
       style="width: 100%; height: 100%;"
+      transition="dialog-bottom-transition"
     >
-      <v-toolbar
-        dense
-        small
-        dark
-        color="primary"
-      >
-        {{ field.data.title }}
-        <v-spacer />
-        <v-btn
-          icon
-          small
-          dense
-          @click="dialog = false"
-        >
-          <v-icon small>
-            mdi-close
-          </v-icon>
+        <template v-slot:activator="{ on, attrs }">
+            <v-btn
+                outlined
+                primary
+                rouned
+                class="no-letter-spacing"
+                @click="dialog = true"
+                v-bind="attrs"
+                v-on="on"
+            >
+                <v-icon class="mx-2">
+                    mdi-google-classroom
+                </v-icon> ورود به کلاس
+            </v-btn>
+        </template>
+      <v-system-bar color="primary" dark>
+          <span>{{ field.data.title }}</span>
+          <v-spacer></v-spacer>
+          <v-btn
+            icon
+            small
+            dense
+            @click="minmized = !minmized"
+            >
+              <v-icon small>{{ minmized ? 'mdi-window-maximize':'mdi-window-minimize' }}</v-icon>
         </v-btn>
-      </v-toolbar>
-      <v-lazy
-        v-if="dialog"
-        class="pa-2 grey lighten-4"
-      >
-        <v-sheet
+        <v-btn
+            icon
+            small
+            dense
+            :disabled="minmized"
+            @click="dialog = false"
+        >
+              <v-icon small>mdi-close</v-icon>
+        </v-btn>
+      </v-system-bar>
+      <v-sheet
           class="d-flex flex-column"
         >
           <v-row
@@ -89,7 +116,6 @@
             </v-col>
           </v-row>
         </v-sheet>
-      </v-lazy>
     </v-dialog>
   </div>
 </template>
@@ -108,6 +134,7 @@ export default {
         dialog: false,
         openTime: null,
         boardContent: '',
+        minmized: false,
     }),
     computed: {
         extraPlayers () {
@@ -145,6 +172,10 @@ export default {
         dialog () {
             const host = this.$store.state.host;
             if (this.dialog) {
+                this.$forceUpdate();
+                window.onbeforeunload = function() {
+                    return true;
+                };
                 this.openTime = Date.now();
                 host.axios({
                     url: `/api/course-session/${this.field.id}/presence-form`,
@@ -156,7 +187,8 @@ export default {
                 }).catch(err => {
                     host.showSnack(err.message);
                 });
-            } else {
+            } else if (!this.minmized) {
+                window.onbeforeunload = null;
                 const dur = Math.abs(this.openTime - Date.now()) / 1000;
                 host.axios({
                     url: `/api/course-session/${this.field.id}/presence-form`,
@@ -170,6 +202,15 @@ export default {
                 }).catch(err => {
                     host.showSnack(err.message);
                 });
+            }
+        },
+        minmized () {
+            if (this.minmized) {
+                window.onbeforeunload = function() {
+                    return true;
+                };
+            } else {
+                window.onbeforeunload = null;
             }
         }
     }

@@ -12,16 +12,18 @@
       v-model="snack.visible"
       :color="snack.color"
     >
-      {{ snack.message }}
-      <v-btn
-        color="red"
-        icon
-        @click="snack.visible = false"
-      >
-        <v-icon small>
-          mdi-close
-        </v-icon>
-      </v-btn>
+        <div class="d-flex flex-row justify-space-between">
+            <span>{{ snack.message }}</span>
+            <v-btn
+                color="white"
+                icon
+                @click="snack.visible = false"
+            >
+                <v-icon small>
+                mdi-close
+                </v-icon>
+            </v-btn>
+        </div>
     </v-snackbar>
     <component
       :is="template"

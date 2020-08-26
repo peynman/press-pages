@@ -105,7 +105,7 @@ export default {
         actionBtnLabel() {
             if (this.user) {
                 if (this.product.available) {
-                    return "نمایش محتوا";
+                    return "نمایش جلسات برگزارشده";
                 } else {
                     let found = false;
                     if (
