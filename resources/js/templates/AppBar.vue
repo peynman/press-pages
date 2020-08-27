@@ -121,60 +121,28 @@
         v-if="user"
       >
         <template #activator="{ on }">
-          <v-btn
-            small
-            rounded
-            outlined
-            :color="profileComplete ? 'green': 'warning'"
-            class="my-auto ms-1 no-letter-spacing"
-            v-on="on"
-          >
-            <span class="white--text">{{ userNameString }}</span>
-            <v-avatar :color="profileComplete ? 'green': 'warning'" size="32px" class="ms-2" >
-                <img
-                    v-if="userAvatar"
-                    alt="Avatar"
-                    :src="userAvatar"
-                >
-                <v-icon
-                    v-if="!userAvatar"
-                    color="white"
-                    small
-                >mdi-face-recognition</v-icon>
-            </v-avatar>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="link in links"
-            :key="link.href"
-            justify="space-between"
-            :href="link.href"
-          >
-            <v-icon>{{ link.icon }}</v-icon>
-            <v-list-item-title class="mx-10">
-              {{ link.text }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-      <!-- user notifications -->
-      <v-menu
-        v-if="user && user.notifications && user.notifications.length > 0"
-        offset-y
-        dark
-      >
-        <template #activator="{ on }">
-          <v-btn
-            fab
-            small
-            class="ms-2 lighten-2 xsBtnCart"
-          >
-            <v-icon
-                color="white"
+            <v-btn
                 small
-            >mdi-clock</v-icon>
-          </v-btn>
+                rounded
+                outlined
+                :color="profileComplete ? 'green': 'warning'"
+                class="my-auto me-3 no-letter-spacing"
+                v-on="on"
+            >
+                <span class="white--text">{{ userNameString }}</span>
+                <v-avatar :color="profileComplete ? 'green': 'warning'" size="32px" class="ms-2" >
+                    <img
+                        v-if="userAvatar"
+                        alt="Avatar"
+                        :src="userAvatar"
+                    >
+                    <v-icon
+                        v-if="!userAvatar"
+                        color="white"
+                        small
+                    >mdi-face-recognition</v-icon>
+                </v-avatar>
+            </v-btn>
         </template>
         <v-list>
           <v-list-item
@@ -183,10 +151,14 @@
             justify="space-between"
             :href="link.href"
           >
-            <v-icon>{{ link.icon }}</v-icon>
-            <v-list-item-title class="mx-10">
-              {{ link.text }}
-            </v-list-item-title>
+            <v-list-item-icon>
+                <v-icon>{{ link.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+                <v-list-item-title>
+                {{ link.text }}
+                </v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -224,7 +196,7 @@
             <v-btn
               fab
               small
-              class="mx-2 lighten-2 xsBtnCart"
+              class="mx-2 xsBtnCart indigo darken-4"
               v-on="on"
             >
               <v-icon small>
@@ -310,11 +282,74 @@
       >
         {{ options.labels && options.labels.signup ? options.labels.singup : 'ثبت نام' }}
       </v-btn>
+      <!-- user notifications -->
+      <v-menu
+        v-if="user && user.notifications && user.notifications.length > 0"
+        offset-y
+        dark
+      >
+        <template #activator="{ on }">
+            <v-badge
+                class="my-auto"
+                :value="user.notifications.length > 0"
+                overlap
+                left
+                label
+                offset-y="15"
+                offset-x="15"
+                :content="`${user.notifications.length}`"
+                color="red"
+            >
+                <v-btn
+                    fab
+                    small
+                    class="mx-2 xsBtnCart indigo darken-4"
+                    v-on="on"
+                >
+                    <v-icon
+                        color="white"
+                        small
+                    >mdi-bell</v-icon>
+                </v-btn>
+            </v-badge>
+        </template>
+        <v-list two-line dense>
+          <v-list-item
+            v-for="(notify, index) in user.notifications"
+            :key="`notifications-${index}`"
+            justify="space-between"
+            @click="openNotificationWindow(notify)"
+          >
+            <v-list-item-icon>
+                <v-icon class="my-auto">{{ notify.data.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+                <v-list-item-title>
+                {{ notify.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                {{ notify.message }}
+                </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+                <v-btn
+                    small
+                    dense
+                    icon
+                    :loading="notify.loading"
+                    @click.stop="onDismissNotification(notify)"
+                >
+                    <v-icon small>mdi-close</v-icon>
+                </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <!-- social links alternate -->
       <v-btn
         fab
         small
-        :class="`ms-1 xsbtn ${showMediaLinks ? 'indigo darken-4': 'indigo darken-4' }`"
+        :class="`ms-1 xsbtn indigo darken-4`"
         @click="showMediaLinks = !showMediaLinks"
       >
         <v-icon small>
@@ -490,7 +525,7 @@ export default {
                                     type: "input",
                                     input: "button",
                                     label: "انتقال به بانک",
-                                    class: 'mt-1',
+                                    class: 'mt-1 no-letter-spacing',
                                     props: {
                                         dense: true,
                                         outlined: true,
@@ -534,11 +569,58 @@ export default {
             //     ]
             // );
             return navs;
-        }
+        },
     },
     watch: {
         body() {
             this.UpdatePageContent(this.body, this.options, this.sources);
+        }
+    },
+    methods: {
+        onDismissNotification (notify) {
+            const host = this.$store.state.host;
+            notify.loading = true;
+            host.axios({
+                url: '/api/notifications/dismiss/' + notify.id,
+                method: 'POST',
+                headers: host.getWebAuthHeaders({}),
+            }).then((response) => {
+                notify.loading = false;
+                const notifications = [];
+                this.user.notifications.forEach((n) => {
+                    if (n.id !== notify.id) {
+                        notifications.push(n);
+                    }
+                });
+                this.user.notifications = notifications;
+                this.$forceUpdate();
+            }).catch((error) => {
+                notify.loading = false;
+                host.showSnack(error.message);
+                this.$forceUpdate();
+            })
+            this.$forceUpdate();
+        },
+        openNotificationWindow(notify) {
+            const host = this.$store.state.host;
+            host.axios({
+                url: '/api/notifications/view/' + notify.id,
+                method: 'POST',
+                headers: host.getWebAuthHeaders({}),
+            }).then((response) => {
+                notify.loading = false;
+                const notifications = [];
+                this.user.notifications.forEach((n) => {
+                    if (n.id !== notify.id) {
+                        notifications.push(n);
+                    }
+                });
+                this.user.notifications = notifications;
+                this.$forceUpdate();
+            }).catch((error) => {
+                host.showSnack(error.message);
+            })
+            window.open(notify.data.link, "_blank");
         }
     },
     mounted() {

@@ -79,10 +79,10 @@ export default {
                             props: {
                                 field: {
                                     label: session.data.title,
-                                    url: '/vod/' + session.id + '/link/' + session.data.types.vod_hls.file_id + '/stream',
+                                    url: '/vod/' + session.id + '/link/' + session.data.types?.vod_hls?.file_id + '/stream',
                                     ...session.data.types.vod_hls,
                                 },
-                                id: 'session-' + session.id  +'-hls-' + session.data.types.vod_hls.file_id,
+                                id: 'session-' + session.id  +'-hls-' + session.data.types?.vod_hls?.file_id,
                             }
                         });
                         break;

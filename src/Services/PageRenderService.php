@@ -17,6 +17,7 @@ use Larapress\ECommerce\Services\Banking\IBankingService;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Session;
+use Larapress\Notifications\Models\Notification;
 use Larapress\Profiles\Repository\Form\IFormRepository;
 
 class PageRenderService implements IPageRenderService
@@ -101,6 +102,7 @@ class PageRenderService implements IPageRenderService
             // make sure support user is loaded
             $support = $user->supportUserProfile;
             $user['support'] = !is_null($support) ? $support->data['values'] : null;
+            $user['notifications'] = $user->unseen_notifications;
         }
 
         $this->reportPageEvents($user, $request, $route, $page);

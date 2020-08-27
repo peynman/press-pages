@@ -1,5 +1,16 @@
 <template>
   <v-list nav dense>
+    <v-list-item href="/" dark
+        style="background: rgba(84, 84, 84, 0.74);">
+        <v-list-item-icon class="my-auto">
+          <v-icon small color="white" class="my-auto">mdi-home</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+            <v-list-item-title>
+                بازگرد به صفحه اصلی سایت
+            </v-list-item-title>
+        </v-list-item-content>
+    </v-list-item>
     <v-list-group
       v-for="group in groups"
       :key="`${id}-admin-crud-group-${group.id}`"
