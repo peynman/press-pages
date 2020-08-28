@@ -67,7 +67,7 @@ export default {
     computed: {
         sessions() {
             if (this.field.children) {
-                return this.field.children.filter((child) => child.types.map((t) => t.name).includes('session')).sort((a, b) => (a.priority))
+                return this.field.children.filter((child) => child.types.map((t) => t.name).includes('session')).sort((a, b) => (a.priority - b.priority))
                 .map((c) => ({...c}))
             }
             return [];
