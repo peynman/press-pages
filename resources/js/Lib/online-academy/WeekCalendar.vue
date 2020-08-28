@@ -7,7 +7,9 @@
     :xs="field.xs ? field.xs : 6"
   >
     <v-card :class="`rounded-product-card grey lighten-4 ${field.class ? field.class : ''}`">
-      <v-card-title>{{ field.label }}</v-card-title>
+      <v-card-title>
+        <span>{{ field.label }}</span>
+      </v-card-title>
       <v-card-text>
         <v-simple-table dense style="border-bottom: solid 1px black;">
             <template #default>
@@ -60,6 +62,11 @@ export default {
         weekDays () {
             const week = moment().locale('fa').startOf('week');
             const days = [];
+            const todayWeekDay = moment().locale('fa').format('e');
+            console.log(todayWeekDay);
+            if (todayWeekDay == '۶') {
+                week.add(7, 'days');
+            }
             for (let i = 0; i < 7; i++) {
                 days.push([week.format('jMM/jDD'), week.format('ddd')]);
                 week.add(1, 'day');

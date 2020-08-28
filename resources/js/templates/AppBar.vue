@@ -321,7 +321,7 @@
             @click="openNotificationWindow(notify)"
           >
             <v-list-item-icon>
-                <v-icon class="my-auto">{{ notify.data.icon }}</v-icon>
+                <v-icon class="my-auto" :color="notify.data.color ? notify.data.color : 'white'">{{ notify.data.icon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
                 <v-list-item-title>
@@ -337,6 +337,7 @@
                     dense
                     icon
                     :loading="notify.loading"
+                    v-show="notify.data.dismissable"
                     @click.stop="onDismissNotification(notify)"
                 >
                     <v-icon small>mdi-close</v-icon>
