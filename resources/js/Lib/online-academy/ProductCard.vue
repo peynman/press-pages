@@ -79,11 +79,12 @@ export default {
         };
         const courseProduct = this.field?.data?.types?.course;
         if (courseProduct) {
+            console.log(courseProduct);
             product = {
                 ...product,
                 subtitle: courseProduct.paragraph,
                 person: courseProduct.teacher,
-                time: courseProduct.week_day + " " + courseProduct.time,
+                date_time: courseProduct.week_day + " " + courseProduct.time,
                 image: courseProduct.image,
                 isOnline: false,
                 registered: false,
