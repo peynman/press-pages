@@ -40,6 +40,13 @@ export default {
                     url: '/admin/form-entries/create',
                     devalue: {
                         user_id: this.itemId,
+                    },
+                    schema: {
+                        fields: {
+                            user_id: {
+                                hidden: true,
+                            }
+                        }
                     }
                 },
                 {
@@ -52,13 +59,29 @@ export default {
                     }
                 },
                 {
-                    id: 'send-sms',
-                    title: 'ارسال پیامک',
-                    icon: 'mdi-cellphone-play',
+                    id: 'send-notification',
+                    title: 'ارسال اعلان',
+                    icon: 'mdi-shield-alert',
                     url: '/admin/sms-messages/send',
                     devalue: {
                         type: 'in_ids',
                         ids: this.itemId,
+                    },
+                    schema: {
+                        fields: {
+                            ids: {
+                                hidden: true,
+                            },
+                            type: {
+                                hidden: true,
+                            },
+                            roles: {
+                                hidden: true,
+                            },
+                            domains: {
+                                hidden: true,
+                            },
+                        }
                     }
                 },
                 {

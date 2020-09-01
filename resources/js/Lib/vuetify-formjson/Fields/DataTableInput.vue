@@ -421,14 +421,17 @@ export default {
         Object.keys(customFilters).forEach((k) => {
             if (customFilters[k]) {
                 if (Array.isArray(customFilters[k]) && customFilters[k].length > 0) {
-                    hasFilters = true;
-                } else if (typeof customFilters[k] === 'object' && Object.keys(customFilters[k]).length > 0) {
-                    hasFilters = true;
+                    console.log('array')
+                } else if (typeof customFilters[k] === 'object') {
+                    if (Object.keys(customFilters[k]).length > 0) {
+                        hasFilters = true;
+                    }
                 } else {
                     hasFilters = true;
                 }
             }
         })
+        console.log(hasFilters, customFilters)
 
         return {
             createModel: {},
@@ -637,7 +640,9 @@ export default {
         options: {
             deep: true,
             handler() {
-                this.updateTable();
+                if (! this.loading) {
+                    this.updateTable();
+                }
             }
         },
         selected: {

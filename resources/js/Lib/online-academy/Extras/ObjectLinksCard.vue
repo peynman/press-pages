@@ -70,6 +70,27 @@ export default {
         getFormFromURL(link) {
             if (link.url) {
                 console.log(link);
+                function mergeDeep(...objects) {
+                    const isObject = obj => obj && typeof obj === 'object';
+                    return objects.reduce((prev, obj) => {
+                        Object.keys(obj).forEach(key => {
+                        const pVal = prev[key];
+                        const oVal = obj[key];
+
+                        if (Array.isArray(pVal) && Array.isArray(oVal)) {
+                            prev[key] = pVal.concat(...oVal);
+                        }
+                        else if (isObject(pVal) && isObject(oVal)) {
+                            prev[key] = mergeDeep(pVal, oVal);
+                        }
+                        else {
+                            prev[key] = oVal;
+                        }
+                        });
+
+                        return prev;
+                    }, {});
+                }
                 const foundPage = (data) => {
                     this.UpdatePageContent(
                         data.body,
@@ -91,8 +112,8 @@ export default {
 
                     this.$nextTick(() => {
                         link.loading = false
-                        link.fields = this.formSchema.fields
-                        link.options = this.formSchema.options
+                        link.fields = mergeDeep(this.formSchema.fields, link.schema?.fields ?? {})
+                        link.options = mergeDeep(this.formSchema.options, link.schema?.options ?? {})
                         link.loaded = true
                         this.formModel = link.devalue;
                         this.$forceUpdate();

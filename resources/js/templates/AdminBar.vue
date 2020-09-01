@@ -110,19 +110,6 @@ export default {
             drawer: false,
             groups: [
                 {
-                    id: "dashboards",
-                    title: "داشبرد ادمین",
-                    icon: "mdi-monitor-dashboard",
-                    links: [
-                        {
-                            icon: "mdi-home",
-                            title: "خانه ادمین",
-                            id: "dashboard_home",
-                            href: "/admin/home"
-                        }
-                    ]
-                },
-                {
                     id: "accounts",
                     icon: "mdi-account-box-multiple",
                     title: "حساب‌های کاربری",

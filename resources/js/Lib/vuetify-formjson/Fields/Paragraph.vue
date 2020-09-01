@@ -1,17 +1,17 @@
 <template>
-    <div :class="`vf-input d-flex flex-column flex-grow-1 ${field.class ? field.class : ''}`">
-        <label v-if="mode !== 'view'">{{ field.label }}</label>
-        <div v-show="!field.readonly">
-            <v-btn fab small icon @click="() => { mode = mode === 'editor' ? 'view' : 'editor'; toggleVirtualMathKeyboard(dialog && mode === 'editor') }">
-                <v-icon small>{{ modeIcon }}</v-icon>
-            </v-btn>
-        </div>
-        <div v-show="mode === 'view' || field.readonly" ref="editorView" class="fill-height" style="width: 100%;"></div>
-        <v-card v-show="mode === 'editor' && !field.readonly" style="position: relative; width: 100%; min-height: 100px; overflow: scroll;" class="fill-hight mx-2">
-            <div class="" :style="`position: absolute; width: 100%; left: 0; right: 0; top: 0; bottom: 0; ${field.height ? 'height: ' + field.height : ''}`" ref="editorCode">
-            </div>
-        </v-card>
+<div :class="`vf-input d-flex flex-column flex-grow-1 ${field.class ? field.class : ''}`">
+    <label v-if="mode !== 'view'">{{ field.label }}</label>
+    <div v-show="!field.readonly">
+        <v-btn fab small icon @click="() => { mode = mode === 'editor' ? 'view' : 'editor'; toggleVirtualMathKeyboard(dialog && mode === 'editor') }">
+            <v-icon small>{{ modeIcon }}</v-icon>
+        </v-btn>
     </div>
+    <div v-show="mode === 'view' || field.readonly" ref="editorView" class="fill-height" style="width: 100%;"></div>
+    <v-card v-show="mode === 'editor' && !field.readonly" style="position: relative; width: 100%; min-height: 100px; overflow: scroll;" class="fill-hight mx-2">
+        <div class="" :style="`position: absolute; width: 100%; left: 0; right: 0; top: 0; bottom: 0; ${field.height ? 'height: ' + field.height : ''}`" ref="editorCode">
+        </div>
+    </v-card>
+</div>
 </template>
 
 <script>
@@ -22,23 +22,28 @@ import './MarkdownInput/AceEditor/mode-markdown'
 import './MarkdownInput/AceEditor/theme-eclipse'
 
 import markdownit from 'markdown-it'
-import MarkdownItColor from './MarkdownInput/MarkdownItColor/index'
-import MermaidPlugin from './MarkdownInput/mermaid'
-import FromJSONPlugin from './MarkdownInput/formjson'
-import MathLivePlugin from './MarkdownInput/mathlive'
 import markdownItAttrs from 'markdown-it-attrs'
 
-import { VBtn, VIcon, VCard } from 'vuetify/lib'
+import {
+    VBtn,
+    VIcon,
+    VCard
+} from 'vuetify/lib'
 export default {
     components: {
-        VBtn, VIcon, VCard
+        VBtn,
+        VIcon,
+        VCard
     },
     mixins: [BaseComponent],
     name: 'vf-paragraph-input',
     props: {
         id: String,
         field: Object,
-        value: { type: String, default: () => '' }
+        value: {
+            type: String,
+            default: () => ''
+        }
     },
     data: (vm) => ({
         dialog: false,
@@ -50,10 +55,12 @@ export default {
         mode: vm.field.readonly ? 'view' : 'editor'
     }),
     computed: {
-        modeIcon () { return this.mode === 'editor' ? 'mdi-code-braces' : 'mdi-eye' }
+        modeIcon() {
+            return this.mode === 'editor' ? 'mdi-code-braces' : 'mdi-eye'
+        }
     },
     methods: {
-        toggleVirtualMathKeyboard (to) {
+        toggleVirtualMathKeyboard(to) {
             if (this.mathfieldEditor) {
                 if (this.mathfieldEditor.virtualKeyboardVisible !== to) {
                     this.mathfieldEditor.$perform(['toggleVirtualKeyboard'])
@@ -61,12 +68,14 @@ export default {
                 this.mathKeyboardVisible = this.mathfieldEditor.virtualKeyboardVisible
             }
         },
-        insertMathToMarkdown () {
-            if (this.mathfieldEditor) {
-                this.aceEditor.session.insert(this.aceEditor.getCursorPosition(), '$$' + this.mathfieldEditor.$text() + '$$')
-            }
-        },
-        updateMarkdownText () {
+        //         insertMathToMarkdown() {
+        //             if (this.mathfieldEditor) {
+        //                 this.aceEditor.session.insert(this.aceEditor.getCursorPosition(), '
+        //  + this.mathfieldEditor.$text() + '
+        // )
+        //             }
+        //         },
+        updateMarkdownText() {
             const markdownHtml = this.markdownEditor.render(this.devalue)
             let child = this.$refs.editorView.lastElementChild
             while (child) {
@@ -85,12 +94,12 @@ export default {
     watch: {
         devalue: {
             deep: true,
-            handler () {
+            handler() {
                 this.updateMarkdownText()
             }
         }
     },
-    mounted () {
+    mounted() {
         this.aceEditor = ACE.edit(this.$refs.editorCode, {
             mode: 'ace/mode/markdown',
             selectionStyle: 'text',
@@ -108,23 +117,23 @@ export default {
 
         // eslint-disable-next-line new-cap
         this.markdownEditor = new markdownit((this.field.markdownProps ? this.field.markdownProps : {}))
-        this.markdownEditor.use(MarkdownItColor, {
-            inline: true
-        })
-        this.markdownEditor.use(MermaidPlugin, {
-            host: this
-        })
-        this.markdownEditor.use(FromJSONPlugin, {
-            host: this
-        })
-        this.markdownEditor.use(MathLivePlugin, {
-            host: this
-        })
+        // this.markdownEditor.use(MarkdownItColor, {
+        //     inline: true
+        // })
+        // this.markdownEditor.use(MermaidPlugin, {
+        //     host: this
+        // })
+        // this.markdownEditor.use(FromJSONPlugin, {
+        //     host: this
+        // })
+        // this.markdownEditor.use(MathLivePlugin, {
+        //     host: this
+        // })
         this.markdownEditor.use(markdownItAttrs, {
             // optional, these are default options
             leftDelimiter: '{',
             rightDelimiter: '}',
-            allowedAttributes: []  // empty array = all attributes are allowed
+            allowedAttributes: [] // empty array = all attributes are allowed
         });
         // init ace editor before calling update
         this.updateMarkdownText()

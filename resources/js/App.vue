@@ -59,17 +59,18 @@ export default {
             template: null,
             templateProps: null,
             loading: false,
-            snacks: [],
         };
     },
     computed: {},
     mounted() {
+        this.$store.state.host = this;
+
         if (window.PageConfig) {
-            const params = new URLSearchParams(window.location.search);
-            this.updatePageWithData(window.PageConfig);
+            this.$nextTick(() => {
+                this.updatePageWithData(window.PageConfig);
+            })
         }
 
-        this.$store.state.host = this;
     },
     methods: {
         onGotoPage(page, data) {
@@ -131,14 +132,6 @@ export default {
                 this.$store.state.channels = data.channels;
             }
         },
-
-        showSnack(message, color = 'red') {
-            this.snacks.push({
-                message,
-                visible: true,
-                color,
-            });
-        }
     }
 };
 </script>

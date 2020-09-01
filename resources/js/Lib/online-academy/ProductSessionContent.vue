@@ -55,8 +55,8 @@ export default {
                                 id: 'session-' + session.id  +'-v-link',
                             }
                         });
-                        if (session.data.types?.vod_link.extras) {
-                            session.data.types?.vod_link.extras.forEach((extra, index) => {
+                        if (session.data.types?.vod_link?.extras) {
+                            session.data.types?.vod_link?.extras.forEach((extra, index) => {
                                 contents.push({
                                     component: 'vf-product-video-link-input',
                                     props: {

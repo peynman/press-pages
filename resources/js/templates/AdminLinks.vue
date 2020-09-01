@@ -1,5 +1,28 @@
 <template>
   <v-list nav dense>
+    <v-list-item href="/admin/home" dark
+        style="background: rgba(84, 84, 84, 0.74);">
+        <v-list-item-icon class="my-auto">
+          <v-icon small color="white" class="my-auto">mdi-monitor-dashboard</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+            <v-list-item-title>
+                داشبرد ادمین
+            </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+<!--            <v-btn
+            x-small
+            dense
+            icon
+            class="pa-0 ma-0 my-auto"
+            color="primary lighten-4"
+            href="/admin/dashboard/settings"
+          >
+            <v-icon small color="primary">mdi-settings</v-icon>
+          </v-btn> -->
+        </v-list-item-action>
+    </v-list-item>
     <v-list-item href="/" dark
         style="background: rgba(84, 84, 84, 0.74);">
         <v-list-item-icon class="my-auto">
@@ -7,7 +30,7 @@
         </v-list-item-icon>
         <v-list-item-content>
             <v-list-item-title>
-                بازگرد به صفحه اصلی سایت
+                صفحه اصلی سایت
             </v-list-item-title>
         </v-list-item-content>
     </v-list-item>

@@ -37,7 +37,8 @@ export default {
         formSchema: {},
         channelObjs: {},
         echo: null,
-        isConnected: false
+        isConnected: false,
+        snacks: [],
     }),
     methods: {
         UpdatePageContent(body, options, sources) {
@@ -134,12 +135,36 @@ export default {
                 compiled.onFormInit?.();
             })
         },
+        appendFormValue(values) {
+            return this.appendFormValues(values);
+        },
         appendFormValues(values) {
-            this.$nextTick(() => {
-                this.formModel = {
-                    ...this.formModel,
-                    ...values,
+            const iterator = (ref, target) => {
+                if (target) {
+                    Object.keys(target).forEach((k) => {
+                        if (typeof target[k] === 'object') {
+                            if (Array.isArray(target[k])) {
+                                if (!ref[k]) {
+                                    ref[k] = [];
+                                }
+                                ref[k].push(...target[k])
+                            } else {
+                                if (!ref[k]) {
+                                    ref[k] = {}
+                                }
+                                if (target[k]) {
+                                    iterator(ref[k], target[k]);
+                                }
+                            }
+                        } else if (target[k]) {
+                            ref[k] = target[k]
+                        }
+                    })
                 }
+            }
+
+            this.$nextTick(() => {
+                iterator(this.formModel, values);
             })
         },
         appendFormOptions(options) {
@@ -385,9 +410,6 @@ export default {
             }
             return alert;
         },
-        appendFormValue(value) {
-            this.formModel = { ...this.formModel, ...value };
-        },
         setFormValidations(errors) {
             let valErrors = errors
             if (errors.validations) {
@@ -464,6 +486,13 @@ export default {
                     ref[parts[parts.length - 1]] = value
                 }
             }
+        },
+        showSnack(message, color = 'red') {
+            this.snacks.push({
+                message,
+                visible: true,
+                color,
+            });
         },
         CompileFormJSONSchemaWithCode(component, schema, codeDom, blocklyBlocks) {
             let evalObj = {}

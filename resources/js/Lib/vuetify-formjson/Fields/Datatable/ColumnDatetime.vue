@@ -38,7 +38,9 @@ export default {
         mom: null,
         dayOfWeek: {
             1: "شنبه"
-        }
+        },
+        dateString: "",
+        timeString: "",
     }),
     methods: {
         getNestedPathValue: function (item, path) {
@@ -57,24 +59,20 @@ export default {
             const dt = this.getNestedPathValue(this.item, this.column.id);
             if (dt) {
                 if (dt.includes('+')) {
-                    this.mom = moment().utcOffset(dt);
+                    this.mom = moment(dt, "YYYY/MM/DDTHH:mm:ssZ");
                     this.mom.locale("fa");
                 } else {
                     this.mom = moment(momentTz.utc(dt).tz(momentTz.tz.guess()));
                     this.mom.locale("fa");
                 }
             }
+            if (this.mom) {
+                this.dateString = this.mom.format("jYYYY/jMM/jDD");
+                this.timeString = this.mom.format("dddd") + " " + this.mom.format("HH:mm");
+            }
         }
     },
     computed: {
-        dateString() {
-            return this.mom ? this.mom.format("jYYYY/jMM/jDD") : "";
-        },
-        timeString() {
-            return this.mom
-                ? this.mom.format("dddd") + " " + this.mom.format("HH:mm")
-                : "";
-        },
         isDatetime() {
             return this.getNestedPathValue(this.item, this.column.id)
         }
