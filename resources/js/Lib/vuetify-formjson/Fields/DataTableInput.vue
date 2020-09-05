@@ -149,13 +149,15 @@
       :sort-desc.sync="sortDesc"
       :headers="headers"
       :items="devalue"
+      :item-class= "getRowClass"
       :search="search"
       :server-items-length="total"
       :loading="loading"
       :footer-props="{
         'items-per-page-options': [5, 10, 15, 30, 50, 100, 200]
       }"
-      :items-per-page="100"
+      :hide-default-footer="true"
+      :items-per-page="30"
       selectable-key
       v-bind="datatableProps"
       @click:row="onToggleItem"
@@ -199,7 +201,7 @@
                     </v-icon>
                 </v-btn>
                 <vf-datatable-dialog-create
-                    v-if="((field.crud && field.crud.create) || (field.table && field.table['create-url'])) && !field['hide-create']"
+                    v-if="showCreateButton"
                     v-model="createModel"
                     :field="field.crud.create"
                     :url="field.table && field.table['create-url'] ? field.table['create-url'] : null"
@@ -210,7 +212,7 @@
                     @on-update="onUpdateNew"
                 />
                 <v-btn
-                    v-if="field.table && field.table['reports-url'] && !field['hide-reports']"
+                    v-if="showReportsButton"
                     x-small
                     icon
                     :href="field.table['reports-url']"
@@ -336,6 +338,24 @@
       >
         {{ header.text }}
       </template>
+      <template v-slot:footer="{props}">
+        <div class="d-flex flex-row justify-center">
+            <span class="mx-2 my-auto">نمایش</span>
+            <v-select
+                :disabled="totalPages == 0"
+                v-model="options.itemsPerPage"
+                :items="[5, 10, 30, 50, 100, 200]"
+                solo
+                dense
+                small
+                :hide-details="true"
+                class="col-1 my-auto x-dense"
+            ></v-select>
+            <span class="mx-2 my-auto">رکورد در صفحه</span>
+            <v-pagination class="my-auto" v-model="options.page" :length="totalPages" :total-visible="customSettings.vis_pages ? customSettings.vis_pages:10"></v-pagination>
+            <span class="mx-2 my-auto">از مجموع {{ total }} رکورد</span>
+        </div>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -411,27 +431,35 @@ export default {
                 customSettings = settings;
             }
 
-            const filters = JSON.parse(localStorage.getItem('crud.datatable.filters.' + vm.field.table.query.url));
-            if (filters && Object.keys(filters).length > 0) {
-                customFilters = filters;
+            if (! vm.field['default-filters']) {
+                const filters = JSON.parse(localStorage.getItem('crud.datatable.filters.' + vm.field.table.query.url));
+                if (filters && Object.keys(filters).length > 0) {
+                    customFilters = filters;
+                }
             }
         }
 
+        var urlParams = new URLSearchParams(window.location.search);
+        let page = urlParams.has('page') && !isNaN(parseInt(urlParams.get('page'))) && !hasFilters ? parseInt(urlParams.get('page')) : 1
+
         let hasFilters = false;
-        Object.keys(customFilters).forEach((k) => {
-            if (customFilters[k]) {
-                if (Array.isArray(customFilters[k]) && customFilters[k].length > 0) {
-                    console.log('array')
-                } else if (typeof customFilters[k] === 'object') {
-                    if (Object.keys(customFilters[k]).length > 0) {
+        if (! vm.field['default-filters']) {
+            Object.keys(customFilters).forEach((k) => {
+                if (customFilters[k]) {
+                    if (Array.isArray(customFilters[k]) && customFilters[k].length > 0) {
+                    } else if (typeof customFilters[k] === 'object') {
+                        if (Object.keys(customFilters[k]).length > 0) {
+                            hasFilters = true;
+                        }
+                    } else {
                         hasFilters = true;
                     }
-                } else {
-                    hasFilters = true;
                 }
-            }
-        })
-        console.log(hasFilters, customFilters)
+            })
+        } else {
+            // we are in default filters mode
+            page = 0;
+        }
 
         return {
             createModel: {},
@@ -451,6 +479,7 @@ export default {
             selected: [],
             expanded: [],
             total: vm.value.length,
+            totalPages: 0,
             response: null,
             sortBy: null,
             sortDesc: null,
@@ -464,7 +493,8 @@ export default {
             editModelIndex: -1,
             customForms,
             options: {
-                itemsPerPage: customSettings?.per_page ?? 100,
+                itemsPerPage: customSettings?.per_page ?? 30,
+                page: page,
             },
         }
     },
@@ -586,6 +616,14 @@ export default {
                     validations: {
                         numeric: true,
                     }
+                },
+                vis_pages: {
+                    type: 'input',
+                    input: 'text',
+                    label: 'تعداد صفحات قابل رجوع',
+                    validations: {
+                        numeric: true,
+                    }
                 }
             };
             if (this.field.columns) {
@@ -624,6 +662,26 @@ export default {
         },
         hasForm () {
             return !this.field['hide-forms'] && this.field.forms && Object.keys(this.field.forms).length > 0;
+        },
+        showCreateButton () {
+            let hasPermission = true;
+            if (this.$store.state.user?.permissions && this.field.table && this.field.table['create-permissions']) {
+                if (!this.$store.state.user.permissions.includes(this.field.table['create-permissions'])) {
+                    hasPermission = false;
+                }
+            }
+            return hasPermission &&
+                     ((this.field.crud && this.field.crud.create) || (this.field.table && this.field.table['create-url'])) && !this.field['hide-create'];
+        },
+        showReportsButton () {
+            let hasPermission = true;
+            if (this.$store.state.user?.permissions && this.field.table && this.field.table['reports-permissions']) {
+                if (!this.$store.state.user.permissions.includes(this.field.table['create-permissions'])) {
+                    hasPermission = false;
+                }
+            }
+            return hasPermission &&
+                    this.field.table && this.field.table['reports-url'] && !this.field['hide-reports'];
         }
     },
     watch: {
@@ -661,6 +719,9 @@ export default {
         this.updateTable();
     },
     methods: {
+        getRowClass(item) {
+            return ''
+        },
         downloadExport() {
             this.exportLoading = true;
             const sort = [];
@@ -750,6 +811,7 @@ export default {
                         this.response = response;
                         if (response.data.data && this.loadingId <= response.data.ref_id) {
                             this.total = response.data.total;
+                            this.totalPages = Math.ceil(parseInt(response.data.total) / parseInt(response.data.per_page));
                             this.devalue = response.data.data;
                         }
                     })

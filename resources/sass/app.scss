@@ -12,6 +12,13 @@
     letter-spacing: 0 !important;
 }
 
+.x-dense .v-input__control {
+    min-height: 32px !important;
+}
+
+.xx-dense .v-input__control {
+    min-height: 28px !important;
+}
 
 .ribbon {
     position: relative;

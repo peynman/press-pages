@@ -181,7 +181,13 @@ export const CommonInputEssentials = {
         input: 'checkbox',
         label: 'Hidden',
         class: 'col-12 ma-0 ps-0 pe-0'
-    }
+    },
+    user_permission: {
+        type: 'input',
+        input: 'text',
+        label: 'Required user permission to see button',
+        class: 'col-12 ma-0 ps-0 pe-0'
+    },
 }
 
 export const MessagesTab = {

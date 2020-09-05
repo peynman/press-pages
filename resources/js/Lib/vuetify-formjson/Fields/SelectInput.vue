@@ -43,5 +43,12 @@ export default {
             this.$emit('input', this.devalue)
         }
     },
+    mounted () {
+        if (!this.value) {
+            if (this.field.already_selected) {
+                this.devalue = this.field.already_selected;
+            }
+        }
+    }
 }
 </script>

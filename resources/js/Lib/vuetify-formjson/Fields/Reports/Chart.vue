@@ -325,6 +325,7 @@ export default {
                         return this.getDecorableLabel(flabel);
                     }
                 }
+                console.log(i)
                 return i[this.field.report_item_key];
             });
         }

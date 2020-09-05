@@ -116,7 +116,15 @@ export default {
                 }
                 return result;
             };
-            return filter(this.fields, i => i.hidden === true);
+
+            return filter(this.fields, (i) => {
+                if (this.$store.state.user?.permissions && i.user_permission) {
+                    if (!this.$store.state.user.permissions.includes(i.user_permission)) {
+                        return true;
+                    }
+                }
+                return i.hidden === true
+            });
         }
     },
     watch: {

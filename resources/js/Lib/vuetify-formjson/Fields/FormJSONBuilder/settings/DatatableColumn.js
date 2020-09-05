@@ -93,11 +93,13 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                             type: 'input',
                             input: 'text',
                             label: 'Decorator Label',
+                            class: 'col-12',
                         },
                         labels: {
                             type: 'input',
                             input: 'text',
                             label: 'Decorator Property Names',
+                            class: 'col-12',
                             props: {
                                 hint: 'comma separated property names'
                             }

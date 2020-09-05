@@ -310,6 +310,9 @@ export default {
             return [];
         },
         webRequest(data) {
+            if (data.data) {
+                data.data = {...data.data}
+            }
             console.log(data)
             return this.axios(data)
         },

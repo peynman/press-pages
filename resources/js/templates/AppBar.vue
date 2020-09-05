@@ -226,7 +226,7 @@ export default {
             return 'تکمیل پروفایل'
         },
         userAvatar() {
-            return this.user.profile?.data?.values?.profile ?? false
+            return this.user.profile?.data?.values?.profile ?? this.user.profile?.data?.values?.image ?? false
         },
         links() {
             const profileFormIds = {

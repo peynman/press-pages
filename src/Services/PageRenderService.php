@@ -101,7 +101,8 @@ class PageRenderService implements IPageRenderService
             $user->makeVisible('profile');
             // make sure support user is loaded
             $support = $user->supportUserProfile;
-            $user['support'] = !is_null($support) ? $support->data['values'] : null;
+
+            $user['support'] = isset($support['data']['values']) ? $support['data']['values'] : null;
             $user['notifications'] = $user->unseen_notifications;
         }
 
@@ -248,7 +249,8 @@ class PageRenderService implements IPageRenderService
                 config('larapress.ecommerce.banking.currency.id')
             );
             $balance = [
-                'amount' =>  $cartService->getUserBalance(
+                'amount' =>
+                $cartService->getUserBalance(
                     $user,
                     $domain,
                     config('larapress.ecommerce.banking.currency.id')

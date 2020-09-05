@@ -4,14 +4,31 @@
     <span class="caption" v-if="Object.keys(field.links).length == 0">امکانات بیشتری برای این رکورد موجود نیست</span>
     <v-tabs v-if="Object.keys(field.links).length > 0" optional dense icons-and-text centered background-color="grey lighten-2" v-model="selected">
       <v-tabs-slider/>
+      <v-tab>
+        <slot name="prepend"></slot>
+      </v-tab>
       <v-tab
         class="no-letter-spacing"
         v-for="(link) in field.links"
         :key="`${id}-link-${link.id}`"
         :href="`#${id}-link-${link.id}`"
       >
-        <span class="caption">{{ link.title }}</span>
-        <v-icon>{{ link.icon }}</v-icon>
+        <div class="d-flex flex-row">
+            <div class="d-flex flex-column">
+                <v-icon v-show="link.icon">{{ link.icon }}</v-icon>
+                <span v-show="link.title" class="caption">{{ link.title }}</span>
+            </div>
+            <component
+                v-if="link.extraComponent"
+                v-bind="link.extraComponent.props"
+                :is="link.extraComponent.component"
+                :class="link.extraComponent.class"
+            >
+            </component>
+        </div>
+      </v-tab>
+      <v-tab disabled>
+        <slot name="append"></slot>
       </v-tab>
       <v-tab-item
         v-for="(link) in field.links"

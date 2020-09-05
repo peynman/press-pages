@@ -1,6 +1,7 @@
 import {
     CommonInputEssentials,
-    BaseInputSettings
+    BaseInputSettings,
+    TextSettings,
 } from './comon'
 
 import api from './../api'

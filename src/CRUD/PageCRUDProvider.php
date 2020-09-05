@@ -63,7 +63,7 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'zorder',
         'flags',
     ];
-    public $searchColumns = ['slug', 'body'];
+    public $searchColumns = ['slug', 'name'];
     public $filterFields = [];
     public $filterDefaults = [];
 

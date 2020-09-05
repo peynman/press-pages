@@ -15,11 +15,7 @@
 </template>
 
 <script>
-// import MathLive from 'dist/mathlive.mjs'
 import BaseComponent from './mixins'
-import ACE from './MarkdownInput/AceEditor/ace'
-import './MarkdownInput/AceEditor/mode-markdown'
-import './MarkdownInput/AceEditor/theme-eclipse'
 
 import markdownit from 'markdown-it'
 import markdownItAttrs from 'markdown-it-attrs'
@@ -84,10 +80,12 @@ export default {
             }
             this.$refs.editorView.insertAdjacentHTML('beforeend', markdownHtml)
 
-            if (!this.aceUpdate) {
-                this.aceEditor.session.setValue(this.devalue)
-            } else {
-                this.aceUpdate = false
+            if (this.aceEditor) {
+                if (!this.aceUpdate) {
+                    this.aceEditor.session.setValue(this.devalue)
+                } else {
+                    this.aceUpdate = false
+                }
             }
         }
     },
@@ -100,20 +98,27 @@ export default {
         }
     },
     mounted() {
-        this.aceEditor = ACE.edit(this.$refs.editorCode, {
-            mode: 'ace/mode/markdown',
-            selectionStyle: 'text',
-            theme: 'ace/theme/eclipse',
-            maxLines: Infinity
-        })
-        this.aceEditor.session.on('change', (delta) => {
-            this.aceUpdate = true
-            this.$nextTick(() => {
-                this.devalue = this.aceEditor.session.getValue()
-                this.$emit('input', this.devalue)
+        if (!this.field.readonly) {
+            const ace = () => import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/ace');
+            () => import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/mode-markdown')();
+            () => import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/theme-eclipse')();
+            const ACE = ace();
+            console.log(ACE);
+            this.aceEditor = ACE.edit(this.$refs.editorCode, {
+                mode: 'ace/mode/markdown',
+                selectionStyle: 'text',
+                theme: 'ace/theme/eclipse',
+                maxLines: Infinity
             })
-        })
-        this.aceEditor.session.setValue(this.devalue)
+            this.aceEditor.session.on('change', (delta) => {
+                this.aceUpdate = true
+                this.$nextTick(() => {
+                    this.devalue = this.aceEditor.session.getValue()
+                    this.$emit('input', this.devalue)
+                })
+            })
+            this.aceEditor.session.setValue(this.devalue)
+        }
 
         // eslint-disable-next-line new-cap
         this.markdownEditor = new markdownit((this.field.markdownProps ? this.field.markdownProps : {}))

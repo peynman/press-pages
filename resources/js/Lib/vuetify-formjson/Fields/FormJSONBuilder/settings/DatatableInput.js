@@ -128,7 +128,9 @@ export default class DatatableInputSettings extends BaseInputSettings {
                         }
                     },
                     'create-url': TextSettings('Remote Create Form URL'),
+                    'create-permissions': TextSettings('Create permission'),
                     'reports-url': TextSettings('Remote url for Reports'),
+                    'reports-permissions': TextSettings('Reports permission'),
                     'export-url': TextSettings('Remote url for downloading Exported file'),
                 }
             },

@@ -25,7 +25,7 @@ export default {
     props: {
         id: String,
         field: Object,
-        value: String
+        value: [String, Object]
     },
     computed: {
         fixedFieldProps () {

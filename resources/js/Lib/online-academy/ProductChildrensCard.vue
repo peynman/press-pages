@@ -57,7 +57,6 @@ export default {
         ProductSessionTitle,
         ProductSessionContent,
     },
-    mixins: [],
     props: {
         field: Object,
         value: Object,
@@ -67,8 +66,17 @@ export default {
     computed: {
         sessions() {
             if (this.field.children) {
-                return this.field.children.filter((child) => child.types.map((t) => t.name).includes('session')).sort((a, b) => (a.priority - b.priority))
-                .map((c) => ({...c}))
+                let list = this.field.children
+                    .filter((child) => child.types.map((t) => t.name).includes('session'));
+                if (this.field.sortStartTime) {
+                    list = list.map((c) => {
+                        c.start_at = moment(session.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm');
+                    });
+                    list = list.sort((a, b) => (a.start_at.diff(b.sart_at)))
+                } else {
+                    list = list.sort((a, b) => (a.priority - b.priority))
+                }
+                return list.map((c) => ({...c}))
             }
             return [];
         },

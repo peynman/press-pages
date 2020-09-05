@@ -3,6 +3,7 @@ let exec = require('child_process').exec;
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const fs = require('fs');
+const Visualizer = require('webpack-visualizer-plugin');
 
 /*
  |--------------------------------------------------------------------------
@@ -39,6 +40,9 @@ if (process.env.NODE_ENV === 'publish_only') {
             new MomentLocalesPlugin({
                 localesToKeep: ['fa']
             }),
+            new Visualizer({
+                filename: './statistics.html'
+            })
         ],
     })
     .babelConfig({

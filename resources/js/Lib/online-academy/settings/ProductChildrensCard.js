@@ -1,7 +1,8 @@
 import {
     CommonInputEssentials,
     BaseInputSettings,
-    TextSettings
+    TextSettings,
+    CheckboxSettings
 } from '../../vuetify-formjson/Fields/FormJSONBuilder/settings/comon'
 
 
@@ -18,11 +19,11 @@ export default class ProductChildrensCardSettings extends BaseInputSettings {
         return {
             ...CommonInputEssentials,
             emptyMessage: TextSettings('Empty message'),
+            sortStartTime: CheckboxSettings('Sort on session start time'),
             xs: TextSettings('X-Small cols'),
             sm: TextSettings('Small cols'),
             md: TextSettings('Medium cols'),
             lg: TextSettings('Large cols'),
-
         }
     }
 }

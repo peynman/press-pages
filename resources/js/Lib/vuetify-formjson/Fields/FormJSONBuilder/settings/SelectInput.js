@@ -2,7 +2,8 @@ import {
     CommonInputEssentials,
     MessagesTab,
     BaseInputSettings,
-    CheckboxSettings
+    CheckboxSettings,
+    TextSettings
 } from './comon'
 
 import api from './../api'
@@ -66,6 +67,7 @@ export default class SwitchInputSettings extends BaseInputSettings {
                 },
             },
             multiple: CheckboxSettings('Multiple'),
+            already_selected: TextSettings('Already Selected'),
             decorator: {
                 options: {
                     formClass: 'ma-0 pa-0'
@@ -75,11 +77,13 @@ export default class SwitchInputSettings extends BaseInputSettings {
                         type: 'input',
                         input: 'text',
                         label: 'Decorator Label',
+                        class: 'col-12',
                     },
                     labels: {
                         type: 'input',
                         input: 'text',
                         label: 'Decorator Property Names',
+                        class: 'col-12',
                         props: {
                             hint: 'comma separated property names'
                         }
