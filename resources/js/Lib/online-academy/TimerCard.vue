@@ -39,6 +39,7 @@
           </v-list-item-content>
           <v-list-item-action
             style="min-width: 130px;"
+            class="d-none d-sm-flex"
           >
             <v-progress-circular
               :value="timeRemainingPercent"
@@ -104,6 +105,7 @@ export default {
             if (
                 this.profileComplete &&
                 this.profile.profile &&
+                typeof this.profile.profile == 'string' &&
                 this.profile.profile.startsWith("data:")
             ) {
                 return this.profile.profile;

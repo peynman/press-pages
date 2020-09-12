@@ -362,6 +362,10 @@ This set of fonts are used in this project under the license: (.....)
   height: auto;
 }
 
+.scrollable-table .v-data-table__wrapper {
+  overflow-x: scroll !important;
+}
+
 .no-letter-spacing {
   letter-spacing: 0 !important;
 }

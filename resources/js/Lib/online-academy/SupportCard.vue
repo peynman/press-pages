@@ -9,7 +9,7 @@
     <v-card :class="`d-flex flex-row rounded-product-card grey lighten-4 ${field.class ? field.class : ''}`">
         <v-list class="grey lighten-4 fill-width">
             <v-list-item class="fill-width">
-                <v-list-item-avatar size="100">
+                <v-list-item-avatar size="100" class="d-none d-sm-flex">
                 <v-img :src="imagePic" />
                 </v-list-item-avatar>
                 <v-list-item-content class="ms-3">
@@ -134,7 +134,6 @@ export default {
                 },
                 headers: host.getWebAuthHeaders({}),
             }).then((response) => {
-                console.log(response);
                 this.updatingSupport = false;
                 if (response.data?.message) {
                     host.showSnack(response.data.message, 'success');
@@ -142,7 +141,6 @@ export default {
                 this.user.support = response.data.support;
                 this.$forceUpdate();
             }).catch((err) => {
-                console.log(err);
                 if (err.response?.data?.message) {
                     host.showSnack(err.response?.data?.message);
                 } else {

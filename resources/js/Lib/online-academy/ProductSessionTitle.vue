@@ -107,7 +107,7 @@ export default {
                     switch (t.name) {
                         case 'vod_hls':
                         case 'vod_link':
-                        title = 'فایل ضبظ شده';
+                        title = 'فایل ضبط شده';
                         break;
                         case 'file_pdf':
                         title = 'جزوه';

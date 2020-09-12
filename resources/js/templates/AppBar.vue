@@ -344,11 +344,11 @@ export default {
                             }
                         },
                         sub: "موجودی شما: " +
-                            parseInt(this.user.balance.amount)
+                            (this.user.balance ? parseInt(this.user.balance.amount): 0)
                             .toLocaleString('fa-IR')
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                             " " +
-                            this.user.balance.currency.title
+                            (this.user.balance ? this.user.balance.currency.title : 'تومان')
                     });
                 }
             }

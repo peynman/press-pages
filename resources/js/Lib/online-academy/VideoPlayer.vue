@@ -164,5 +164,11 @@ export default {
             }
         }
     },
+    destroyed() {
+        if (this.player && !this.dialog) {
+                this.player.dispose();
+                this.player = null;
+        }
+    },
 }
 </script>

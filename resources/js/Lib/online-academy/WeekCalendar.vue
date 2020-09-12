@@ -5,7 +5,7 @@
             <span>{{ field.label }}</span>
         </v-card-title>
         <v-card-text>
-            <v-simple-table dense style="border-bottom: solid 1px black;">
+            <v-simple-table class="scrollable-table" dense style="border-bottom: solid 1px black;">
                 <template #default>
                     <thead>
                         <tr>

@@ -19,6 +19,7 @@
     </v-btn>
     <v-chip
       dense
+      :small="field.noIcon"
       outlined
       color="green"
       class="mx-2 #363b5e--text my-auto"

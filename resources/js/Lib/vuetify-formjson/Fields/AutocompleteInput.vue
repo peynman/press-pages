@@ -39,11 +39,11 @@ export default {
         field: Object,
         value: [Array, String, Number]
     },
-    data: () => ({
+    data: (vm) => ({
         search: '',
         loadingId: 0,
         loading: false,
-        avItems: [],
+        avItems: vm.value ? [{id:vm.value}] : [],
     }),
     methods: {
         updateSearch() {
@@ -51,7 +51,6 @@ export default {
                 const host = this.$store.state.host;
                 this.loading = true;
                 this.loadingId += 1;
-                console.log(this.search);
                 this.axios({
                     url: this.field.table.query.url,
                     method: "POST",
@@ -69,21 +68,20 @@ export default {
                             : [],
                         appends: this.field.table.query.appends ? this.field.table.query.appends : [],
                     }
-                })
-                    .then(response => {
-                        this.response = response;
-                        if (response.data.data && this.loadingId <= response.data.ref_id) {
-                            this.avItems = response.data.data;
+                }).then(response => {
+                    this.response = response;
+                    if (response.data.data && this.loadingId <= response.data.ref_id) {
+                        this.avItems = response.data.data;
 
-                            this.search = ''
-                        }
-                    })
-                    .catch(error => {
-                        this.response = error.response;
-                    })
-                    .finally(() => {
-                        this.loading = false;
-                    });
+                        this.search = ''
+                    }
+                })
+                .catch(error => {
+                    this.response = error.response;
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
             }
         },
         updateInput: function (ev) {

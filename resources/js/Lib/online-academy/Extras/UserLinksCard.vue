@@ -19,7 +19,7 @@
                     </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                    <v-btn icon small dense :href="`/admin/users/${field.id}`" target="_blank"><v-icon small>mdi-database-edit</v-icon></v-btn>
+                    <v-btn icon small dense :href="`/admin/users/${itemId}`" target="_blank"><v-icon small>mdi-database-edit</v-icon></v-btn>
                     <v-btn color="warning" icon small dense :loading="updatingPass" @click="updatePass"><v-icon small>mdi-onepassword</v-icon></v-btn>
                 </v-list-item-action>
             </v-list-item>
@@ -74,7 +74,7 @@ export default {
         balance () {
             if (this.field.balance) {
                 return { amount: parseInt(this.field.balance.amount).toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ","), currency: this.field.balance.currency };
-            } else if (this.field[this.column.id].balance.amount) {
+            } else if (this.field[this.column.id].balance && this.field[this.column.id].balance?.amount) {
                 return { amount: parseInt(this.field[this.column.id].balance.amount).toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ","), currency: this.field[this.column.id].balance.currency };
             }
         },
@@ -143,15 +143,6 @@ export default {
                     }
                 },
                 {
-                    id: 'purchass',
-                    title: 'سبد‌های خرید',
-                    icon: 'mdi-cart-arrow-down',
-                    url: '/admin/carts',
-                    filters: {
-                        customer_id: this.itemId,
-                    }
-                },
-                {
                     id: 'send-sms',
                     title: 'ارسال پیامک',
                     icon: 'mdi-cellphone-play',
@@ -213,12 +204,53 @@ export default {
                     }
                 },
                 {
+                    id: 'carts',
+                    title: 'سبد‌های خرید',
+                    icon: 'mdi-cart-arrow-down',
+                    url: '/admin/carts',
+                    filters: {
+                        customer_id: this.itemId,
+                    }
+                },
+                {
+                    id: 'carts_create',
+                    title: 'ثبت سبد جدید',
+                    icon: 'mdi-cart-plus',
+                    url: '/admin/carts/create',
+                    devalue: {
+                        customer_id: this.itemId,
+                    },
+                    schema: {
+                        fields: {
+                            customer_id: {
+                                hidden: true,
+                            },
+                        }
+                    }
+                },
+                {
                     id: 'wallet',
                     title: 'تراکنش‌های کیف پول',
                     icon: 'mdi-wallet',
                     url: '/admin/wallet-transactions',
                     filters: {
                         user_id: this.itemId,
+                    }
+                },
+                {
+                    id: 'wallet_create',
+                    title: 'ثبت تراکنش‌ جدید',
+                    icon: 'mdi-wallet-plus',
+                    url: '/admin/wallet-transactions/create',
+                    devalue: {
+                        target_user: this.itemId,
+                    },
+                    schema: {
+                        fields: {
+                            target_user: {
+                                hidden: true,
+                            },
+                        }
                     }
                 },
                 {
@@ -231,7 +263,7 @@ export default {
                         flags: 16,
                         status: "1",
                     }
-                }
+                },
             ];
 
             extras.forEach((e) => {
@@ -256,10 +288,10 @@ export default {
     },
     methods: {
         updatePass () {
-            const newpass = window.prompt('Enter new password for user #'+this.field.id);
+            const newpass = window.prompt('Enter new password for user #'+this.itemId);
             const host = this.$store.state.host;
             if (newpass && newpass.length >= 6) {
-                if (window.confirm('Are you sure you want to change user #'+this.field.id+' password to "'+newpass+'"?')) {
+                if (window.confirm('Are you sure you want to change user #'+this.itemIdd+' password to "'+newpass+'"?')) {
                     this.updatingPass = true;
                     host.axios({
                         url: '/api/users/' + this.field.id,
@@ -271,7 +303,7 @@ export default {
                         headers: host.getWebAuthHeaders({}),
                     }).then((response) => {
                         this.updatingPass = false;
-                        host.showSnack('Password updated for user #'+this.field.id, 'success')
+                        host.showSnack('Password updated for user #'+this.itemIdd, 'success')
                     }).catch((error) => {
                         this.updatingPass = false;
                         if (error.response?.data.message) {

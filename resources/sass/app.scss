@@ -8,6 +8,10 @@
 @import "../../node_modules/video.js/dist/video-js.min.css";
 @import "./videojs-skin.scss";
 
+
+.scrollable-table .v-data-table__wrapper {
+    overflow-x: scroll !important;
+}
 .no-letter-spacing {
     letter-spacing: 0 !important;
 }

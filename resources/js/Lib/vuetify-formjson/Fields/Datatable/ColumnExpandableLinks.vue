@@ -1,5 +1,5 @@
 <template>
-    <v-badge dense :value="badgeValue" bordered :color="badgeColor" overlap :content="badgeValue">
+    <v-badge dense :value="badgeValue !== false" bordered :color="badgeColor" overlap :content="badgeValue">
         <v-tooltip left content-class="ma-0 pa-0">
             <template v-slot:activator="{ on, attrs }">
                 <v-chip
@@ -51,7 +51,7 @@ export default {
                 const inTime = moment(this.item.supportUserProfile?.entry?.created_at, 'YYYY/MM/DDTHH:mm:ssZ');
                 const now = moment();
                 return now.diff(inTime, 'day');
-            } else if (this.item[this.column.id].supportUserProfile?.entry?.created_at) {
+            } else if (this.item[this.column.id] && this.item[this.column.id].supportUserProfile?.entry?.created_at) {
                 const inTime = moment(this.item[this.column.id].supportUserProfile?.entry?.created_at, 'YYYY/MM/DDTHH:mm:ssZ');
                 const now = moment();
                 return now.diff(inTime, 'day');
@@ -61,7 +61,7 @@ export default {
         extraName () {
             if (this.item.profile?.data?.values?.firstname && this.item.profile?.data?.values?.lastname) {
                 return this.item.profile?.data?.values?.firstname + ' ' + this.item.profile?.data?.values?.lastname;
-            } else if (this.item[this.column.id].profile?.data?.values?.firstname && this.item[this.column.id].profile?.data?.values?.lastname) {
+            } else if (this.item[this.column.id] && this.item[this.column.id].profile?.data?.values?.firstname && this.item[this.column.id].profile?.data?.values?.lastname) {
                 return this.item[this.column.id].profile?.data?.values?.firstname + ' ' + this.item[this.column.id].profile?.data?.values?.lastname;
             }
             return false
@@ -69,7 +69,7 @@ export default {
         extraSupportName () {
             if (this.item.supportUserProfile?.data?.values?.firstname && this.item.supportUserProfile?.data?.values?.lastname) {
                 return this.item.supportUserProfile?.data?.values?.firstname + ' ' + this.item.supportUserProfile?.data?.values?.lastname;
-            } else if (this.item[this.column.id].supportUserProfile?.data?.values?.firstname && this.item[this.column.id].supportUserProfile?.data?.values?.lastname) {
+            } else if (this.item[this.column.id] && this.item[this.column.id].supportUserProfile?.data?.values?.firstname && this.item[this.column.id].supportUserProfile?.data?.values?.lastname) {
                 return this.item[this.column.id].supportUserProfile?.data?.values?.firstname + ' ' + this.item[this.column.id].supportUserProfile?.data?.values?.lastname;
             }
             return false
@@ -77,8 +77,8 @@ export default {
         extraBalanceString () {
             if (this.item.balance) {
                 return parseInt(this.item.balance.amount).toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            } else if (this.item[this.column.id].balance) {
-                return parseInt(this.item[this.column.id].balance.amount).toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            } else if (this.item[this.column.id] && this.item[this.column.id].balance) {
+                return parseInt(this.item[this.column.id] && this.item[this.column.id].balance.amount).toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
 
             return false;
@@ -86,14 +86,14 @@ export default {
         extraBalanceCurrency () {
             if (this.item.balance) {
                 return this.item.currency.title;
-            } else if (this.item[this.column.id].balance) {
+            } else if (this.item[this.column.id] && this.item[this.column.id].balance) {
                 return this.item[this.column.id].balance.currency.title;
             }
 
             return false;
         },
         badgeColor () {
-            if (this.badgeValue) {
+            if (this.badgeValue !== false) {
                 if (this.badgeValue <= 7) {
                     return 'green'
                 } else if (this.badgeValue <= 14) {

@@ -24,7 +24,6 @@
         </v-btn>
     </v-system-bar>
     <v-dialog
-      v-if="!minmized"
       v-model="dialog"
       fullscreen hide-overlay
       class="grey lighten-4"
@@ -46,7 +45,9 @@
                 </v-icon> ورود به کلاس
             </v-btn>
         </template>
-      <v-system-bar color="primary" dark>
+      <v-system-bar color="primary" dark
+            v-show="!minmized"
+      >
           <span>{{ field.data.title }}</span>
           <v-spacer></v-spacer>
           <v-btn
@@ -67,7 +68,10 @@
               <v-icon small>mdi-close</v-icon>
         </v-btn>
       </v-system-bar>
+    <v-lazy
+    >
       <v-sheet
+            v-if="!minmized && dialog"
           class="d-flex flex-column"
         >
           <v-row
@@ -116,6 +120,7 @@
             </v-col>
           </v-row>
         </v-sheet>
+        </v-lazy>
     </v-dialog>
   </div>
 </template>
@@ -172,7 +177,9 @@ export default {
         dialog () {
             const host = this.$store.state.host;
             if (this.dialog) {
-                this.$forceUpdate();
+                if (this.minmized) {
+                    this.minmized = false;
+                }
                 window.onbeforeunload = function() {
                     return true;
                 };
@@ -187,6 +194,7 @@ export default {
                 }).catch(err => {
                     host.showSnack(err.message);
                 });
+                this.$forceUpdate();
             } else if (!this.minmized) {
                 window.onbeforeunload = null;
                 const dur = Math.abs(this.openTime - Date.now()) / 1000;
@@ -209,8 +217,12 @@ export default {
                 window.onbeforeunload = function() {
                     return true;
                 };
+                this.dialog = false;
+                this.$forceUpdate();
             } else {
+                this.dialog = true;
                 window.onbeforeunload = null;
+                this.$forceUpdate();
             }
         }
     }

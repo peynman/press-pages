@@ -310,10 +310,9 @@ export default {
             return [];
         },
         webRequest(data) {
-            if (data.data) {
+            if (data.data && Array.isArray(data.data)) {
                 data.data = {...data.data}
             }
-            console.log(data)
             return this.axios(data)
         },
         getWebAuthHeaders(headers) {

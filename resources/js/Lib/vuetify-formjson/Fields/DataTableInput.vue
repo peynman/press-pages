@@ -461,6 +461,8 @@ export default {
             page = 0;
         }
 
+        let search = urlParams.has('search') ? urlParams.get('search') : ''
+
         return {
             createModel: {},
             showAlert: false,
@@ -475,7 +477,7 @@ export default {
             loading: false,
             editMode: false,
             loadingId: 0,
-            search: "",
+            search,
             selected: [],
             expanded: [],
             total: vm.value.length,
@@ -916,6 +918,7 @@ export default {
         },
         updateSearch(ev) {
             if (ev.keyCode === 13) {
+                this.options.page = 1;
                 this.updateTable();
             }
         },
@@ -942,6 +945,7 @@ export default {
                             events[event] = e => {
                                 const values = clonedeep(this.customForms[id]);
                                 values.selected = this.selected.map((s) => s.id)
+                                console.log(values);
                                 handle(values, e);
                             };
                         }

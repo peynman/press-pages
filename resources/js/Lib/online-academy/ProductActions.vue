@@ -1,7 +1,7 @@
 <template>
   <component
     :is="!field.compact ? 'VCardActions' : 'VCardActions'"
-    class="justify-center"
+    :class="`justify-center ${field.compact ? 'd-flex flex-column' : ''}`"
   >
     <v-btn
       v-show="hasPrice && product.freeDetailLink && !product.noHover"
@@ -10,6 +10,7 @@
       rounded
       :href="`/products/${product.id}/details`"
       class="no-letter-spacing"
+      :dense="field.compact"
     >
       مشاهده رایگان این جلسه
     </v-btn>

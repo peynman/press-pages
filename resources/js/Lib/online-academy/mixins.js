@@ -222,7 +222,7 @@ export const UserAwareComponent = {
                 this.$store.state.user &&
                 this.$store.state.user.roles &&
                 this.$store.state.user.roles.filter(
-                    i => adminRoles.includes(i.name)
+                    i => adminRoles.includes(i.name) || i.name.endsWith('admin') || i.name.endsWith('manager')
                 ).length > 0
             );
         },
