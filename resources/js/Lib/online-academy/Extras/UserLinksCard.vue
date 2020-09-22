@@ -291,10 +291,10 @@ export default {
             const newpass = window.prompt('Enter new password for user #'+this.itemId);
             const host = this.$store.state.host;
             if (newpass && newpass.length >= 6) {
-                if (window.confirm('Are you sure you want to change user #'+this.itemIdd+' password to "'+newpass+'"?')) {
+                if (window.confirm('Are you sure you want to change user #'+this.itemId+' password to "'+newpass+'"?')) {
                     this.updatingPass = true;
                     host.axios({
-                        url: '/api/users/' + this.field.id,
+                        url: '/api/users/' + this.itemId,
                         method: 'PUT',
                         data: {
                             password: newpass,
@@ -303,7 +303,7 @@ export default {
                         headers: host.getWebAuthHeaders({}),
                     }).then((response) => {
                         this.updatingPass = false;
-                        host.showSnack('Password updated for user #'+this.itemIdd, 'success')
+                        host.showSnack('Password updated for user #'+this.itemId, 'success')
                     }).catch((error) => {
                         this.updatingPass = false;
                         if (error.response?.data.message) {

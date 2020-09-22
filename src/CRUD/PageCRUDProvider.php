@@ -4,6 +4,7 @@ namespace Larapress\Pages\CRUD;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Larapress\CRUD\Services\BaseCRUDProvider;
 use Larapress\CRUD\Services\ICRUDProvider;
@@ -154,5 +155,15 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         }
 
         return true;
+    }
+
+    public function onAfterCreate($object, $input_data)
+    {
+        Cache::tags(['pages'])->flush();
+    }
+
+    public function onAfterUpdate($object, $input_data)
+    {
+        Cache::tags(['pages'])->flush();
     }
 }

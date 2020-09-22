@@ -327,7 +327,7 @@ export default {
                 if (this.azmoonTime > 0) {
                     setTimeout(() => {
                         this.updateAzmoonTimeTitle();
-                        this.startAzmoonTimerUpdate()
+                        this.startAzmoonTimerUpdate();
                     }, 60000)
                 }
             }

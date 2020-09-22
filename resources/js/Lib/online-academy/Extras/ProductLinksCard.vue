@@ -34,7 +34,7 @@ export default {
                             icon: 'mdi-file-tree',
                             url: '/admin/products',
                             filters: {
-                                parent_id: this.field.id,
+                                parent_id: this.itemId,
                             }
                         },
                         {
@@ -43,7 +43,7 @@ export default {
                             icon: 'mdi-cart-arrow-down',
                             url: '/admin/users',
                             filters: {
-                                purchased_id: this.field.id,
+                                purchased_id: [this.itemId, this.field.parent_id],
                             }
                         },
                         {
@@ -52,7 +52,7 @@ export default {
                             icon: 'mdi-cart-plus',
                             url: '/admin/users',
                             filters: {
-                                in_cart_id: this.field.id,
+                                in_cart_id: this.itemId,
                             }
                         },
                         {
@@ -62,7 +62,7 @@ export default {
                             url: '/admin/sms-messages/send',
                             devalue: {
                                 type: 'in_purchased_ids',
-                                ids: this.itemId,
+                                ids: [this.itemId, this.field.parent_id].join(','),
                             }
                         },
                     ]);
@@ -75,7 +75,7 @@ export default {
                             icon: 'mdi-clipboard-check',
                             url: '/admin/form-entries',
                             filters: {
-                                tags: 'course-' + this.field.id + '-presence',
+                                tags: 'course-' + this.itemId + '-presence',
                             }
                         },
                         {
@@ -84,7 +84,20 @@ export default {
                             icon: 'mdi-clipboard-file',
                             url: '/admin/form-entries',
                             filters: {
-                                tags: 'course-' + this.field.id + '-taklif',
+                                tags: 'course-' + this.itemId + '-taklif',
+                            }
+                        },
+                    ]);
+                }
+                if (this.field.types.map((t) => t.name).includes('azmoon')) {
+                    extras.push(...[
+                        {
+                            id: 'azmoon',
+                            title: 'پاسخنامه آزمون',
+                            icon: 'mdi-clipboard-check',
+                            url: '/admin/form-entries',
+                            filters: {
+                                tags: 'azmoon-' + this.itemId,
                             }
                         },
                     ]);

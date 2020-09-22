@@ -154,7 +154,7 @@ export default {
                     small: true,
                     color: 'secondary',
                 },
-            props: {
+                props: {
                     icon: true,
                     small: true,
                     click: () => {
@@ -172,7 +172,124 @@ export default {
                                 path.push('fields');
                             }
                         }
-                        window.alert(path.reverse().join('.'));
+                        var dummy = document.createElement("textarea");
+                        // to avoid breaking orgain page when copying more words
+                        // cant copy when adding below this code
+                        // dummy.style.display = 'none'
+                        document.body.appendChild(dummy);
+                        //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+                        dummy.value = path.join('.');
+                        dummy.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(dummy);
+                        this.$store.state.host.showSnack('Path Copied', 'success');
+                    }
+                }
+            }
+        },
+        getCopyContentAction: function (items, item) {
+            return {
+                type: 'button',
+                icon: 'mdi-content-copy',
+                iconProps: {
+                    small: true,
+                    color: 'primary',
+                },
+                props: {
+                    icon: true,
+                    small: true,
+                    click: () => {
+                        var dummy = document.createElement("textarea");
+                        // to avoid breaking orgain page when copying more words
+                        // cant copy when adding below this code
+                        // dummy.style.display = 'none'
+                        document.body.appendChild(dummy);
+                        //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+                        dummy.value = JSON.stringify(item.model);
+                        dummy.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(dummy);
+                        this.$store.state.host.showSnack('Content Copied', 'success');
+                    }
+                }
+            }
+        },
+        getPasteContentNextAction: function (items, item) {
+            return {
+                type: 'button',
+                icon: 'mdi-content-paste',
+                iconProps: {
+                    small: true,
+                    color: 'warning',
+                },
+                props: {
+                    icon: true,
+                    small: true,
+                    click: () => {
+                        const newItem = JSON.parse(text);
+                        const newModel = this.treeModel.parse(newItem)
+                        newModel.value = {
+                            settings: {
+                                tabs: {
+                                    fieldProperties: {
+                                        id: newItem.id
+                                    }
+                                }
+                            },
+                            slots: {
+                                slot: null
+                            }
+                        }
+
+                        const itemParentTypeSettings = this.inputTypeSettings[item.model.type]
+                        if (itemParentTypeSettings && itemParentTypeSettings.getInputSlots(item).length > 0) {
+                            newModel.value.slots.slot = itemParentTypeSettings.getInputSlots(item)[0].id
+                        }
+
+                        item.parent.addChild(newModel)
+                    }
+                }
+            }
+        },
+        getPasteContentInsideAction: function (items, item) {
+            return {
+                type: 'button',
+                icon: 'mdi-plus-network',
+                iconProps: {
+                    small: true,
+                    color: 'warning',
+                },
+                props: {
+                    icon: true,
+                    small: true,
+                    click: () => {
+                        navigator.clipboard.readText()
+                        .then(text => {
+                            const newItem = JSON.parse(text);
+                            const newModel = this.treeModel.parse(newItem)
+                            newModel.value = {
+                                settings: {
+                                    tabs: {
+                                        fieldProperties: {
+                                            id: newItem.id
+                                        }
+                                    }
+                                },
+                                slots: {
+                                    slot: null
+                                }
+                            }
+
+                            const itemParentTypeSettings = this.inputTypeSettings[item.model.type]
+                            if (itemParentTypeSettings && itemParentTypeSettings.getInputSlots(item).length > 0) {
+                                newModel.value.slots.slot = itemParentTypeSettings.getInputSlots(item)[0].id
+                            }
+
+                            item.addChild(newModel)
+                        })
+                        .catch(err => {
+                            this.$store.state.host.showSnack('Could not read clipboard')
+                        });
                     }
                 }
             }
@@ -457,7 +574,6 @@ export default {
                     return true
                 },
                 getActions: (slot, item) => {
-
                     const actions = {}
                     switch (slot) {
                     case 'append':
@@ -466,7 +582,7 @@ export default {
                                 this.schema.builder,
                                 item
                             )
-                            actions.duplicate = this.getDuplicateAction(
+                            actions.copy_path = this.getCopyPathAction(
                                 this.schema.builder,
                                 item
                             )
@@ -474,10 +590,12 @@ export default {
                                 this.schema.builder,
                                 item
                             )
-                            actions.copy_path = this.getCopyPathAction(
+                            actions.duplicate = this.getDuplicateAction(
                                 this.schema.builder,
                                 item
                             )
+                            actions.copy = this.getCopyContentAction(this.schema.builder, item);
+                            actions.pasteNext = this.getPasteContentNextAction(this.schema.builder, item);
                         } else if (this.template && this.inputTypeSettings[this.template]) {
                             actions.__template = {
                                 type: 'drawer',
@@ -505,6 +623,7 @@ export default {
                             }
                         }
                         if (item.model.type === 'vf-fields-renderer') {
+                            actions.pasteInside = this.getPasteContentInsideAction(this.schema.builder, item);
                             actions.add = this.getAddAction(this.schema.builder, item)
                         }
                         if (this.inputTypeSettings[item.model.type] && this.inputTypeSettings[item.model.type].getInputSlots) {

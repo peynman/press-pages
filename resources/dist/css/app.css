@@ -362,6 +362,17 @@ This set of fonts are used in this project under the license: (.....)
   height: auto;
 }
 
+.user-id-chip {
+  position: absolute;
+  right: 0;
+  top: 25px;
+  border-radius: 10px;
+  padding: 0px 8px;
+  font-size: 8px;
+  color: white;
+  padding-top: 1px;
+}
+
 .scrollable-table .v-data-table__wrapper {
   overflow-x: scroll !important;
 }

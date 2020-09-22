@@ -153,7 +153,13 @@ export default {
         if (this.field.modePlain) {
             if (!this.player && !this.field.modeFrame) {
                 this.$nextTick(() => {
-                    this.player = videojs(`${this.id}-videojs-player`);
+                    this.player = videojs(`${this.id}-videojs-player`, {
+                        html5: {
+                            vhs: {
+                                overrideNative: !videojs.browser.IS_SAFARI
+                            }
+                        }
+                    });
                     this.player.crossOrigin = 'anonymous';
                     if (this.field.autoPlay) {
                         this.$nextTick(() => {

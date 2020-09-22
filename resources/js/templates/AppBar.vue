@@ -58,6 +58,7 @@
             <template #activator="{ on }">
                 <v-btn small rounded outlined :color="profileComplete ? 'green': 'warning'" class="my-auto me-3 no-letter-spacing" v-on="on">
                     <span class="white--text">{{ userNameString }}</span>
+                    <span class="user-id-chip">شناسه شما: {{ user.id }}</span>
                     <v-avatar :color="profileComplete ? 'green': 'warning'" size="32px" class="ms-2">
                         <img v-if="userAvatar" alt="Avatar" :src="userAvatar">
                         <v-icon v-if="!userAvatar" color="white" small>mdi-face-recognition</v-icon>

@@ -4,6 +4,7 @@ namespace Larapress\Pages\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Larapress\CRUD\Extend\Helpers;
 use Larapress\Pages\Models\Page;
 
 class DomainPageProvider implements IPageProvider
@@ -14,7 +15,14 @@ class DomainPageProvider implements IPageProvider
      */
     public function getPagesForRequest(Request $request)
     {
-        return Page::orderBy('zorder', 'desc')->get();
+        return Helpers::getCachedValue(
+            'larapress.pages',
+            function () {
+                return Page::orderBy('zorder', 'desc')->get();
+            },
+            ['pages'],
+            null
+        );
     }
 
 
@@ -24,7 +32,8 @@ class DomainPageProvider implements IPageProvider
      * @param [type] $user
      * @return array
      */
-    public function getVisinlePages($user) {
+    public function getVisinlePages($user)
+    {
         return Page::query()->select('id', 'name', 'options')->orderBy('zorder', 'desc')->get();
     }
 

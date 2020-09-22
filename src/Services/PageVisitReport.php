@@ -71,6 +71,7 @@ class PageVisitReport implements IReportSource
             'domain' => $event->domain->id,
             'role' => is_null($event->user) ? 'guest' : $roleRepo->getUserHighestRole($event->user)->name,
             'page' => $event->page_id,
+            'user' => $event->user->id,
         ], $event->filters);
         $this->reports->pushMeasurement('pages.visit', 1, $tags, [], $event->timestamp);
     }

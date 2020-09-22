@@ -39,10 +39,11 @@
                 @click="dialog = true"
                 v-bind="attrs"
                 v-on="on"
+                :disabled="!canStart"
             >
                 <v-icon class="mx-2">
                     mdi-google-classroom
-                </v-icon> ورود به کلاس
+                </v-icon> {{ startTitle }}
             </v-btn>
         </template>
       <v-system-bar color="primary" dark
@@ -171,6 +172,24 @@ export default {
                 class: 'col-12 pa-0 ma-0',
             };
             return field;
+        },
+        startTitle () {
+            if (!this.canStart) {
+                return 'ابتدا در آزمون شرکت کنید'
+            }
+
+            return 'ورود به کلاس'
+        },
+        canStart () {
+            if (this.field.data?.types?.azmoon) {
+                if (this.field.data?.types?.azmoon.is_required) {
+                    if (!this.field.azmoon_result) {
+                        return false
+                    }
+                }
+            }
+
+            return true;
         }
     },
     watch: {

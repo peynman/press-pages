@@ -6,10 +6,11 @@
       class="no-letter-spacing"
       :loading="loading"
       @click="onVerifyACMeeting"
+      :disabled="!canStart && !isEnded"
     >
-        <v-icon class="me-1">mdi-play</v-icon>
+        <v-icon class="mx-2">{{ isEnded ? 'mdi-play':'mdi-google-classroom'}}</v-icon>
         <span v-if="isEnded">دریافت مجوز نمایش از AdobeConnect</span>
-        <span v-else>دریافت مجوز ورود به کلاس AdobeConnect</span>
+        <span v-else>{{ startTitle }}</span>
     </v-btn>
     <v-btn
       v-if="access && !isEnded"
@@ -18,8 +19,8 @@
       color="green"
       @click="onOpenWindow"
     >
-        <v-icon class="me-1">mdi-google-classroom</v-icon>
-          ورود به کلاس AdobeConnect
+        <v-icon class="mx-1"></v-icon>
+        ورود به کلاس AdobeConnect
     </v-btn>
     <v-btn
         outlined
@@ -51,6 +52,23 @@ export default {
     computed: {
         isEnded () {
             return this.field.status === 'ended'
+        },
+        startTitle () {
+            if (!this.canStart) {
+                return 'ابتدا در آزمون شرکت کنید'
+            }
+            return 'دریافت مجوز ورود به کلاس AdobeConnect'
+        },
+        canStart () {
+            if (this.field.data?.types?.azmoon) {
+                if (this.field.data?.types?.azmoon.is_required) {
+                    if (!this.field.azmoon_result) {
+                        return false
+                    }
+                }
+            }
+
+            return true;
         }
     },
     methods: {

@@ -384,6 +384,7 @@ import ColumnDatetime from "./Datatable/ColumnDatetime.vue";
 import ColumnAmount from "./Datatable/ColumnAmount.vue";
 import ColumnObjectsMap from './Datatable/ColumnObjectsMap.vue';
 import ColumnBitwiseFlags from './Datatable/ColumnBitwiseFlags.vue';
+import ColumnProductStatsList from './Datatable/ColumnProductStatsList'
 
 import clonedeep from "lodash.clonedeep";
 
@@ -404,7 +405,8 @@ export default {
         ColumnActions,
         ColumnExpandableLinks,
         ColumnObjectsMap,
-        ColumnBitwiseFlags
+        ColumnBitwiseFlags,
+        ColumnProductStatsList
     },
     mixins: [BaseComponent],
     props: {
@@ -568,6 +570,9 @@ export default {
                     case "hover-list":
                         template.component = ColumnHoverList;
                         break;
+                    case "products-stats-list":
+                        template.component = ColumnProductStatsList;
+                        break;
                     case "datetime":
                         template.component = ColumnDatetime;
                         break;
@@ -728,10 +733,17 @@ export default {
             this.exportLoading = true;
             const sort = [];
             this.sortBy?.forEach((s, index) => {
-                sort.push({
-                    column: s,
-                    direction: this.options.sortDesc[index] ? "desc" : "asc"
-                });
+                if (this.field.columns[s] && this.field.columns[s].sort_name) {
+                    sort.push({
+                        column: s,
+                        direction: this.options.sortDesc[index] ? "desc" : "asc"
+                    });
+                } else {
+                    sort.push({
+                        column: s,
+                        direction: this.options.sortDesc[index] ? "desc" : "asc"
+                    });
+                }
             });
             if (sort.length === 0 && this.field.columns.id) {
                 sort.push({

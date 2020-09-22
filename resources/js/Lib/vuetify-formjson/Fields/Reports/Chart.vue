@@ -114,7 +114,8 @@
             <v-card-text class="pb-0">
             <canvas
                 ref="chart"
-                style="height: 80%;"
+                width="100%"
+                min-height="600px"
             />
             </v-card-text>
         </v-card>
@@ -336,51 +337,53 @@ export default {
                 if (this.chart) {
                     this.chart.destroy();
                 }
-                this.chart = new Chart(this.$refs.chart, {
-                    type: this.field.report_type,
-                    data: {
-                        labels: this.labels,
-                        datasets: this.datasets
-                    },
-                    options: {
-                        scales:
-              this.field.report_type === "bar" ||
-              this.field.report_type === "line"
-                  ? {
-                      xAxes: [
-                          {
-                              type: "time",
-                              time: {
-                                  unit: this.window.endsWith("d")
-                                      ? "day"
-                                      : this.window.endsWith("h")
-                                          ? "hour"
-                                          : this.window.endsWith("s")
-                                              ? "second"
-                                              : "minute",
-                                  tooltipFormat: "jYYYY/jMM/jDD, h:mm:ss a",
-                                  displayFormats: {
-                                      millisecond: "h:mm:ss.SSS a",
-                                      second: "h:mm:ss a",
-                                      minute: "h:mm a",
-                                      hour: "hA",
-                                      day: "jMM/jDD",
-                                      week: "ll",
-                                      month: "jYYYY/jMM",
-                                      quarter: "[Q]Q - jYYYY",
-                                      year: "jYYYY"
-                                  }
-                              }
-                          }
-                      ]
-                  }
-                  : {},
-                        legend: {
-                            display: true,
-                            position: "bottom"
-                        }
-                    }
-                });
+                this.$nextTick(() => {
+                    this.chart = new Chart(this.$refs.chart, {
+                        type: this.field.report_type,
+                        data: {
+                            labels: this.labels,
+                            datasets: this.datasets
+                        },
+                        options: {
+                            scales:
+                            this.field.report_type === "bar" ||
+                            this.field.report_type === "line"
+                            ? {
+                                xAxes: [
+                                    {
+                                        type: "time",
+                                        time: {
+                                            unit: this.window.endsWith("d")
+                                                ? "day"
+                                                : this.window.endsWith("h")
+                                                    ? "hour"
+                                                    : this.window.endsWith("s")
+                                                        ? "second"
+                                                        : "minute",
+                                            tooltipFormat: "jYYYY/jMM/jDD, h:mm:ss a",
+                                            displayFormats: {
+                                                millisecond: "h:mm:ss.SSS a",
+                                                second: "h:mm:ss a",
+                                                minute: "h:mm a",
+                                                hour: "hA",
+                                                day: "jMM/jDD",
+                                                week: "ll",
+                                                month: "jYYYY/jMM",
+                                                quarter: "[Q]Q - jYYYY",
+                                                year: "jYYYY"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                            : {},
+                                    legend: {
+                                        display: true,
+                                        position: "bottom"
+                                    }
+                                }
+                            });
+                })
             }
         }
     },

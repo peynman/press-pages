@@ -99,6 +99,7 @@ export default {
                 return "سلام " + this.profile.firstname;
             } else {
                 return "سلام ";
+                
             }
         },
         profilePic() {
@@ -106,13 +107,14 @@ export default {
                 this.profileComplete &&
                 this.profile.profile &&
                 typeof this.profile.profile == 'string' &&
-                this.profile.profile.startsWith("data:")
+                (this.profile.profile.startsWith("data:") || this.profile.profile.startsWith("/storage/"))
             ) {
                 return this.profile.profile;
             } else {
                 return this.field.avatar ? this.field.avatar : "/images/avatar.png";
             }
         },
+
         dateMessage() {
             const now = moment();
             now.locale("fa");

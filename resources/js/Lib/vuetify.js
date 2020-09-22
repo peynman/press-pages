@@ -16,4 +16,7 @@ Vue.use(Vuetify, {
 
 export default new Vuetify({
     rtl: true,
+    options: {
+        customProperties: true
+    }
 });

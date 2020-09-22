@@ -266,7 +266,8 @@ export default class DatatableColumnSettings extends BaseInputSettings {
                     {
                         id: 'custom',
                         title: 'Custom Component'
-                    }
+                    },
+
                 ]
             },
             ...extras
