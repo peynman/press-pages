@@ -7,6 +7,11 @@
     :xs="field.xs ? field.xs : 12"
     :class="`vf-input ${field.class ? field.class : ''}`"
   >
+    <v-card class="rounded-product-card grey lighten-4 mb-2" v-if="moreDetails">
+      <v-card-text class="mx-2">
+        <vf-paragraph-input :field="{'readonly': true}" :value="moreDetails" />
+      </v-card-text>
+    </v-card>
     <v-card class="rounded-product-card grey lighten-4 ">
       <v-card-title v-if="field.label">
         {{ field.label }}
@@ -80,6 +85,9 @@ export default {
             }
             return [];
         },
+        moreDetails () {
+            return this.field.data?.types?.course?.moreDetails;
+        }
     },
     mounted() {
     }

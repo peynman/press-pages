@@ -139,18 +139,18 @@ export const UserCartEditor = {
                         "رایگان";
                 } else {
                     product.price =
-                        prices[0].amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                        prices[0].amount.toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                         " " +
                         this.$store.state.currencies[prices[0].currency];
                 }
                 product.takhfif = "";
             } else if (prices.length > 1) {
                 product.takhfif =
-                    prices[0].amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                    prices[0].amount.toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                     " " +
                     this.$store.state.currencies[prices[0].currency];
                 product.price =
-                    prices[1].amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                    prices[1].amount.toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                     " " +
                     this.$store.state.currencies[prices[1].currency];
             } else {
@@ -187,13 +187,13 @@ export const UserCartEditor = {
                 (a, b) => a.priority > b.priority
             );
 
-            return prices[0].amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' ' +
+            return prices[0].amount.toLocaleString('fa').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' ' +
                 this.$store.state.currencies[prices[0].currency];
         },
 
         getProductPeriodicPriceListString(item) {
             const count = item.data?.calucalte_periodic?.period_count;
-            const amount = item.data?.calucalte_periodic?.period_amount?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            const amount = item.data?.calucalte_periodic?.period_amount?.toLocaleString('fa')?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             const days = item.data?.calucalte_periodic?.period_duration;
             const currency = this.$store.state.currencies[1]
             return `و سپس ${count} قسط ${amount} ${currency} هر ${days} روز`

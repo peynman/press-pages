@@ -1,7 +1,8 @@
 import {
     CommonInputEssentials,
     BaseInputSettings,
-    CheckboxSettings
+    CheckboxSettings,
+    TextSettings
 } from './comon'
 
 export default class AutocompleteInputSettings extends BaseInputSettings {
@@ -28,12 +29,14 @@ export default class AutocompleteInputSettings extends BaseInputSettings {
         return {
             ...CommonInputEssentials,
             readonly: CheckboxSettings('Readonly', 'removes editor buttons from paragraph input and display in view mode'),
+            mode: TextSettings('Highlighting mode'),
             props: {
                 options: {
                     type: 'row',
                     formClass: 'ma-0 pa-0'
                 },
                 fields: {
+
                 }
             }
         }

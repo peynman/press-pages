@@ -20,7 +20,7 @@
       :field="{noIcon: true}"
     />
     <v-btn
-      v-if="hasPrice"
+      v-if="hasPrice && (!product.capacityFull || product.available)"
       v-show="!isParentInCart"
       :class="field.compact ? '':'my-2'"
       dark
@@ -36,8 +36,17 @@
         style="letter-spacing: 0"
       >{{ actionBtnLabel }}</span>
     </v-btn>
+    <v-btn v-else
+      :class="`no-letter-spacing px-2 ${field.compact ? '':'my-2'}`"
+      rounded
+      :dense="field.compact"
+      :small="field.compact"
+      :disabled="true"
+    >
+    ظرفیت تکمیل شد
+    </v-btn>
     <v-chip
-      v-if="product.data.price_periodic && product.data.price_periodic.length > 0 && !product.available && !field.compact"
+      v-if="product.data.price_periodic && product.data.price_periodic.length > 0 && !product.available && !field.compact && !product.capacityFull"
       small
       outlined
       class="deep-purple--text ma-auto"

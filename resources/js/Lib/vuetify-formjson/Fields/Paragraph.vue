@@ -64,13 +64,6 @@ export default {
                 this.mathKeyboardVisible = this.mathfieldEditor.virtualKeyboardVisible
             }
         },
-        //         insertMathToMarkdown() {
-        //             if (this.mathfieldEditor) {
-        //                 this.aceEditor.session.insert(this.aceEditor.getCursorPosition(), '
-        //  + this.mathfieldEditor.$text() + '
-        // )
-        //             }
-        //         },
         updateMarkdownText() {
             const markdownHtml = this.markdownEditor.render(this.devalue)
             let child = this.$refs.editorView.lastElementChild
@@ -98,42 +91,8 @@ export default {
         }
     },
     mounted() {
-        if (!this.field.readonly) {
-            const ace = () => import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/ace');
-            () => import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/mode-markdown')();
-            () => import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/theme-eclipse')();
-            const ACE = ace();
-            console.log(ACE);
-            this.aceEditor = ACE.edit(this.$refs.editorCode, {
-                mode: 'ace/mode/markdown',
-                selectionStyle: 'text',
-                theme: 'ace/theme/eclipse',
-                maxLines: Infinity
-            })
-            this.aceEditor.session.on('change', (delta) => {
-                this.aceUpdate = true
-                this.$nextTick(() => {
-                    this.devalue = this.aceEditor.session.getValue()
-                    this.$emit('input', this.devalue)
-                })
-            })
-            this.aceEditor.session.setValue(this.devalue)
-        }
-
         // eslint-disable-next-line new-cap
         this.markdownEditor = new markdownit((this.field.markdownProps ? this.field.markdownProps : {}))
-        // this.markdownEditor.use(MarkdownItColor, {
-        //     inline: true
-        // })
-        // this.markdownEditor.use(MermaidPlugin, {
-        //     host: this
-        // })
-        // this.markdownEditor.use(FromJSONPlugin, {
-        //     host: this
-        // })
-        // this.markdownEditor.use(MathLivePlugin, {
-        //     host: this
-        // })
         this.markdownEditor.use(markdownItAttrs, {
             // optional, these are default options
             leftDelimiter: '{',
@@ -142,6 +101,40 @@ export default {
         });
         // init ace editor before calling update
         this.updateMarkdownText()
+
+        if (!this.field.readonly) {
+            import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/ace').then((ACE) => {
+                this.aceEditor = ACE.edit(this.$refs.editorCode, {
+                    selectionStyle: 'text',
+                    maxLines: Infinity
+                })
+                this.aceEditor.session.on('change', (delta) => {
+                    this.aceUpdate = true
+                    this.$nextTick(() => {
+                        this.devalue = this.aceEditor.session.getValue()
+                        this.$emit('input', this.devalue)
+                    })
+                })
+                this.aceEditor.session.setValue(this.devalue)
+                switch (this.field.mode) {
+                    case 'js':
+                    case 'javascript':
+                        import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/mode-javascript').then((mode) => {
+                            this.aceEditor.session.setMode(new mode.Mode());
+                        });
+                    break;
+                    case 'markdown':
+                    default:
+                        import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/mode-markdown').then((mode) => {
+                            this.aceEditor.session.setMode(new mode.Mode());
+                        });
+                    break;
+                }
+                import( /* webpackChunkName: "ace-editor"*/ './MarkdownInput/AceEditor/theme-eclipse').then((theme) => {
+                    this.aceEditor.session.setTheme(theme);
+                });
+            });
+        }
     }
 }
 </script>

@@ -98,7 +98,7 @@ export default {
                             url: '/admin/form-entries',
                             filters: {
                                 tags: 'azmoon-' + this.itemId,
-                            }
+                            },
                         },
                     ]);
                 }

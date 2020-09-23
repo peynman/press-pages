@@ -16,14 +16,21 @@
                     </v-img>
                     <!-- product title -->
                     <v-card-title v-if="!field.compactMode || !isSM" style="word-break: break-word;">
+                        <v-btn v-show="product.subtitle" @click="showDetails = !showDetails" absolute fab outlined x-small left><v-icon>mdi-dots-horizontal</v-icon></v-btn>
                         <v-badge :value="isLive" :content="liveStreamsMessage" top end offset-y="10px" color="green">
                             <a style="text-decoration: none; color: black;" :href="`/products/${product.id}/details`">{{ product.title }}</a>
                         </v-badge>
                     </v-card-title>
                     <!-- product subtitle -->
-                    <div v-if="!field.compactMode || !isSM" class="ps-5">
-                        <vf-paragraph-input :field="{'readonly': true}" :value="product.subtitle" />
-                    </div>
+                    <v-expand-transition>
+                        <div v-show="showDetails" v-if="!field.compactMode || !isSM" class="px-2">
+                            <v-divider></v-divider>
+                            <v-card-text>
+                                <vf-paragraph-input :field="{'readonly': true}" :value="product.subtitle" />
+                            </v-card-text>
+                            <v-divider></v-divider>
+                        </div>
+                    </v-expand-transition>
                     <!-- product details -->
                     <v-card-text v-if="!field.compactMode || !isSM" class="text--primary pa-0 mb-1 pb-2">
                         <ProductCategories :product="product" />
@@ -79,7 +86,6 @@ export default {
         };
         const courseProduct = this.field?.data?.types?.course;
         if (courseProduct) {
-            console.log(courseProduct);
             product = {
                 ...product,
                 subtitle: courseProduct.paragraph,
@@ -96,6 +102,7 @@ export default {
             product,
             loading: false,
             isSM: window.innerWidth < 768,
+            showDetails: false,
         };
     },
     computed: {
