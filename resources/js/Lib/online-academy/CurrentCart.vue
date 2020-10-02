@@ -74,10 +74,15 @@
           </tbody>
         </template>
       </v-simple-table>
-      <v-row v-else>
+      <v-row v-if="!targetCart.data.periodic_pay.custom">
         <v-col cols="12">
           <strong>{{ targetCart.data.periodic_pay.product.title }}</strong> - &nbsp;&nbsp;
           پرداخت قسط {{ targetCart.data.periodic_pay.index }} از {{ targetCart.data.periodic_pay.total }} قسط به مبلغ {{ priceTagString }}
+        </v-col>
+      </v-row>
+      <v-row v-else>
+        <v-col cols="12">
+          پرداخت قسط {{ targetCart.data.periodic_pay.index + 1 }} از {{ targetCart.data.periodic_pay.total }} قسط به مبلغ {{ priceTagString }}
         </v-col>
       </v-row>
       <v-row v-if="targetCartItems.length > 0 || field.singleCartMode">

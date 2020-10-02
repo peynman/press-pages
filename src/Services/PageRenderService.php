@@ -240,19 +240,16 @@ class PageRenderService implements IPageRenderService
             // include carts and balance of current user
             $currentCart = $cartService->getPurchasingCart(
                 $user,
-                $domain,
                 config('larapress.ecommerce.banking.currency.id')
             );
             $currentCart['items'] = $cartService->getPurchasingCartItems(
                 $user,
-                $domain,
                 config('larapress.ecommerce.banking.currency.id')
             );
             $balance = [
                 'amount' =>
                 $cartService->getUserBalance(
                     $user,
-                    $domain,
                     config('larapress.ecommerce.banking.currency.id')
                 ),
                 'currency' => config('larapress.ecommerce.banking.currency'),

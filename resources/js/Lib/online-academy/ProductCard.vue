@@ -43,7 +43,7 @@
                             <ProductPrice :product="{...product, noHover: field.noHover}" />
                         </div>
                     </v-card-text>
-                    <ProductActions v-if="!field.noHover || !product.available" :product="product" :field="{compact: field.compactMode && isSM}" />
+                    <ProductActions v-if="!field.noHover || !product.available || product.locked" :product="product" :field="{compact: field.compactMode && isSM}" />
                 </v-card>
             </template>
         </v-hover>

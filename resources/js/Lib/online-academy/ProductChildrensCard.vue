@@ -24,7 +24,7 @@
           <v-expansion-panel
             v-for="(session,i) in sessions"
             :key="i"
-            :readonly="!session.available"
+            :readonly="!session.available || session.locked"
           >
             <v-expansion-panel-header class="grey lighten-4">
               <template #default="{ open }">
@@ -32,7 +32,7 @@
               </template>
               <template #actions>
                 <v-icon class="ms-2">
-                  {{ session.available ? 'mdi-chevron-down' : 'mdi-lock' }}
+                  {{ session.available && !session.locked ? 'mdi-chevron-down' : 'mdi-lock' }}
                 </v-icon>
               </template>
             </v-expansion-panel-header>

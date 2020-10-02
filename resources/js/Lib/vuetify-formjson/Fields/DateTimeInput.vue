@@ -126,7 +126,6 @@ export default {
         },
         value () {
             const inTime = moment(this.value, 'YYYY/MM/DDTHH:mm:ssZ');
-            console.log('watch', inTime, inTime.isValid(), this.value);
             this.devalue = this.value && inTime.isValid() ? inTime.format('jYYYY/jMM/jDDTHH:mm'):'';
         }
     },
@@ -141,6 +140,8 @@ export default {
                     this.devalue = this.getValueDateTime().format('jYYYY/jMM/jDDTHH:mm');
                     console.log(this.devalue);
                     this.$emit("input", this.getValueDateTime().format('YYYY/MM/DDTHH:mm:ssZ'))
+                } else if (this.devalue === '') {
+                    this.$emit("input", this.devalue);
                 }
             } else {
                 this.dirty = this.devalue && this.devalue.length > 1;

@@ -9,6 +9,7 @@
     hide-details="auto"
     item-text="title"
     item-value="id"
+    :value-comparator="itemValueComparor"
     v-bind="fieldProps"
     v-on="eventHandlers"
   >
@@ -41,6 +42,11 @@ export default {
     watch: {
         devalue: function () {
             this.$emit('input', this.devalue)
+        }
+    },
+    methods: {
+        itemValueComparor (e1, e2) {
+            return e1 == e2;
         }
     },
     mounted () {

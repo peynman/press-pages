@@ -54,9 +54,9 @@
       style="flex: 1;"
     >
       <ProductActions
-        v-if="!session.available"
+        v-if="!session.available || session.locked"
         :product="session"
-        :field="{compact: true}"
+        :field="{compact: true,noHover:true}"
       />
       <v-btn class="my-auto" icon small dense v-if="isAdmin" :href="`/admin/products/${session.id}`" target="_blank"><v-icon small>mdi-database-edit</v-icon></v-btn>
     </div>

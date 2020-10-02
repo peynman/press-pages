@@ -28,9 +28,6 @@
                 <th>تاریخ خرید</th>
                 <th>
                     خرید اقساط
-                    <v-btn v-if="hasMorePeriods" dense small rounded outlined color="primary" class="ms-2 no-letter-spacing" @click="onCheckInstallmentAll()">
-                        پرداخت همه اقساط این دوره
-                    </v-btn>
                 </th>
               </tr>
             </thead>
@@ -40,7 +37,10 @@
                 :key="`${id}-app-bar-cart-items-${index}`"
               >
                 <td>{{ item.cart_id }}</td>
-                <td><a :href="`/products/${item.parent_id ? item.parent_id : item.id}/details`">{{ item.data.title }}</a></td>
+                <td v-if="item.data && item.data.title"><a :href="`/products/${item.parent_id ? item.parent_id : item.id}/details`">{{ item.data.title }}</a></td>
+                <td v-if="item.titles">
+                    <a class="d-block" v-for="ttl in item.titles" :key="`items-${ttl.id}`" :href="`/products/${ttl.parent_id ? ttl.parent_id : ttl.id}/details`">{{ ttl.data.title }}</a>
+                </td>
                 <td>{{ getTypeString(item) }}</td>
                 <td>{{ getDateString(item) }}</td>
                 <td>
@@ -117,40 +117,88 @@ export default {
             const items = [];
             this.field.carts?.forEach((c) => {
                 const periodics = c.data.periodic_product_ids ? c.data.periodic_product_ids : [];
-                c.products.forEach((p) => {
-                    const isPeriodic = periodics.includes(p.id);
-                    const extras = {}
-                    if (isPeriodic) {
-                        const paidPeriods = c.data.periodic_payments ? c.data.periodic_payments : {};
-                        const duration = parseInt(p.data.calucalte_periodic?.period_duration ?? 30);
-                        const count = parseInt(p.data.calucalte_periodic?.period_count ?? 0);
-                        const paidPeriodsCount = paidPeriods[p.id] ? paidPeriods[p.id].length : 0;
-                        if (paidPeriodsCount >= count) {
-                            extras.isPeriodicCompleted = true;
-                        } else {
-                            const start_pay = moment(
-                                momentTz.utc(c.data.period_start).tz(momentTz.tz.guess())
-                            );
-                            start_pay.add(duration * (paidPeriodsCount + 1), 'day');
+                if (c.data.periodic_custom && c.data.periodic_custom.length > 0) {
+                    let alldone = true;
+                    const ttls = [];
+                    c.products.forEach((p) => {
+                        const isPeriodic = periodics.includes(p.id);
+                        if (isPeriodic) {
+                            ttls.push({...p});
+                        }
+                    });
 
-                            const diff = moment().diff(start_pay, 'day');
-                            start_pay.locale("fa");
-
+                    let foundPeriod = false;
+                    c.data.periodic_custom.reverse().forEach((cc) => {
+                        if (cc.status == 2 && !foundPeriod) {
+                            alldone = false;
+                            foundPeriod = true;
+                            const payat = this.getValueDateTime(cc.payment_at);
+                            console.log(payat);
+                            const diff = moment().diff(payat, 'day');
+                            payat.locale("fa");
                             const diffString = diff < 0 ? `${Math.abs(diff).toLocaleString('fa-IR')} روز مانده` :
                                 `${Math.abs(diff).toLocaleString('fa-IR')} روز گذشته`;
-
-                            extras.nextPeriodDue = start_pay.format("dddd") + ' ' + start_pay.format("jYYYY/jMM/jDD") + ` (${diffString})`
+                            const extras = {};
+                            extras.nextPeriodDue = payat.format("dddd") + ' ' + payat.format("jYYYY/jMM/jDD") + ` (${diffString})`
+                            items.push({
+                                custom: {
+                                    ...cc,
+                                },
+                                payment_date: c.data.period_start,
+                                titles: ttls,
+                                isPeriodic: true,
+                                cart_id: c.id,
+                                loading: false,
+                                ...extras,
+                            })
                         }
+                    })
+
+                    if (alldone) {
+                        items.push({
+                            payment_date: c.data.period_start,
+                            titles: ttls,
+                            isPeriodic: false,
+                            cart_id: c.id,
+                            loading: false,
+                        })
                     }
-                    items.push({
-                        ...p,
-                        payment_date: c.data.period_start,
-                        isPeriodic,
-                        cart_id: c.id,
-                        loading: false,
-                        ...extras,
-                    });
-                })
+                } else {
+                    c.products.forEach((p) => {
+                        const isPeriodic = periodics.includes(p.id);
+                        const extras = {}
+                        if (isPeriodic) {
+                            const paidPeriods = c.data.periodic_payments ? c.data.periodic_payments : {};
+                            const duration = parseInt(p.data.calucalte_periodic?.period_duration ?? 30);
+                            const count = parseInt(p.data.calucalte_periodic?.period_count ?? 0);
+                            const paidPeriodsCount = paidPeriods[p.id] ? paidPeriods[p.id].length : 0;
+                            if (paidPeriodsCount >= count) {
+                                extras.isPeriodicCompleted = true;
+                            } else {
+                                const start_pay = moment(
+                                    momentTz.utc(c.data.period_start).tz(momentTz.tz.guess())
+                                );
+                                start_pay.add(duration * (paidPeriodsCount + 1), 'day');
+
+                                const diff = moment().diff(start_pay, 'day');
+                                start_pay.locale("fa");
+
+                                const diffString = diff < 0 ? `${Math.abs(diff).toLocaleString('fa-IR')} روز مانده` :
+                                    `${Math.abs(diff).toLocaleString('fa-IR')} روز گذشته`;
+
+                                extras.nextPeriodDue = start_pay.format("dddd") + ' ' + start_pay.format("jYYYY/jMM/jDD") + ` (${diffString})`
+                            }
+                        }
+                        items.push({
+                            ...p,
+                            payment_date: c.data.period_start,
+                            isPeriodic,
+                            cart_id: c.id,
+                            loading: false,
+                            ...extras,
+                        });
+                    })
+                }
             });
             return items;
         },
@@ -169,6 +217,19 @@ export default {
         }
     },
     methods: {
+        getValueDateTime(dt) {
+            if (dt) {
+               if (dt.includes('+')) {
+                    const mom = moment(dt, "YYYY/MM/DDTHH:mm:ssZ");
+                    mom.locale("fa");
+                    return mom;
+                } else {
+                    const mom = moment(momentTz.utc(dt).tz(momentTz.tz.guess()));
+                    mom.locale("fa");
+                    return mom;
+                }
+            }
+        },
         getTypeString (item) {
             const avTypes = [
                 'course',
@@ -177,9 +238,16 @@ export default {
             let found = null;
             avTypes.forEach((a) => {
                 if (!found) {
-                    const type = item.types.filter((t) => t.name === a);
-                    if (type.length > 0) {
-                        found = type[0];
+                    if (item.types) {
+                        const type = item.types.filter((t) => t.name === a);
+                        if (type.length > 0) {
+                            found = type[0];
+                        }
+                    } else if (item.titles && item.titles[0] && item.titles[0].types) {
+                        const type = item.titles[0].types.filter((t) => t.name === a);
+                        if (type.length > 0) {
+                            found = type[0];
+                        }
                     }
                 }
             });
@@ -193,39 +261,37 @@ export default {
             return mom.format("jYYYY/jMM/jDD") + ' ' + mom.format("dddd") + " " + mom.format("HH:mm")
         },
         getPeriodPriceString (item) {
-            const v = parseInt(item.data.calucalte_periodic?.period_amount ?? 0);
+            let v = 0;
+            if (item.custom) {
+                v = parseInt(item.custom.amount ?? 0);
+            } else {
+                v = parseInt(item.data.calucalte_periodic?.period_amount ?? 0);
+            }
+
             return v.toLocaleString('fa-IR').replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' تومان'
         },
         onCheckInstallments(item) {
+            let url = ''
+            if (item.custom) {
+                url = '/api/me/' + item.cart_id + '/custom-installment'
+            } else {
+                url = '/api/me/' + item.cart_id + '/installments/' + item.id
+            }
+
             const host = this.$store.state.host;
-            item.loading = true;
-            host.axios({
-                url: '/api/me/' + item.cart_id + '/installments/' + item.id,
-                method: 'POST',
-                headers: host.getWebAuthHeaders({}),
-            }).then((response) => {
-                item.loading = false;
-                window.location = '/me/carts/' + response.data.id;
-            }).catch((err) => {
-                item.loading = false;
-                host.showSnack(err.message);
-            })
+                item.loading = true;
+                host.axios({
+                    url,
+                    method: 'POST',
+                    headers: host.getWebAuthHeaders({}),
+                }).then((response) => {
+                    item.loading = false;
+                    window.location = '/me/carts/' + response.data.id;
+                }).catch((err) => {
+                    item.loading = false;
+                    host.showSnack(err.message);
+                })
         },
-        onCheckInstallmentAll() {
-            const host = this.$store.state.host;
-            item.loading = true;
-            host.axios({
-                url: '/api/me/all/installments',
-                method: 'POST',
-                headers: host.getWebAuthHeaders({}),
-            }).then((response) => {
-                item.loading = false;
-                window.location = '/me/carts/' + response.data.id;
-            }).catch((err) => {
-                item.loading = false;
-                host.showSnack(err.message);
-            })
-        }
     }
 };
 </script>

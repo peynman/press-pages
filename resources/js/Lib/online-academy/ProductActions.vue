@@ -1,6 +1,5 @@
 <template>
-  <component
-    :is="!field.compact ? 'VCardActions' : 'VCardActions'"
+  <v-card-actions
     :class="`justify-center ${field.compact ? 'd-flex flex-column' : ''}`"
   >
     <v-btn
@@ -22,7 +21,7 @@
     <v-btn
       v-if="hasPrice && (!product.capacityFull || product.available)"
       v-show="!isParentInCart"
-      :class="field.compact ? '':'my-2'"
+      :class="`no-letter-spacing px-2 ${field.compact ? '':'my-2'}`"
       dark
       rounded
       :dense="field.compact"
@@ -31,12 +30,9 @@
       :color="actionBtnColor"
       @click="onProductAction()"
     >
-      <span
-        class="px-2"
-        style="letter-spacing: 0"
-      >{{ actionBtnLabel }}</span>
+    {{ actionBtnLabel }}
     </v-btn>
-    <v-btn v-else
+    <v-btn v-if="product.capacityFull && !product.available"
       :class="`no-letter-spacing px-2 ${field.compact ? '':'my-2'}`"
       rounded
       :dense="field.compact"
@@ -46,14 +42,15 @@
     ظرفیت تکمیل شد
     </v-btn>
     <v-chip
-      v-if="product.data.price_periodic && product.data.price_periodic.length > 0 && !product.available && !field.compact && !product.capacityFull"
-      small
-      outlined
-      class="deep-purple--text ma-auto"
-    >
-      امکان خرید اقساط
+            v-if="product.data.price_periodic && product.data.price_periodic.length > 0 && !product.available && !field.compact && !product.capacityFull"
+            small
+            outlined
+            class="deep-purple--text ma-auto"
+            style="position: absolute;"
+        >
+         امکان خرید اقساط
     </v-chip>
-  </component>
+  </v-card-actions>
 </template>
 
 <script>
@@ -83,18 +80,24 @@ export default {
         hasPrice() {
             return this.product.data?.pricing?.length > 0
         },
+        isPriceFree() {
+            return this.product.data?.pricing && this.product.data?.pricing[0] && this.product.data?.pricing[0].amount == 0
+        },
         isParentInCart () {
             return this.product.parent_id != null && this.user.current_cart.items.map(i => i.id).includes(this.product.parent_id)
         },
         actionBtnColor() {
             if (this.user) {
                 if (this.product.available‌‌) {
+                    if (this.product.locked) {
+                        return '#f5bc42';
+                    }
                     return "#57cc91";
                 } else {
                     let found = false;
                     if (
                         this.user.current_cart &&
-            Array.isArray(this.user.current_cart.items)
+                        Array.isArray(this.user.current_cart.items)
                     ) {
                         this.user.current_cart.items.forEach(item => {
                             if (item.id === this.product.id) {
@@ -115,6 +118,9 @@ export default {
         actionBtnLabel() {
             if (this.user) {
                 if (this.product.available) {
+                    if (this.product.locked && !this.isPriceFree) {
+                        return "اقساط پرداخت نشده دارید"
+                    }
                     return "نمایش جلسات برگزارشده";
                 } else {
                     let found = false;
@@ -144,7 +150,11 @@ export default {
             const host = this.$store.state.host;
             if (this.user) {
                 if (this.product.available) {
-                    window.location = '/products/'+this.product.id+'/details';
+                    if (this.product.locked) {
+                        window.location = '/me/carts';
+                    } else {
+                        window.location = '/products/'+this.product.id+'/details';
+                    }
                 } else {
                     this.toggleItemInCart(this.product);
                 }

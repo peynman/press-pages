@@ -98,6 +98,9 @@ export default {
         value () {
             this.maskedModel = this.value;
         }
+    },
+    mounted() {
+        this.updateInput();
     }
 }
 </script>

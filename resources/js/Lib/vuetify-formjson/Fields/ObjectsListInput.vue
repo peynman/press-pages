@@ -80,23 +80,27 @@ export default {
     getCheckedIds() {
         const checkedIds = {};
         if (this.field.objects) {
-        this.field.objects.forEach(o => {
-            checkedIds[o.id] = false;
-        });
+            this.field.objects.forEach(o => {
+                checkedIds[o.id] = false;
+            });
         }
         if (this.value) {
             if (Array.isArray(this.value)) {
                 this.value.forEach(v => {
-                checkedIds[v.id] = true;
+                    if (typeof v === "object") {
+                        checkedIds[v.id] = true;
+                    } else {
+                        checkedIds[v] = true;
+                    }
                 });
             } else {
                 for (const p in this.value) {
-                const v = this.value[p];
-                if (typeof v === "object") {
-                    checkedIds[v.id] = true;
-                } else {
-                    checkedIds[p] = v;
-                }
+                    const v = this.value[p];
+                    if (typeof v === "object") {
+                        checkedIds[v.id] = true;
+                    } else {
+                        checkedIds[p] = v;
+                    }
                 }
             }
         }
