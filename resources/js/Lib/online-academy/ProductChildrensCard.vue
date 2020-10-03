@@ -76,7 +76,8 @@ export default {
                     .filter((child) => child.types.map((t) => t.name).includes('session'));
                 if (this.field.sortStartTime) {
                     list = list.map((c) => {
-                        c.start_at = moment(session.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm');
+                        c.start_at = moment(c.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm');
+                        return c
                     });
                     list = list.sort((a, b) => (a.start_at.diff(b.start_at)))
                 } else {
