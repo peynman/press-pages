@@ -55,6 +55,7 @@
 <script>
 import ProductSessionTitle from './ProductSessionTitle.vue'
 import ProductSessionContent from './ProductSessionContent.vue'
+import moment from "moment-jalaali";
 
 export default {
     name: "VfProductChildrensCardInput",
@@ -77,7 +78,7 @@ export default {
                     list = list.map((c) => {
                         c.start_at = moment(session.data?.types?.session?.start_at, 'YYYY/MM/DDTHH:mm');
                     });
-                    list = list.sort((a, b) => (a.start_at.diff(b.sart_at)))
+                    list = list.sort((a, b) => (a.start_at.diff(b.start_at)))
                 } else {
                     list = list.sort((a, b) => (a.priority - b.priority))
                 }
