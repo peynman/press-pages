@@ -19,10 +19,21 @@ export default function (Blockly, crudList) {
                     ['x-www Form', 'application/x-www-form-urlencoded'],
                     ['Raw', 'text']
                 ]), 'content_type')
+            this.appendDummyInput()
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('and response type')
+                .appendField(new Blockly.FieldDropdown([
+                    ['JSON', 'application/json'],
+                    ['Blob File Download', 'download'],
+                ]), 'response_type')
             this.appendValueInput('data')
                 .setCheck(['Array', 'String', 'Object', 'Boolean', 'Number'])
                 .setAlign(Blockly.ALIGN_RIGHT)
                 .appendField('and data')
+            this.appendValueInput('isDownload')
+                .setCheck('Boolean')
+                .setAlign(Blockly.ALIGN_RIGHT)
+                .appendField('is blob download')
             this.appendValueInput('headers')
                 .setCheck('Object')
                 .setAlign(Blockly.ALIGN_RIGHT)
@@ -50,6 +61,7 @@ export default function (Blockly, crudList) {
         const valueUrl = Blockly.JavaScript.valueToCode(block, 'url', Blockly.JavaScript.ORDER_ATOMIC)
         const dropdownMethod = block.getFieldValue('method')
         const dropdownContentType = block.getFieldValue('content_type')
+        const dropdownResponseType = block.getFieldValue('response_type')
         const valueData = Blockly.JavaScript.valueToCode(block, 'data', Blockly.JavaScript.ORDER_ATOMIC)
         const valueHeaders = Blockly.JavaScript.valueToCode(block, 'headers', Blockly.JavaScript.ORDER_ATOMIC)
         const variableResponse = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('response'), Blockly.Variables.NAME_TYPE)
@@ -67,7 +79,12 @@ export default function (Blockly, crudList) {
             headers += `const formValues = new FormData(); console.log('form values: ', ${valueData});\n for (let prop in ${valueData}) formValues.append(prop, ${valueData}[prop]);\n`
             value = 'formValues';
         }
-        var code = `${headers}this.webRequest({\nurl: ${valueUrl},\nmethod: '${dropdownMethod}',\nheaders,\ndata: ${value},\n}).then((response) => {\n  this.blockly.${variableResponse} = response;\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
+        let responseCode = '';
+        if (dropdownResponseType === 'download') {
+            responseCode = `this.downloadDataFile(this.blockly.${variableResponse}.data)`
+        }
+
+        var code = `${headers}this.webRequest({\nurl: ${valueUrl},\nmethod: '${dropdownMethod}',\nheaders,\ndata: ${value},\n}).then((response) => {\n  this.blockly.${variableResponse} = response; ${responseCode};\n ${innerCode}\n}).catch((error) => {\nthis.blockly.${variableError} = error; \n ${innerErrorCode}\n})\n`
         return code
     }
 

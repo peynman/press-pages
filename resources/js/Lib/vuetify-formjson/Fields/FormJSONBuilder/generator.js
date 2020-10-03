@@ -217,6 +217,16 @@ export default {
                 target.splice(foundIndex, 1);
             }
         },
+        downloadDataFile (data) {
+            var a = document.createElement('a');
+            var url = window.URL.createObjectURL(new Blob([data]));
+            a.href = url;
+            a.download = 'datatable.csv';
+            document.body.append(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        },
         arrayMergeWithObjects(target, items, key, mode) {
             let found = false;
             target.forEach((i) => {
