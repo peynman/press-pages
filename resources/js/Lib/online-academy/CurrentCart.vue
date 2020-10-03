@@ -240,7 +240,7 @@ export default {
     }),
     computed: {
         isCustomPeriodic () {
-            return targetCart.data.periodic_pay?.custom;
+            return this.targetCart.data.periodic_pay?.custom;
         },
         hasAlert () {
             return window.SessionData.answer != null;
