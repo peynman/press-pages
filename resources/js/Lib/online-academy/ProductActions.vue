@@ -46,7 +46,6 @@
             small
             outlined
             class="deep-purple--text ma-auto"
-            style="position: absolute;"
         >
          امکان خرید اقساط
     </v-chip>

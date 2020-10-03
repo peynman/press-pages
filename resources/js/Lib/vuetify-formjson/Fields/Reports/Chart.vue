@@ -115,7 +115,7 @@
             <canvas
                 ref="chart"
                 width="100%"
-                min-height="600px"
+                :min-height="field.minHeight ? field.minHeight : '600px'"
             />
             </v-card-text>
         </v-card>

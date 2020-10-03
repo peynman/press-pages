@@ -74,13 +74,13 @@
           </tbody>
         </template>
       </v-simple-table>
-      <v-row v-if="!targetCart.data.periodic_pay.custom">
+      <v-row v-if="field.singleCartMode && !isCustomPeriodic">
         <v-col cols="12">
           <strong>{{ targetCart.data.periodic_pay.product.title }}</strong> - &nbsp;&nbsp;
           پرداخت قسط {{ targetCart.data.periodic_pay.index }} از {{ targetCart.data.periodic_pay.total }} قسط به مبلغ {{ priceTagString }}
         </v-col>
       </v-row>
-      <v-row v-else>
+      <v-row v-if="field.singleCartMode && isCustomPeriodic">
         <v-col cols="12">
           پرداخت قسط {{ targetCart.data.periodic_pay.index + 1 }} از {{ targetCart.data.periodic_pay.total }} قسط به مبلغ {{ priceTagString }}
         </v-col>
@@ -239,6 +239,9 @@ export default {
         giftCode: null
     }),
     computed: {
+        isCustomPeriodic () {
+            return targetCart.data.periodic_pay?.custom;
+        },
         hasAlert () {
             return window.SessionData.answer != null;
         },

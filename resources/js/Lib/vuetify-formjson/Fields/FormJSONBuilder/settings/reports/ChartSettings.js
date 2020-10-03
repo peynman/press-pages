@@ -134,6 +134,7 @@ export default class ChartSettings extends BaseInputSettings {
                     }
                 },
             },
+            minHeight: TextSettings('Min Height'),
             xs: TextSettings('X-Small cols'),
             sm: TextSettings('Small cols'),
             md: TextSettings('Medium cols'),
