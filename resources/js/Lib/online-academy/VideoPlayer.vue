@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`vf-input fill-width ${field.class?field.class:''}`"
+    :class="`vf-input fill-width ${field.class?field.class:''}`" v-resize="onResize"
   >
     <v-dialog
       v-if="!field.modePlain"
@@ -43,7 +43,7 @@
             <div v-if="field.modeFrame">
                 <div class="h_iframe-aparat_embed_frame">
                 <iframe
-                    style="width:100%; min-height: 390px;"
+                    :style="`min-width: ${videoWidth}; min-height: ${videoHeight}; max-width: 100%`"
                     scrolling="no"
                     allowFullScreen="true"
                     webkitallowfullscreen="true"
@@ -74,7 +74,7 @@
         <div v-if="field.modeFrame">
             <div class="h_iframe-aparat_embed_frame">
                 <iframe
-                style="width:100%; min-height: 390px;"
+                :style="`min-width: ${videoWidth}; min-height: ${videoHeight}; max-width: 100%`"
                 scrolling="no"
                 allowFullScreen="true"
                 webkitallowfullscreen="true"
@@ -116,6 +116,7 @@ export default {
         return {
             player: null,
             dialog: false,
+            windowWidth: window.innerWidth,
         }
     },
     computed: {
@@ -123,7 +124,7 @@ export default {
             return this.field.width ?? '100%';
         },
         videoHeight () {
-            return this.field.height ?? '390px';
+            return this.field.height ?? (this.windowWidth / 5 * 3) + 'px';
         },
         videoSrc () {
             return this.field.url ?? '#';
@@ -147,6 +148,11 @@ export default {
                     }
                 }
             });
+        }
+    },
+    methods: {
+        onResize() {
+            this.windowWidth = window.innerWidth
         }
     },
     mounted () {

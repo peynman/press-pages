@@ -70,6 +70,7 @@
         </v-btn>
       </v-system-bar>
     <v-lazy
+    class="fill-width fill-height"
     >
       <v-sheet
             v-if="!minmized && dialog"

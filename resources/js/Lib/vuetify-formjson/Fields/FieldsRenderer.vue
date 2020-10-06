@@ -7,7 +7,7 @@
   >
     <component
       :is="options.wrap.component"
-      v-if="options && options.wrap && options.wrap.enabled !== false && options.wrap.inside"
+      v-if="options && options.wrap && options.wrap.enabled !== false && options.wrap.inside && options.wrap.inside.component"
       v-bind="wrapProps"
       :class="options.wrap.class"
     >

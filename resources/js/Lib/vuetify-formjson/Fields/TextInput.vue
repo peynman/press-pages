@@ -35,7 +35,7 @@ function ConvertDigits(input, source, target) {
     const tnine = systems[target] + 9;
     for (var i = 0 ; i < input.length; i++) {
         var char = input.charCodeAt(i);
-        if (char >= zero && char <= nine) {
+        if (char >= zero && char <= nine || char === '-') {
             output.push(String.fromCharCode(char + offset));
         } else {
             if ((char >= tzero && char <= tnine) || char === tzero - 2) {
