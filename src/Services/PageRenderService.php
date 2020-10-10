@@ -17,6 +17,8 @@ use Larapress\ECommerce\Services\Banking\IBankingService;
 use Mews\Captcha\Facades\Captcha;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Session;
+use Larapress\CRUD\BaseFlags;
+use Larapress\Profiles\Flags\UserFlags;
 use Larapress\Notifications\Models\Notification;
 use Larapress\Profiles\Repository\Form\IFormRepository;
 
@@ -87,6 +89,12 @@ class PageRenderService implements IPageRenderService
         if (!$this->checkUserAccessToPage($user, $page)) {
             Session::put('endpoint', $request->path());
             return redirect('/signin');
+        }
+
+        if (!is_null($user) && BaseFlags::isActive($user->flags, UserFlags::BANNED)) {
+            if ($request->path() != 'signin') {
+                return redirect('/signin');
+            }
         }
 
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
