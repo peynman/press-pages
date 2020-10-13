@@ -104,12 +104,10 @@ class PageRenderService implements IPageRenderService
             $jwtToken = auth()->guard('api')->tokenById($user->id);
             $user['permissions'] = $permissions;
             $user['current_cart'] = $currentCart;
-            $user['balance'] = $balance;
             // make sure user profile ise loaded if exists
             $user->makeVisible('profile');
             // make sure support user is loaded
             $support = $user->supportUserProfile;
-
             $user['support'] = isset($support['data']['values']) ? $support['data']['values'] : null;
             $user['notifications'] = $user->unseen_notifications;
         }

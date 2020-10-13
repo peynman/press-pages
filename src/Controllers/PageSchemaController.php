@@ -15,25 +15,7 @@ class PageSchemaController extends BaseCRUDController
         self::registerCrudRoutes(
             $name,
             $class,
-            PageSchemaCRUDProvider::class,
-            [
-                'query.name' => [
-                    'methods' => ['GET'],
-                    'url' => $name.'/name/{name}',
-                    'uses' => '\\'.$class.'@named',
-                ],
-            ]
+            PageSchemaCRUDProvider::class
         );
-    }
-
-    /**
-     * Custom CRUD verb
-     * Show Page Schema with name
-     *
-     * @param String $name
-     * @return void
-     */
-    public function named(String $name) {
-        return PageSchema::where('name', $name)->first();
     }
 }

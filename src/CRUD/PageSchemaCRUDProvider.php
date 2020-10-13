@@ -24,28 +24,19 @@ class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'name' => 'required|string|unique:page_schemas,name',
         'schema' => 'nullable',
         'flags' => 'nullable|numeric',
-        'publish_at' => 'nullable|datetime_zoned',
-        'unpublish_at' => 'nullable|datetime_zoned',
     ];
     public $updateValidations = [
         'name' => 'nullable|string|unique:page_schemas,name',
         'schema' => 'nullable',
         'flags' => 'nullable|numeric',
-        'publish_at' => 'nullable|datetime_zoned',
-        'unpublish_at' => 'nullable|datetime_zoned',
     ];
-    public $autoSyncRelations = [];
     public $validSortColumns = [
         'name',
         'author_id',
-        'publish_at',
-        'unpublish_at',
         'flags',
     ];
     public $validRelations = ['author'];
-    public $validFilters = [];
     public $defaultShowRelations = ['author'];
-    public $excludeIfNull = [];
     public $searchColumns = ['schema', 'name'];
     public $filterFields = [];
     public $filterDefaults = [];

@@ -26,7 +26,9 @@ class PageSchema extends Model
         'name',
         'schema',
         'flags',
-        'author_id'
+        'author_id',
+        'publish_at',
+	    'expires_at',
     ];
 
     public $casts = [
