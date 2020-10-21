@@ -214,16 +214,17 @@ class PageRenderService implements IPageRenderService
             $userPermissions = [];
             if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super-role'), config('larapress.profiles.security.roles.affiliate')))) {
                 $permissions = $user->getPermissions();
+                $roleFolder = $user->hasRole(config('larapress.profiles.security.roles.affiliate')) ? ".".$user->id : '';
                 foreach ($permissions as $permission) {
                     if (!in_array('crud.' . $permission[1], $channels)) {
-                        $channels[] = ['name' => 'crud.' . $permission[1], 'access' => 'private']; // attach first part if permission string as name.verb
+                        $channels[] = ['name' => 'crud.' . $permission[1] .$roleFolder, 'access' => 'private']; // attach first part if permission string as name.verb
                         $userPermissions[] = $permission[1];
                     }
                 }
             }
-            $channels[] = ['name' => 'users', 'access' => 'presence'];
             $userPermissions = $userPermissions;
         }
+        $channels[] = ['name' => 'website', 'access' => 'presence', 'auto' => true];
 
         return [$channels, $userPermissions];
     }
