@@ -2,6 +2,7 @@
 
 namespace Larapress\Pages\CRUD;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Larapress\CRUD\Services\BaseCRUDProvider;
 use Larapress\CRUD\Services\ICRUDProvider;
@@ -31,15 +32,32 @@ class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'flags' => 'nullable|numeric',
     ];
     public $validSortColumns = [
+        'id',
         'name',
         'author_id',
         'flags',
     ];
-    public $validRelations = ['author'];
-    public $defaultShowRelations = ['author'];
-    public $searchColumns = ['schema', 'name'];
-    public $filterFields = [];
-    public $filterDefaults = [];
+    public $validRelations = [
+        'author'
+    ];
+    public $defaultShowRelations = [
+        'author'
+    ];
+    public $searchColumns = [
+        'name'
+    ];
+
+
+    /**
+     * Exclude current id in name unique request
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getUpdateRules(Request $request) {
+        $this->updateValidations['name'] .= ',' . $request->route('id');
+        return $this->updateValidations;
+    }
 
     /**
      * Undocumented function
