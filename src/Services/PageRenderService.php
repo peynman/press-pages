@@ -89,18 +89,18 @@ class PageRenderService implements IPageRenderService
         $user = Auth::user();
         if (!$this->checkUserAccessToPage($user, $page)) {
             Session::put('endpoint', $request->path());
-            return redirect('/signin');
+            return redirect(config('larapress.auth.redirects.login'));
         }
 
         if (!is_null($user) && BaseFlags::isActive($user->flags, UserFlags::BANNED)) {
             if ($request->path() != 'signin') {
-                return redirect('/signin');
+                return redirect(config('larapress.auth.redirects.login'));
             }
         }
 
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
         [$channels, $permissions] = $this->collectPageChannelsAndPermissionsForUser($user);
-        [$currentCart, $balance] = $this->collectPageUserECommerce($user, $request);
+        [$currentCart, $balance] = is_null($user) ? [null, null] : $this->collectPageUserECommerce($user, $request);
         if (!is_null($user)) {
             $jwtToken = auth()->guard('api')->tokenById($user->id);
             $user['permissions'] = $permissions;
@@ -173,7 +173,7 @@ class PageRenderService implements IPageRenderService
      */
     protected function checkUserAccessToPage($user, Page $page)
     {
-        if (isset($page->options['roles']) && isset($page->options['roles'])) {
+        if (isset($page->options['roles']) && count($page->options['roles']) > 0) {
             if (isset($page->options['roles'][0]['id'])) {
                 $roles = collect($page->options['roles'])->pluck('id')->toArray();
             } else {
@@ -184,6 +184,9 @@ class PageRenderService implements IPageRenderService
                     return false;
                 }
             }
+        }
+        if (isset($page->options['registerred']) && $page->options['registerred']) {
+            return !is_null($user);
         }
         return true;
     }
