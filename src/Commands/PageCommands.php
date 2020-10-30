@@ -5,6 +5,9 @@ namespace Larapress\Pages\Commands;
 use Illuminate\Support\Facades\Artisan;
 use Larapress\CRUD\Commands\ActionCommandBase;
 use Larapress\Pages\Models\Page;
+use Larapress\Profiles\Flags\UserDomainFlags;
+use Larapress\Profiles\Models\Domain;
+use Larapress\Profiles\IProfileUser;
 
 class PageCommands extends ActionCommandBase
 {
@@ -33,7 +36,32 @@ class PageCommands extends ActionCommandBase
             'import:file' => $this->importFromJSONFile(),
             'import:convert' => $this->convertJSONFile(),
             'export:pages' => $this->exportToJSON(),
+            'add:domain' => $this->addDomain(),
         ]);
+    }
+
+    public function addDomain() {
+        return function () {
+            $domainName = $this->ask('Enter domain to add');
+            $domain = Domain::updateOrCreate([
+                'domain' => $domainName,
+                'author_id' => 1,
+            ]);
+
+            /** @var Builder $user_quer */
+            $user_query = call_user_func([config('larapress.crud.user.class'), 'query']);
+            /** @var \Larapress\CRUD\ICRUDUser|IProfileUser $user */
+            $users = $user_query->whereHas('roles', function($q) {
+                $q->where('id', 1);
+            })->get();
+            foreach ($users as $user) {
+                $user->domains()->attach($domain, [
+                    'flags' => UserDomainFlags::REGISTRATION_DOMAIN | UserDomainFlags::MEMBERSHIP_DOMAIN,
+                ]);
+                $user->forgetDomainsCache();
+            }
+            $this->info('done.');
+        };
     }
 
     public function importFromJSONFile() {
