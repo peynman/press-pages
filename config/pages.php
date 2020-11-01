@@ -6,6 +6,7 @@ use Larapress\CRUD\Repository\IRoleRepository;
 return [
     /** middlewares for page routes */
     'middleware' => [
+        'api',
         'web',
     ],
 
@@ -33,6 +34,18 @@ return [
         'web_path' => env('ECHO_WEB_PATH', ''),
     ],
 
+    'languages' => [
+        [
+            'id' => 'fa',
+            'abbr' => 'fa',
+            'title' => 'Farsi',
+        ],
+        [
+            'id' => 'en',
+            'abbr' => 'en',
+            'title' => 'English',
+        ],
+    ],
     'safe-sources' => [
         IPermissionsRepository::class,
         IRoleRepository::class,

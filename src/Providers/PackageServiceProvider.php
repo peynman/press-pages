@@ -41,7 +41,7 @@ class PackageServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadTranslationsFrom(__DIR__.'/../../resources/lang', 'larapress');
-        // $this->loadRoutesFrom(__DIR__.'/../../routes/pages.php');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/pages.php');
         $this->loadMigrationsFrom(__DIR__.'/../../migrations');
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'larapress-pages');
 
@@ -50,6 +50,13 @@ class PackageServiceProvider extends ServiceProvider
             __DIR__.'/../../config/pages.php' => config_path('larapress/pages.php'),
             ],
             ['config', 'larapress', 'larapress-pages']
+        );
+
+        $this->publishes(
+            [
+            __DIR__.'/../../storage/json' => storage_path('json'),
+            ],
+            ['templates', 'larapress', 'larapress-pages']
         );
 
         if ($this->app->runningInConsole()) {

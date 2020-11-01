@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Session;
 use Larapress\CRUD\BaseFlags;
 use Larapress\Profiles\Flags\UserFlags;
 use Larapress\Notifications\Models\Notification;
+use Larapress\Pages\Models\PageSchema;
+use Larapress\Profiles\IProfileUser;
 use Larapress\Profiles\Repository\Form\IFormRepository;
 
 class PageRenderService implements IPageRenderService
@@ -82,24 +84,23 @@ class PageRenderService implements IPageRenderService
      */
     public function renderPageJSON(Request $request, Route $route, Page $page, $schema)
     {
-        $lang = TranslationHelper::getLocaleLanguage(app()->getLocale());
         $jwtToken = null;
         /** @var  IProfileUser|ICRUDUser */
         $user = Auth::user();
         if (!$this->checkUserAccessToPage($user, $page)) {
             Session::put('endpoint', $request->path());
-            return redirect('/signin');
+            return redirect(config('larapress.auth.redirects.login'));
         }
 
         if (!is_null($user) && BaseFlags::isActive($user->flags, UserFlags::BANNED)) {
             if ($request->path() != 'signin') {
-                return redirect('/signin');
+                return redirect(config('larapress.auth.redirects.login'));
             }
         }
 
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
         [$channels, $permissions] = $this->collectPageChannelsAndPermissionsForUser($user);
-        [$currentCart, $balance] = $this->collectPageUserECommerce($user, $request);
+        [$currentCart, $balance] = is_null($user) ? [null, null] : $this->collectPageUserECommerce($user, $request);
         if (!is_null($user)) {
             $jwtToken = auth()->guard('api')->tokenById($user->id);
             $user['permissions'] = $permissions;
@@ -114,6 +115,15 @@ class PageRenderService implements IPageRenderService
 
         $this->reportPageEvents($user, $request, $route, $page);
 
+        $locale = app()->getLocale();
+        $langs = config('larapress.pages.languages');
+        $lang = $langs[0];
+        foreach ($langs as $ll) {
+            if ($ll['id'] === $locale) {
+                $lang = $ll;
+                break;
+            }
+        }
         return [
             'user' => $user,
             'tokens' => [
@@ -122,14 +132,12 @@ class PageRenderService implements IPageRenderService
             'title' => isset($page->options['title']) ? $page->options['title'] : config('larapress.pages.default-title'),
             'body' => $page->body,
             'options' => $page->options,
+            'theme' => PageSchema::find(1),
             'datetime' => [
                 'timestamp' => Carbon::now()->format('Y-m-d H:i:s e'),
             ],
-            'language' => [
-                'rtl' => $lang->isRTL(),
-                'name' => $lang->getName(),
-                'title' => $lang->getTitle(),
-            ],
+            'languages' => $langs,
+            'language' => $lang,
             'sources' => $sources,
             'channels' => $channels,
             'currencies' => [
@@ -165,7 +173,7 @@ class PageRenderService implements IPageRenderService
      */
     protected function checkUserAccessToPage($user, Page $page)
     {
-        if (isset($page->options['roles']) && isset($page->options['roles'])) {
+        if (isset($page->options['roles']) && count($page->options['roles']) > 0) {
             if (isset($page->options['roles'][0]['id'])) {
                 $roles = collect($page->options['roles'])->pluck('id')->toArray();
             } else {
@@ -176,6 +184,9 @@ class PageRenderService implements IPageRenderService
                     return false;
                 }
             }
+        }
+        if (isset($page->options['registerred']) && $page->options['registerred']) {
+            return !is_null($user);
         }
         return true;
     }
@@ -214,16 +225,17 @@ class PageRenderService implements IPageRenderService
             $userPermissions = [];
             if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super-role'), config('larapress.profiles.security.roles.affiliate')))) {
                 $permissions = $user->getPermissions();
+                $roleFolder = $user->hasRole(config('larapress.profiles.security.roles.affiliate')) ? ".".$user->id : '';
                 foreach ($permissions as $permission) {
                     if (!in_array('crud.' . $permission[1], $channels)) {
-                        $channels[] = ['name' => 'crud.' . $permission[1], 'access' => 'private']; // attach first part if permission string as name.verb
+                        $channels[] = ['name' => 'crud.' . $permission[1] .$roleFolder, 'access' => 'private']; // attach first part if permission string as name.verb
                         $userPermissions[] = $permission[1];
                     }
                 }
             }
-            $channels[] = ['name' => 'users', 'access' => 'presence'];
             $userPermissions = $userPermissions;
         }
+        $channels[] = ['name' => 'website', 'access' => 'presence', 'auto' => true];
 
         return [$channels, $userPermissions];
     }
@@ -231,18 +243,15 @@ class PageRenderService implements IPageRenderService
     /**
      * Undocumented function
      *
-     * @param [type] $user
+     * @param IProfileUser $user
      * @param Request $request
      * @return void
      */
-    protected function collectPageUserECommerce($user, Request $request)
+    protected function collectPageUserECommerce(IProfileUser $user, Request $request)
     {
         if (!is_null($user)) {
             /** @var IBankingService */
             $cartService = app(IBankingService::class);
-            /** @var IDomainRepository */
-            $domainRepo = app(IDomainRepository::class);
-            $domain = $domainRepo->getRequestDomain($request);
             // include carts and balance of current user
             $currentCart = $cartService->getPurchasingCart(
                 $user,
