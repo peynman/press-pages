@@ -28,6 +28,11 @@ return [
         ]
     ],
 
+    'echo' => [
+        'port' => env('ECHO_PORT', 8443),
+        'web_path' => env('ECHO_WEB_PATH', ''),
+    ],
+
     'safe-sources' => [
         IPermissionsRepository::class,
         IRoleRepository::class,

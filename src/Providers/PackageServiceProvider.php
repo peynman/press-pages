@@ -45,10 +45,6 @@ class PackageServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../../migrations');
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'larapress-pages');
 
-        $this->publishes([
-            __DIR__.'/../../resources/dist' => storage_path('app/public/vendor/larapress-pages'),
-        ], ['assets', 'larapress', 'larapress-pages']);
-
         $this->publishes(
             [
             __DIR__.'/../../config/pages.php' => config_path('larapress/pages.php'),

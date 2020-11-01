@@ -24,16 +24,16 @@
         window.echoConfig = {
             protocol: window.location.protocol.startsWith('https') ? 'https':'http',
             host: window.location.hostname,
-            port: {!! json_encode(env('ECHO_PORT')) !!},
+            port: {!! config('larapress.pages.echo.port') !!},
         };
     </script>
-    <script src="{!! env('ECHO_WEB_PATH') !!}/socket.io/socket.io.js"></script>
-    @if(env('APP_ENV') === 'debug')
-        <script src="{{ asset('/vendor/larapress-pages/js/app.js') }}"></script>
+    <script src="{!! config('larapress.pages.echo.web_path') !!}/socket.io/socket.io.js"></script>
+    @if(env('APP_ENV') === 'production')
+    <script src="{{ mix('js/manifest.js', '/vendor/larapress-pages') }}"></script>
+    <script src="{{ mix('js/vendor.bundle.js', '/vendor/larapress-pages') }}"></script>
+    <script src="{{ mix('js/app.bundle.js', '/vendor/larapress-pages') }}"></script>
     @else
-        <script src="{{ mix('js/manifest.js', '/vendor/larapress-pages') }}"></script>
-        <script src="{{ mix('js/vendor.bundle.js', '/vendor/larapress-pages') }}"></script>
-        <script src="{{ mix('js/app.bundle.js', '/vendor/larapress-pages') }}"></script>
+    <script src="{{ asset('/vendor/larapress-pages/js/app.js') }}"></script>
     @endif
 </body>
 </html>
