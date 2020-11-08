@@ -119,7 +119,11 @@ class PageCommands extends ActionCommandBase
         return function () {
             $dir = storage_path('json/templates');
 
-            $pages = Page::all();
+            $pages = Page::query();
+            if (!is_null($this->option('file'))) {
+                $pages->where('name', $this->option('file'));
+            }
+            $pages = $pages->get();
             foreach ($pages as $page) {
                 file_put_contents($dir.'/'.$page->name.'.json', json_encode($page->toArray(), JSON_PRETTY_PRINT));
             }
