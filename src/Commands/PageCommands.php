@@ -34,7 +34,6 @@ class PageCommands extends ActionCommandBase
     {
         parent::__construct([
             'import:file' => $this->importFromJSONFile(),
-            'import:convert' => $this->convertJSONFile(),
             'export:pages' => $this->exportToJSON(),
             'add:domain' => $this->addDomain(),
         ]);
@@ -94,27 +93,6 @@ class PageCommands extends ActionCommandBase
         };
     }
 
-    public function convertJSONFile() {
-        return function () {
-            $pretty = function($file) {
-                $content = file_get_contents($file);
-                $pageData = json_decode($content, true);
-                file_put_contents($file, json_encode($pageData, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
-            };
-            $filename = $this->option('file');
-            if (is_dir($filename)) {
-                $files = array_diff(scandir($filename), ['.', '..']);
-                foreach ($files as $file) {
-                    $pretty($filename.DIRECTORY_SEPARATOR.$file);
-                    $this->info("converted $file");
-                }
-            } else {
-                $pretty($filename);
-                $this->info("converted $filename");
-            }
-        };
-    }
-
     public function exportToJSON() {
         return function () {
             $dir = storage_path('json/templates');
@@ -125,7 +103,7 @@ class PageCommands extends ActionCommandBase
             }
             $pages = $pages->get();
             foreach ($pages as $page) {
-                file_put_contents($dir.'/'.$page->name.'.json', json_encode($page->toArray(), JSON_PRETTY_PRINT));
+                file_put_contents($dir.'/'.$page->name.'.json', json_encode($page->toArray(), JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
             }
 
         };
