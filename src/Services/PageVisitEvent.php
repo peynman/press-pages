@@ -5,17 +5,17 @@ namespace Larapress\Pages\Services;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Larapress\CRUD\ICRUDUser;
-use Larapress\Profiles\IProfileUser;
+use Larapress\CRUD\Repository\IRoleRepository;
+use Larapress\ECommerce\IECommerceUser;
 
 class PageVisitEvent implements ShouldQueue
 {
     use Dispatchable, SerializesModels;
 
-    /** @var IProfileUser|ICRUDUser */
-    public $user;
-    /** @var \Larapress\Profiles\Models\Domain */
-    public $domain;
+    /** @var int */
+    public $userId;
+    /** @var int */
+    public $domainId;
     /** @var string */
     public $ip;
     /** @var array */
@@ -24,21 +24,33 @@ class PageVisitEvent implements ShouldQueue
     public $timestamp;
     /** @var int */
     public $page_id;
+    /** @var int */
+    public $supportId;
+    /** @var string */
+    public $role;
 
     /**
      * Create a new event instance.
      *
-     * @param $user
-     * @param $domain
+     * @param null|IECommerceUser $user
+     * @param null|Domain $domain
      * @param $ip
      * @param $timestamp
      * @param $filters
      */
     public function __construct($user, $page_id, $domain, $ip, $timestamp, $filters = [])
     {
-        $this->user = $user;
+        $this->userId = is_null($user) ? $user : $user->id;
+        $this->domainId = is_numeric($domain) || is_null($domain) ? $domain : $domain->id;
+        if (!is_null($user)) {
+            $this->supportId = $user->getSupportUserId();
+            if (isset($user->roles)) {
+                /** @var IRoleRepository */
+                $roleRepo = app(IRoleRepository::class);
+                $this->role = $roleRepo->getUserHighestRole($user)->name;
+            }
+        }
         $this->page_id = $page_id;
-        $this->domain = $domain;
         $this->ip = $ip;
         $this->filters = $filters;
         $this->timestamp = $timestamp;

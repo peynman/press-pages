@@ -66,13 +66,12 @@ class PageVisitReport implements IReportSource, ShouldQueue
 
     public function handle(PageVisitEvent $event)
     {
-        /** @var IRoleRepository */
-        $roleRepo = app(IRoleRepository::class);
         $tags = array_merge([
-            'domain' => $event->domain->id,
-            'role' => is_null($event->user) ? 'guest' : $roleRepo->getUserHighestRole($event->user)->name,
+            'domain' => $event->domainId,
+            'role' => $event->role,
             'page' => $event->page_id,
-            'user' => is_null($event->user) ? 'guest' : $event->user->id,
+            'support' => $event->supportId,
+            'user' => $event->userId,
         ], $event->filters);
         $this->reports->pushMeasurement('pages.visit', 1, $tags, [], $event->timestamp);
     }

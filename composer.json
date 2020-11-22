@@ -28,7 +28,7 @@
     "require": {
         "php": "^7.2.5",
         "laravel/framework": "^8.0",
-        "peynman/larapress-profiles": "master"
+        "peynman/larapress-ecommerce": "master"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",

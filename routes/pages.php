@@ -6,5 +6,5 @@ use Larapress\Pages\Controllers\PageRenderController;
 Route::middleware(config('larapress.pages.middleware'))
     ->prefix(config('larapress.pages.prefix'))
     ->group(function () {
-        PageRenderController::registerPublicWebRoutes();
+        // PageRenderController::registerPublicWebRoutes();
     });
