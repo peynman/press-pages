@@ -103,6 +103,7 @@ class PageCommands extends ActionCommandBase
             }
             $pages = $pages->get();
             foreach ($pages as $page) {
+                $this->info("Page exported ".$page->name);
                 file_put_contents($dir.'/'.$page->name.'.json', json_encode($page->toArray(), JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
             }
 
