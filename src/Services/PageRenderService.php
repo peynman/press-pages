@@ -172,10 +172,22 @@ class PageRenderService implements IPageRenderService
             if (isset($page->options['roles'][0]['id'])) {
                 $roles = collect($page->options['roles'])->pluck('id')->toArray();
             } else {
-                $roles = array_keys($page->options['roles']);
+                $roles = isset($page->options['roles'][0]) ? $page->options['roles'] : array_keys($page->options['roles']);
             }
             if (count($roles) > 0) {
                 if (is_null($user) || !$user->hasRole($roles)) {
+                    return false;
+                }
+            }
+        }
+        if (isset($page->options['blocks']) && count($page->options['blocks']) > 0) {
+            if (isset($page->options['blocks'][0]['id'])) {
+                $roles = collect($page->options['blocks'])->pluck('id')->toArray();
+            } else {
+                $roles = isset($page->options['blocks'][0]) ? $page->options['blocks'] : array_keys($page->options['blocks']);
+            }
+            if (count($roles) > 0) {
+                if (is_null($user) || $user->hasRole($roles)) {
                     return false;
                 }
             }
