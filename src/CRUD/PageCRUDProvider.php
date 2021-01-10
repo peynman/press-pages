@@ -54,6 +54,8 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'author_id',
         'publish_at',
         'unpublish_at',
+        'updated_at',
+        'created_at',
         'flags',
         'zorder',
     ];
