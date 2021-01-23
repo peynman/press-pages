@@ -106,6 +106,7 @@ class PageRenderService implements IPageRenderService
             $support = $user->supportUserProfile;
             $user['support'] = isset($support['data']['values']) ? $support['data']['values'] : null;
             $user['notifications'] = $user->unseen_notifications;
+            $user['phones'] = $user->phones;
         }
 
         $this->reportPageEvents($user, $request, $route, $page);
