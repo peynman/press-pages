@@ -16,7 +16,7 @@ class PageCommands extends ActionCommandBase
      *
      * @var string
      */
-    protected $signature = 'lp:pages {--action=} {--file=}';
+    protected $signature = 'lp:pages {--action=} {--file=} {--domain=}';
 
     /**
      * The console command description.
@@ -39,9 +39,13 @@ class PageCommands extends ActionCommandBase
         ]);
     }
 
-    public function addDomain() {
+    public function addDomain()
+    {
         return function () {
-            $domainName = $this->ask('Enter domain to add');
+            $domainName = $this->option('domain');
+            if (is_null($domainName)) {
+                $this->ask('Enter domain to add');
+            }
             $domain = Domain::updateOrCreate([
                 'domain' => $domainName,
                 'author_id' => 1,
@@ -50,7 +54,7 @@ class PageCommands extends ActionCommandBase
             /** @var Builder $user_quer */
             $user_query = call_user_func([config('larapress.crud.user.class'), 'query']);
             /** @var \Larapress\CRUD\ICRUDUser|IProfileUser $user */
-            $users = $user_query->whereHas('roles', function($q) {
+            $users = $user_query->whereHas('roles', function ($q) {
                 $q->where('id', 1);
             })->get();
             foreach ($users as $user) {
@@ -63,28 +67,29 @@ class PageCommands extends ActionCommandBase
         };
     }
 
-    public function importFromJSONFile() {
+    public function importFromJSONFile()
+    {
         return function () {
-            $import = function($filename) {
+            $import = function ($filename) {
                 $content = file_get_contents($filename);
                 $pageData = json_decode($content, true);
                 $page = Page::updateOrCreate([
                     'name' => $pageData['name'],
-                    'author_id' => isset($pageData['author_id']) ? $pageData['author_id']:1,
+                    'author_id' => isset($pageData['author_id']) ? $pageData['author_id'] : 1,
                     'slug' => $pageData['slug'],
                 ], [
-                    'zorder' => isset($pageData['zorder']) ? $pageData['zorder']:100,
+                    'zorder' => isset($pageData['zorder']) ? $pageData['zorder'] : 100,
                     'body' => $pageData['body'],
                     'options' => $pageData['options'],
-                    'flags' => isset($pageData['flags']) ? $pageData['flags']:0,
+                    'flags' => isset($pageData['flags']) ? $pageData['flags'] : 0,
                 ]);
-                $this->info("Page created with slug: ".$page->slug);
+                $this->info("Page created with slug: " . $page->slug);
             };
             $filename = $this->option('file');
             if (is_dir($filename)) {
                 $files = array_diff(scandir($filename), ['.', '..']);
                 foreach ($files as $file) {
-                    $import($filename.DIRECTORY_SEPARATOR.$file);
+                    $import($filename . DIRECTORY_SEPARATOR . $file);
                 }
             } else {
                 $import($filename);
@@ -93,7 +98,8 @@ class PageCommands extends ActionCommandBase
         };
     }
 
-    public function exportToJSON() {
+    public function exportToJSON()
+    {
         return function () {
             $dir = storage_path('json/templates');
 
@@ -103,10 +109,9 @@ class PageCommands extends ActionCommandBase
             }
             $pages = $pages->get();
             foreach ($pages as $page) {
-                $this->info("Page exported ".$page->name);
-                file_put_contents($dir.'/'.$page->name.'.json', json_encode($page->toArray(), JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
+                $this->info("Page exported " . $page->name);
+                file_put_contents($dir . '/' . $page->name . '.json', json_encode($page->toArray(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
             }
-
         };
     }
 }
