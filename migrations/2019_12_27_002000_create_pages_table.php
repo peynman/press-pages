@@ -27,6 +27,20 @@ class CreatePagesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->index(
+                [
+                    'deleted_at',
+                    'created_at',
+                    'updated_at',
+                    'publish_at',
+                    'unpublish_at',
+                    'name',
+                    'slug',
+                    'zorder',
+                    'flags'
+                ],
+                'pages_full_index'
+            );
             $table->unique(['deleted_at', 'name']);
 
             $table->foreign('author_id')->references('id')->on('users');

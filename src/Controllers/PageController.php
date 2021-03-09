@@ -7,6 +7,11 @@ use Larapress\Pages\CRUD\PageCRUDProvider;
 use Larapress\Pages\Services\IPageService;
 use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
 
+/**
+ * @group Page management
+ *
+ * Standard CRUD controller for Page resources in databaase.
+ */
 class PageController extends BaseCRUDController
 {
     public static function registerRoutes() {
@@ -24,9 +29,10 @@ class PageController extends BaseCRUDController
         );
     }
 
-
     /**
-     * Undocumented function
+     * Update roles that can access a page
+     *
+     * @authenticated
      *
      * @param IPageService $service
      * @param UpdateRolesRequest $request

@@ -4,6 +4,16 @@ use Larapress\CRUD\Repository\IPermissionsRepository;
 use Larapress\CRUD\Repository\IRoleRepository;
 
 return [
+    'permissions' => [
+        \Larapress\Pages\CRUD\PageCRUDProvider::class,
+        \Larapress\Pages\CRUD\PageSchemaCRUDProvider::class,
+    ],
+
+    'controllers' => [
+        \Larapress\Pages\Controllers\PageController::class,
+        \Larapress\Pages\Controllers\PageSchemaController::class,
+    ],
+
     /** middlewares for page routes */
     'middleware' => [
         'api',
@@ -29,11 +39,13 @@ return [
         ]
     ],
 
+    /** Laravel echo, to connect on client side */
     'echo' => [
         'port' => env('ECHO_PORT', 8443),
         'web_path' => env('ECHO_WEB_PATH', ''),
     ],
 
+    /** Available languages */
     'languages' => [
         [
             'id' => 'fa',
@@ -46,6 +58,8 @@ return [
             'title' => 'English',
         ],
     ],
+
+    /** safe sources for client to ask with "ServerSources" page property */
     'safe-sources' => [
         IPermissionsRepository::class,
         IRoleRepository::class,

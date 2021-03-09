@@ -45,9 +45,7 @@ class PageVisitEvent implements ShouldQueue
         if (!is_null($user)) {
             $this->supportId = $user->getSupportUserId();
             if (isset($user->roles)) {
-                /** @var IRoleRepository */
-                $roleRepo = app(IRoleRepository::class);
-                $this->role = $roleRepo->getUserHighestRole($user)->name;
+                $this->role = $user->getUserHighestRole()->name;
             }
         }
         $this->page_id = $page_id;

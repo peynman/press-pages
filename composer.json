@@ -1,12 +1,12 @@
 {
     "name": "peynman/larapress-pages",
-    "description": "This is the description of the package.",
+    "description": "PWA and Page rendering and management for Larapress.",
     "type": "library",
     "license": "MIT",
     "minimum-stability": "dev",
     "authors": [{
         "name": "Peyman Abdi",
-        "email": "peyman.abdi.work@gmail.com"
+        "email": "larapress@peynman.ir"
     }],
     "autoload": {
         "psr-4": {

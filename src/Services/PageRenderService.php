@@ -98,6 +98,7 @@ class PageRenderService implements IPageRenderService
         [$currentCart, $balance] = is_null($user) ? [null, null] : $this->collectPageUserECommerce($user, $request);
         if (!is_null($user)) {
             $jwtToken = auth()->guard('api')->tokenById($user->id);
+            $user['roles'] = [$user->getUserHighestRole()];
             $user['permissions'] = $permissions;
             $user['current_cart'] = $currentCart;
             // make sure user profile ise loaded if exists

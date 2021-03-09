@@ -5,6 +5,11 @@ namespace Larapress\Pages\Services\UpdateRoles;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 
+/**
+ * @bodyParam mode string required One of (add,remove,sync)
+ * @bodyParam roles[].id int required Role ids to (add,remove,sync)
+ * @bodyParam pages int[] required Page ids to update
+ */
 class UpdateRolesRequest extends FormRequest
 {
     /**

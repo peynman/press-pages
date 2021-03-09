@@ -16,7 +16,7 @@ class PageCommands extends ActionCommandBase
      *
      * @var string
      */
-    protected $signature = 'larapress:pages {--action=} {--file=}';
+    protected $signature = 'lp:pages {--action=} {--file=}';
 
     /**
      * The console command description.
