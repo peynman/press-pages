@@ -23,19 +23,29 @@ return [
     /** a prefix for pages url routes /<prefix>/<page url> */
     'prefix' => 'pages',
 
-    /** default title to use when a page does not have a title */
-    'default-title' => 'Larapress Pages: no title',
+    'page-defaults' => [
+        'blade' => 'larapress-pages::vue.app',
+        /** default title to use when a page does not have a title */
+        'title' => 'Larapress Pages: no title',
+        'descrtiption' => 'Larapress Pages: no description',
+        'author' => 'Larapress Pages: no author',
+        'extra-metas' => [],
+        'schema' => null,
+    ],
 
-    /** default template to use when a page is rendered and has no template selected */
-    'default-template' => 'Centered',
-
-    /** route defenitions */
+    /** api route defenitions */
     'routes' => [
         'pages' => [
             'name' => 'pages',
+            'extend' => [
+                'providers' => [],
+            ],
         ],
         'page-schemas' => [
-            'name' => 'page-schemas'
+            'name' => 'page-schemas',
+            'extend' => [
+                'providers' => [],
+            ],
         ]
     ],
 
@@ -51,11 +61,25 @@ return [
             'id' => 'fa',
             'abbr' => 'fa',
             'title' => 'Farsi',
+            'direction' => 'rtl',
         ],
         [
             'id' => 'en',
             'abbr' => 'en',
             'title' => 'English',
+            'direction' => 'ltr',
+        ],
+        [
+            'id' => 'ar',
+            'abbr' => 'ar',
+            'title' => 'Arabic',
+            'direction' => 'rtl',
+        ],
+        [
+            'id' => 'ku',
+            'abbr' => 'ku',
+            'title' => 'Kurdic',
+            'direction' => 'rtl',
         ],
     ],
 

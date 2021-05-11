@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Larapress\CRUD\Services\BaseCRUDProvider;
-use Larapress\CRUD\Services\ICRUDProvider;
-use Larapress\CRUD\Services\IPermissionsMetadata;
+use Larapress\CRUD\Services\CRUD\BaseCRUDProvider;
+use Larapress\CRUD\Services\CRUD\ICRUDProvider;
+use Larapress\CRUD\Services\RBAC\IPermissionsMetadata;
 use Larapress\Pages\Models\Page;
 use Larapress\Pages\Services\PageVisitReport;
 use Larapress\Reports\Services\IReportsService;
@@ -18,6 +18,7 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     use BaseCRUDProvider;
 
     public $name_in_config = 'larapress.pages.routes.pages.name';
+    public $extend_in_config = 'larapress.pages.routes.pages.extend.providers';
     public $verbs = [
         self::VIEW,
         self::CREATE,
@@ -29,24 +30,25 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     public $createValidations = [
         'name' => 'required|string|unique:pages,name',
         'slug' => 'required|string',
-        'body' => 'nullable',
+        'options' => 'required|json',
         'options.title' => 'required|string',
+        'body' => 'nullable|json',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
         'zorder' => 'nullable|numeric',
     ];
     public $updateValidations = [
-        'name' => 'nullable|string|unique:pages,name',
-        'slug' => 'nullable|string',
-        'body' => 'nullable',
+        'name' => 'required|string|unique:pages,name',
+        'slug' => 'required|string',
+        'options' => 'required|json',
         'options.title' => 'required|string',
+        'body' => 'nullable|json',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
         'zorder' => 'nullable|numeric',
     ];
-    public $autoSyncRelations = [];
     public $validSortColumns = [
         'id',
         'slug',
@@ -62,13 +64,13 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     public $validRelations = ['author'];
     public $validFilters = [];
     public $defaultShowRelations = ['author'];
-    public $excludeIfNull = [
-        'zorder',
-        'flags',
-    ];
     public $searchColumns = ['slug', 'name'];
-    public $filterFields = [];
-    public $filterDefaults = [];
+    public $filterFields = [
+        'name' => 'equals:name',
+        'author' => 'equals:author_id',
+        'updated_from' => 'after:updated_at',
+        'updated_to' => 'before:updated_at',
+    ];
 
     /**
      *

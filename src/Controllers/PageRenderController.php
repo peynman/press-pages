@@ -3,11 +3,17 @@
 namespace Larapress\Pages\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Larapress\Pages\Services\IPageRenderService;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Page Rendering
+ *
+ * @group Page Rendering
+ */
 class PageRenderController extends Controller
 {
     /** @var IPageRenderService */
@@ -29,11 +35,14 @@ class PageRenderController extends Controller
     }
 
     /**
-     * Undocumented function
+     * Render
+     *
+     * Render a page to json or html based on incomming request.
      *
      * @param Request $request
      * @param String $slug
-     * @return void
+     *
+     * @return Response
      */
     public function renderPage(Request $request, String $slug = '') {
         [$page, $route] = $this->service->findPageForRequest($request, $slug);
@@ -47,4 +56,6 @@ class PageRenderController extends Controller
 
         return $this->service->renderPageHTML($request, $route, $page, null);
     }
+
+
 }

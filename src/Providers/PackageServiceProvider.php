@@ -3,7 +3,8 @@
 namespace Larapress\Pages\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Larapress\Pages\Commands\PageCommands;
+use Larapress\Pages\Commands\ExportPagesToJSON;
+use Larapress\Pages\Commands\ImportPagesFromJSON;
 use Larapress\Pages\Repository\IPageRepository;
 use Larapress\Pages\Repository\PageRepository;
 use Larapress\Pages\Services\DomainPageProvider;
@@ -52,16 +53,10 @@ class PackageServiceProvider extends ServiceProvider
             ['config', 'larapress', 'larapress-pages']
         );
 
-        $this->publishes(
-            [
-            __DIR__.'/../../storage/json' => storage_path('json'),
-            ],
-            ['templates', 'larapress', 'larapress-pages']
-        );
-
         if ($this->app->runningInConsole()) {
             $this->commands([
-                PageCommands::class,
+                ImportPagesFromJSON::class,
+                ExportPagesToJSON::class,
             ]);
         }
     }

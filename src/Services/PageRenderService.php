@@ -11,9 +11,10 @@ use Larapress\Pages\Models\Page;
 use Larapress\CRUD\ICRUDUser;
 use Larapress\Profiles\Repository\Domain\IDomainRepository;
 use Illuminate\Routing\Route;
-use Larapress\ECommerce\Services\Banking\IBankingService;
 use Illuminate\Support\Facades\Session;
 use Larapress\CRUD\BaseFlags;
+use Larapress\ECommerce\Services\Cart\IPurchasingCartService;
+use Larapress\ECommerce\Services\Wallet\IWalletService;
 use Larapress\Profiles\Flags\UserFlags;
 use Larapress\Pages\Models\PageSchema;
 use Larapress\Profiles\IProfileUser;
@@ -63,7 +64,7 @@ class PageRenderService implements IPageRenderService
     {
         $json = $this->renderPageJSON($request, $route, $page, $schema);
         if (is_array($json)) {
-            return view('larapress-pages::vue.app', [
+            return view(config('larapress.pages.page-defaults.blade'), [
                 'config' => $json
             ]);
         }
@@ -108,6 +109,7 @@ class PageRenderService implements IPageRenderService
             $user['support'] = isset($support['data']['values']) ? $support['data']['values'] : null;
             $user['notifications'] = $user->unseen_notifications;
             $user['phones'] = $user->phones;
+            $user['balance'] = $balance;
         }
 
         $this->reportPageEvents($user, $request, $route, $page);
@@ -115,6 +117,12 @@ class PageRenderService implements IPageRenderService
         $locale = app()->getLocale();
         $langs = config('larapress.pages.languages');
         $lang = $langs[0];
+
+        $schema = isset($page->options['schema']) ? $page->options['schema'] : config('larapress.pages.page-defaults.schema');
+        if (!is_null($schema)) {
+            $schema = PageSchema::find($schema);
+        }
+
         foreach ($langs as $ll) {
             if ($ll['id'] === $locale) {
                 $lang = $ll;
@@ -129,7 +137,7 @@ class PageRenderService implements IPageRenderService
             'title' => isset($page->options['title']) ? $page->options['title'] : config('larapress.pages.default-title'),
             'body' => $page->body,
             'options' => $page->options,
-            'theme' => PageSchema::find(1),
+            'theme' => $schema,
             'datetime' => [
                 'timestamp' => Carbon::now()->format('Y-m-d H:i:s e'),
             ],
@@ -137,8 +145,10 @@ class PageRenderService implements IPageRenderService
             'language' => $lang,
             'sources' => $sources,
             'channels' => $channels,
-            'currencies' => [
-                config('larapress.ecommerce.banking.currency.id') => config('larapress.ecommerce.banking.currency.title')
+            'metas' => [
+                'description' => isset($page->options['metas']['description']) ? $page->options['metas']['description'] : config('larapress.pages.page-defaults.description', ''),
+                'author' => isset($page->options['metas']['author']) ? $page->options['metas']['author'] : config('larapress.pages.page-defaults.author', ''),
+                'extra' => isset($page->options['metas']['extra']) ? $page->options['metas']['extra'] : config('larapress.pages.page-defaults.extra-metas', []),
             ]
         ];
     }
@@ -259,20 +269,19 @@ class PageRenderService implements IPageRenderService
     protected function collectPageUserECommerce(IProfileUser $user, Request $request)
     {
         if (!is_null($user)) {
-            /** @var IBankingService */
-            $cartService = app(IBankingService::class);
+            /** @var IWalletService */
+            $walletService = app(IWalletService::class);
+            /** @var IPurchasingCartService */
+            $cartService = app(IPurchasingCartService::class);
             // include carts and balance of current user
             $currentCart = $cartService->getPurchasingCart(
                 $user,
                 config('larapress.ecommerce.banking.currency.id')
             );
-            $currentCart['items'] = $cartService->getPurchasingCartItems(
-                $user,
-                config('larapress.ecommerce.banking.currency.id')
-            );
+            $currentCart['items'] = $currentCart->products;
             $balance = [
                 'amount' =>
-                $cartService->getUserBalance(
+                $walletService->getUserBalance(
                     $user,
                     config('larapress.ecommerce.banking.currency.id')
                 ),

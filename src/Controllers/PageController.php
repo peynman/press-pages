@@ -2,15 +2,15 @@
 
 namespace Larapress\Pages\Controllers;
 
-use Larapress\CRUD\CRUDControllers\BaseCRUDController;
+use Larapress\CRUD\Services\CRUD\BaseCRUDController;
 use Larapress\Pages\CRUD\PageCRUDProvider;
 use Larapress\Pages\Services\IPageService;
 use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
 
 /**
- * @group Page management
+ * Standard CRUD controller for Page resource.
  *
- * Standard CRUD controller for Page resources in databaase.
+ * @group Page Management
  */
 class PageController extends BaseCRUDController
 {

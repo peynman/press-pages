@@ -2,7 +2,7 @@
 
 namespace Larapress\Pages\Repository;
 
-use Larapress\CRUD\Services\IPermissionsService;
+use Larapress\CRUD\Services\RBAC\IPermissionsService;
 use Larapress\Pages\Services\IPageProvider;
 use Illuminate\Support\Str;
 

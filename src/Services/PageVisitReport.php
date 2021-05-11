@@ -3,14 +3,12 @@
 namespace Larapress\Pages\Services;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
-use Larapress\CRUD\Services\IReportSource;
-use Larapress\CRUD\Repository\IRoleRepository;
+use Larapress\CRUD\Services\CRUD\ICRUDReportSource;
 use Larapress\Pages\Services\PageVisitEvent;
 use Larapress\Reports\Services\BaseReportSource;
 use Larapress\Reports\Services\IReportsService;
 
-class PageVisitReport implements IReportSource, ShouldQueue
+class PageVisitReport implements ICRUDReportSource, ShouldQueue
 {
     use BaseReportSource;
 
