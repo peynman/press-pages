@@ -43,6 +43,6 @@ class Page extends Model
      */
     public function author()
     {
-        return $this->belongsTo(config('larapress.crud.user.class'), 'author_id');
+        return $this->belongsTo(config('larapress.crud.user.model'), 'author_id');
     }
 }

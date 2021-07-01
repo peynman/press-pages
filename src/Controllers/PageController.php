@@ -2,8 +2,7 @@
 
 namespace Larapress\Pages\Controllers;
 
-use Larapress\CRUD\Services\CRUD\BaseCRUDController;
-use Larapress\Pages\CRUD\PageCRUDProvider;
+use Larapress\CRUD\Services\CRUD\CRUDController;
 use Larapress\Pages\Services\IPageService;
 use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
 
@@ -12,13 +11,13 @@ use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
  *
  * @group Page Management
  */
-class PageController extends BaseCRUDController
+class PageController extends CRUDController
 {
     public static function registerRoutes() {
         self::registerCrudRoutes(
             config('larapress.pages.routes.pages.name'),
             self::class,
-            PageCRUDProvider::class,
+            config('larapress.pages.routes.pages.provider'),
             [
                 'edit.update_roles' => [
                     'methods' => ['POST'],

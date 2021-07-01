@@ -2,31 +2,33 @@
 
 namespace Larapress\Pages\CRUD;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Larapress\CRUD\Services\CRUD\BaseCRUDProvider;
+use Larapress\CRUD\Extend\Helpers;
+use Larapress\CRUD\Services\CRUD\Traits\CRUDProviderTrait;
 use Larapress\CRUD\Services\CRUD\ICRUDProvider;
+use Larapress\CRUD\Services\CRUD\ICRUDVerb;
 use Larapress\CRUD\Services\RBAC\IPermissionsMetadata;
 use Larapress\Pages\Models\Page;
 use Larapress\Pages\Services\PageVisitReport;
-use Larapress\Reports\Services\IReportsService;
 
-class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
+class PageCRUDProvider implements ICRUDProvider
 {
-    use BaseCRUDProvider;
+    use CRUDProviderTrait;
 
     public $name_in_config = 'larapress.pages.routes.pages.name';
-    public $extend_in_config = 'larapress.pages.routes.pages.extend.providers';
+    public $model_in_config = 'larapress.pages.routes.pages.model';
+    public $compositions_in_config = 'larapress.pages.routes.pages.compositions';
+
     public $verbs = [
-        self::VIEW,
-        self::CREATE,
-        self::EDIT,
-        self::DELETE,
-        self::REPORTS,
+        ICRUDVerb::VIEW,
+        ICRUDVerb::CREATE,
+        ICRUDVerb::EDIT,
+        ICRUDVerb::DELETE,
+        ICRUDVerb::REPORTS,
     ];
-    public $model = Page::class;
     public $createValidations = [
         'name' => 'required|string|unique:pages,name',
         'slug' => 'required|string',
@@ -53,18 +55,19 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'id',
         'slug',
         'name',
+        'flags',
+        'zorder',
         'author_id',
         'publish_at',
         'unpublish_at',
         'updated_at',
         'created_at',
-        'flags',
-        'zorder',
+        'deleted_at',
     ];
-    public $validRelations = ['author'];
-    public $validFilters = [];
-    public $defaultShowRelations = ['author'];
-    public $searchColumns = ['slug', 'name'];
+    public $searchColumns = [
+        'slug',
+        'name'
+    ];
     public $filterFields = [
         'name' => 'equals:name',
         'author' => 'equals:author_id',
@@ -73,14 +76,24 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     ];
 
     /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public function getValidRelations(): array
+    {
+        return [
+            'author' => config('larapress.crud.user.provider'),
+        ];
+    }
+
+    /**
      *
      */
-    public function getReportSources()
+    public function getReportSources(): array
     {
-        /** @var IReportsService */
-        $service = app(IReportsService::class);
         return [
-            new PageVisitReport($service),
+            new PageVisitReport(),
         ];
     }
 
@@ -88,9 +101,11 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
      * Exclude current id in name unique request
      *
      * @param Request $request
-     * @return void
+     *
+     * @return array
      */
-    public function getUpdateRules(Request $request) {
+    public function getUpdateRules(Request $request): array
+    {
         $this->updateValidations['name'] .= ',' . $request->route('id');
         return $this->updateValidations;
     }
@@ -98,15 +113,16 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     /**
      * Undocumented function
      *
-     * @param [type] $args
-     * @return void
+     * @param array $args
+     *
+     * @return array
      */
-    public function onBeforeCreate( $args )
+    public function onBeforeCreate(array $args): array
     {
         $args['author_id'] = Auth::user()->id;
 
         if (!Str::startsWith($args['slug'], '/')) {
-            $args['slug'] = '/'.$args['slug'];
+            $args['slug'] = '/' . $args['slug'];
         }
 
         return $args;
@@ -115,14 +131,15 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     /**
      * Undocumented function
      *
-     * @param [type] $args
-     * @return void
+     * @param array $args
+     *
+     * @return array
      */
-    public function onBeforeUpdate( $args )
+    public function onBeforeUpdate(array $args): array
     {
         if (isset($args['slug'])) {
             if (!Str::startsWith($args['slug'], '/')) {
-                $args['slug'] = '/'.$args['slug'];
+                $args['slug'] = '/' . $args['slug'];
             }
         }
 
@@ -132,13 +149,13 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     /**
      * @param Builder $query
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
-    public function onBeforeQuery($query)
+    public function onBeforeQuery(Builder $query): Builder
     {
         /** @var ICRUDUser $user */
         $user = Auth::user();
-        if (! $user->hasRole(config('larapress.profiles.security.roles.super-role'))) {
+        if (!$user->hasRole(config('larapress.profiles.security.roles.super_role'))) {
             $query->where('author_id', $user->id);
         }
 
@@ -150,24 +167,40 @@ class PageCRUDProvider implements ICRUDProvider, IPermissionsMetadata
      *
      * @return bool
      */
-    public function onBeforeAccess($object)
+    public function onBeforeAccess($object): bool
     {
-        /** @var ICRUDUser|IProfileUser $user */
+        /** @var IProfileUser $user */
         $user = Auth::user();
-        if (! $user->hasRole(config('larapress.profiles.security.roles.super-role'))) {
+        if (!$user->hasRole(config('larapress.profiles.security.roles.super_role'))) {
             return $user->id === $object->author_id;
         }
 
         return true;
     }
 
-    public function onAfterCreate($object, $input_data)
+    /**
+     * Undocumented function
+     *
+     * @param Page $object
+     * @param array $input_data
+     *
+     * @return void
+     */
+    public function onAfterCreate($object, array $input_data): void
     {
-        Cache::tags(['pages'])->flush();
+        Helpers::forgetCachedValues(['pages']);
     }
 
-    public function onAfterUpdate($object, $input_data)
+    /**
+     * Undocumented function
+     *
+     * @param Page $object
+     * @param array $input_data
+     *
+     * @return void
+     */
+    public function onAfterUpdate($object, array $input_data): void
     {
-        Cache::tags(['pages'])->flush();
+        Helpers::forgetCachedValues(['pages']);
     }
 }

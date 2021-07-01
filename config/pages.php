@@ -1,19 +1,6 @@
 <?php
 
-use Larapress\CRUD\Repository\IPermissionsRepository;
-use Larapress\CRUD\Repository\IRoleRepository;
-
 return [
-    'permissions' => [
-        \Larapress\Pages\CRUD\PageCRUDProvider::class,
-        \Larapress\Pages\CRUD\PageSchemaCRUDProvider::class,
-    ],
-
-    'controllers' => [
-        \Larapress\Pages\Controllers\PageController::class,
-        \Larapress\Pages\Controllers\PageSchemaController::class,
-    ],
-
     /** middlewares for page routes */
     'middleware' => [
         'api',
@@ -23,7 +10,12 @@ return [
     /** a prefix for pages url routes /<prefix>/<page url> */
     'prefix' => 'pages',
 
-    'page-defaults' => [
+    // enable/disable page rendering,
+    // if this is false, the controller wont load page routes
+    'enabled' => env('PAGE_RENDERING', false),
+
+    // page rendering default settings
+    'page_settings' => [
         'blade' => 'larapress-pages::vue.app',
         /** default title to use when a page does not have a title */
         'title' => 'Larapress Pages: no title',
@@ -31,22 +23,6 @@ return [
         'author' => 'Larapress Pages: no author',
         'extra-metas' => [],
         'schema' => null,
-    ],
-
-    /** api route defenitions */
-    'routes' => [
-        'pages' => [
-            'name' => 'pages',
-            'extend' => [
-                'providers' => [],
-            ],
-        ],
-        'page-schemas' => [
-            'name' => 'page-schemas',
-            'extend' => [
-                'providers' => [],
-            ],
-        ]
     ],
 
     /** Laravel echo, to connect on client side */
@@ -85,8 +61,36 @@ return [
 
     /** safe sources for client to ask with "ServerSources" page property */
     'safe-sources' => [
-        IPermissionsRepository::class,
-        IRoleRepository::class,
-        IFilterRepository::class,
-    ]
+        \Larapress\CRUD\Repository\IPermissionsRepository::class,
+        \Larapress\CRUD\Repository\IRoleRepository::class,
+        \Larapress\Profiles\Repository\Domain\IDomainRepository::class,
+        \Larapress\Profiles\Repository\Filter\IFilterRepository::class,
+        \Larapress\Profiles\Repository\Form\IFormRepository::class,
+        \Larapress\Profiles\Repository\User\IUserRepository::class,
+    ],
+
+    // crud resources in package
+    'routes' => [
+        'pages' => [
+            'name' => 'pages',
+            'model' => \Larapress\Pages\Models\Page::class,
+            'provider' => \Larapress\Pages\CRUD\PageCRUDProvider::class,
+        ],
+        'page_schemas' => [
+            'name' => 'page_schemas',
+            'model' => \Larapress\Pages\Models\PageSchema::class,
+            'provider' => \Larapress\Pages\CRUD\PageSchemaCRUDProvider::class,
+        ],
+    ],
+
+    'permissions' => [
+        \Larapress\Pages\CRUD\PageCRUDProvider::class,
+        \Larapress\Pages\CRUD\PageSchemaCRUDProvider::class,
+    ],
+
+    'controllers' => [
+        \Larapress\Pages\Controllers\PageController::class,
+        \Larapress\Pages\Controllers\PageSchemaController::class,
+    ],
+
 ];

@@ -7,7 +7,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Larapress\Pages\Services\IPageRenderService;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
+use Larapress\Pages\Models\Page;
+use Larapress\Pages\Services\RepositoryRequest;
 
 /**
  * Page Rendering
@@ -16,22 +17,26 @@ use Illuminate\Support\Facades\Auth;
  */
 class PageRenderController extends Controller
 {
-    /** @var IPageRenderService */
-    private $service;
-    public function __construct(IPageRenderService $service)
-    {
-        $this->service = $service;
-    }
-
     /**
      * Undocumented function
      *
      * @return void
      */
-    public static function registerPublicWebRoutes() {
-        Route::any('{slug?}', '\\'.self::class.'@renderPage')
-            ->where('slug', '.*')
-            ->name(config('larapress.pages.routes.pages.name').'.any.view');
+    public static function registerPublicWebRoutes()
+    {
+        Route::post('/repos',  '\\' . self::class . '@renderRepository')
+            ->name(config('larapress.pages.routes.pages.name') . '.any.repos');
+
+        /** @var Page[] */
+        if (config('larapress.pages.enabled')) {
+            $pages = Page::all();
+            foreach ($pages as $page) {
+                Route::match(['get'], $page->slug, [
+                    'uses' => '\\' . self::class . '@renderPage',
+                    'page_id' => $page->id,
+                ])->name('page.any.render.' . $page->id);
+            }
+        }
     }
 
     /**
@@ -44,18 +49,31 @@ class PageRenderController extends Controller
      *
      * @return Response
      */
-    public function renderPage(Request $request, String $slug = '') {
-        [$page, $route] = $this->service->findPageForRequest($request, $slug);
-        if (is_null($page)) {
-            abort(404);
-        }
+    public function renderPage(IPageRenderService $service, Request $request)
+    {
+        $route = $request->route();
+        $page = Page::find($route->getAction('page_id'));
 
         if ($request->wantsJson()) {
-            return $this->service->renderPageJSON($request, $route, $page, null);
+            return $service->renderPageJSON($request, $route, $page, null);
         }
 
-        return $this->service->renderPageHTML($request, $route, $page, null);
+        return $service->renderPageHTML($request, $route, $page, null);
     }
 
 
+    /**
+     * Render Repository
+     *
+     * Render a list of repositories
+     *
+     * @param Request $request
+     * @param String $slug
+     *
+     * @return Response
+     */
+    public function renderRepository(IPageRenderService $service, RepositoryRequest $request)
+    {
+        return $service->renderRepositories($request, $request->getSources());
+    }
 }

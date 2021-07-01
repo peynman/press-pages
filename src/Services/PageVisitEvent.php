@@ -5,7 +5,6 @@ namespace Larapress\Pages\Services;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Larapress\CRUD\Repository\IRoleRepository;
 use Larapress\ECommerce\IECommerceUser;
 
 class PageVisitEvent implements ShouldQueue
@@ -24,8 +23,6 @@ class PageVisitEvent implements ShouldQueue
     public $timestamp;
     /** @var int */
     public $page_id;
-    /** @var int */
-    public $supportId;
     /** @var string */
     public $role;
 
@@ -43,7 +40,6 @@ class PageVisitEvent implements ShouldQueue
         $this->userId = is_null($user) ? $user : $user->id;
         $this->domainId = is_numeric($domain) || is_null($domain) ? $domain : $domain->id;
         if (!is_null($user)) {
-            $this->supportId = $user->getSupportUserId();
             if (isset($user->roles)) {
                 $this->role = $user->getUserHighestRole()->name;
             }

@@ -2,26 +2,29 @@
 
 namespace Larapress\Pages\CRUD;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Larapress\CRUD\Services\CRUD\BaseCRUDProvider;
+use Larapress\CRUD\Services\CRUD\Traits\CRUDProviderTrait;
 use Larapress\CRUD\Services\CRUD\ICRUDProvider;
+use Larapress\CRUD\Services\CRUD\ICRUDVerb;
 use Larapress\CRUD\Services\RBAC\IPermissionsMetadata;
 use Larapress\Pages\Models\PageSchema;
 
-class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
+class PageSchemaCRUDProvider implements ICRUDProvider
 {
-    use BaseCRUDProvider;
+    use CRUDProviderTrait;
 
-    public $name_in_config = 'larapress.pages.routes.page-schemas.name';
-    public $extend_in_config = 'larapress.pages.routes.page-schemas.extend.providers';
+    public $name_in_config = 'larapress.pages.routes.page_schemas.name';
+    public $model_in_config = 'larapress.pages.routes.page_schemas.model';
+    public $compositions_in_config = 'larapress.pages.routes.page_schemas.compositions';
+
     public $verbs = [
-        self::VIEW,
-        self::CREATE,
-        self::EDIT,
-        self::DELETE,
+        ICRUDVerb::VIEW,
+        ICRUDVerb::CREATE,
+        ICRUDVerb::EDIT,
+        ICRUDVerb::DELETE,
     ];
-    public $model = PageSchema::class;
     public $createValidations = [
         'name' => 'required|string|unique:page_schemas,name',
         'schema' => 'nullable',
@@ -37,25 +40,35 @@ class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
         'name',
         'author_id',
         'flags',
-    ];
-    public $validRelations = [
-        'author'
-    ];
-    public $defaultShowRelations = [
-        'author'
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
     public $searchColumns = [
         'name'
     ];
 
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public function getValidRelations(): array
+    {
+        return [
+            'author' => config('larapress.crud.user.provider'),
+        ];
+    }
 
     /**
      * Exclude current id in name unique request
      *
      * @param Request $request
-     * @return void
+     *
+     * @return array
      */
-    public function getUpdateRules(Request $request) {
+    public function getUpdateRules(Request $request): array
+    {
         $this->updateValidations['name'] .= ',' . $request->route('id');
         return $this->updateValidations;
     }
@@ -63,10 +76,10 @@ class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     /**
      * Undocumented function
      *
-     * @param [type] $args
-     * @return void
+     * @param array $args
+     * @return array
      */
-    public function onBeforeCreate( $args )
+    public function onBeforeCreate(array $args): array
     {
         $args['author_id'] = Auth::user()->id;
 
@@ -76,9 +89,9 @@ class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
     /**
      * @param Builder $query
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
-    public function onBeforeQuery($query)
+    public function onBeforeQuery(Builder $query): Builder
     {
         /** @var ICRUDUser $user */
         $user = Auth::user();
@@ -94,7 +107,7 @@ class PageSchemaCRUDProvider implements ICRUDProvider, IPermissionsMetadata
      *
      * @return bool
      */
-    public function onBeforeAccess($object)
+    public function onBeforeAccess($object): bool
     {
         /** @var ICRUDUser|IProfileUser $user */
         $user = Auth::user();

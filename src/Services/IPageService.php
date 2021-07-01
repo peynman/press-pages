@@ -2,9 +2,6 @@
 
 namespace Larapress\Pages\Services;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
-use Larapress\Pages\Models\Page;
 use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
 use Illuminate\Http\Response;
 

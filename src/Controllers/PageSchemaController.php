@@ -2,7 +2,7 @@
 
 namespace Larapress\Pages\Controllers;
 
-use Larapress\CRUD\Services\CRUD\BaseCRUDController;
+use Larapress\CRUD\Services\CRUD\CRUDController;
 use Larapress\Pages\CRUD\PageSchemaCRUDProvider;
 use Larapress\Pages\Models\PageSchema;
 
@@ -11,16 +11,13 @@ use Larapress\Pages\Models\PageSchema;
  *
  * @group Page Schemas
  */
-class PageSchemaController extends BaseCRUDController
+class PageSchemaController extends CRUDController
 {
     public static function registerRoutes() {
-        $name = config('larapress.pages.routes.page-schemas.name');
-        $class = self::class;
-
         self::registerCrudRoutes(
-            $name,
-            $class,
-            PageSchemaCRUDProvider::class
+            config('larapress.pages.routes.page_schemas.name'),
+            self::class,
+            config('larapress.pages.routes.page_schemas.provider'),
         );
     }
 }

@@ -28,9 +28,16 @@ interface IPageRenderService
     public function renderPageJSON(Request $request, Route $route, Page $page, $schema);
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @param string $slug
-     * @return [Route, Page]
+     * @param int $pageId
+     *
+     * @return Page
      */
-    public function findPageForRequest(Request $request, string $slug);
+    public function findPage($pageId);
+
+    /**
+     * @param Request $request
+     * @param array $sources
+     * @return \Illuminate\Http\Response|string
+     */
+    public function renderRepositories(Request $request, $sources);
 }

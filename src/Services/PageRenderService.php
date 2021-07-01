@@ -3,12 +3,9 @@
 namespace Larapress\Pages\Services;
 
 use Carbon\Carbon;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Auth;
 use Larapress\Pages\Models\Page;
-use Larapress\CRUD\ICRUDUser;
 use Larapress\Profiles\Repository\Domain\IDomainRepository;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Session;
@@ -18,40 +15,31 @@ use Larapress\ECommerce\Services\Wallet\IWalletService;
 use Larapress\Profiles\Flags\UserFlags;
 use Larapress\Pages\Models\PageSchema;
 use Larapress\Profiles\IProfileUser;
+use Illuminate\Database\Eloquent\Model;
+use Larapress\CRUD\Extend\Helpers;
+use Larapress\ECommerce\IECommerceUser;
 use Larapress\Profiles\Repository\Form\IFormRepository;
+use Tymon\JWTAuth\JWTGuard;
 
 class PageRenderService implements IPageRenderService
 {
+
     /**
-     * @param \Illuminate\Http\Request $request
-     * @param string $slug
-     * @return Page|null
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @param int $pageId
+     *
+     * @return Page
      */
-    public function findPageForRequest(Request $request, string $slug)
+    public function findPage($pageId)
     {
-        /** @var \Larapress\Pages\Services\IPageProvider $pageProvider */
-        $pageProvider = app()->make(IPageProvider::class);
-        $pages = $pageProvider->getPagesForRequest($request);
-
-        $router = new Router(new Dispatcher());
-        foreach ($pages as $page) {
-            $router->get($page->slug, [
-                'id' => $page->id
-            ]);
-        }
-
-        $req = Request::create("http://localhost/$slug");
-        $r = $router->getRoutes()->match($req);
-        if (is_null($r)) {
-            return [null, null];
-        }
-
-        foreach ($pages as $page) {
-            if ($page->id === $r->getAction('id')) {
-                return [$page, $r];
-            }
-        }
+        return Helpers::getCachedValue(
+            'larapress.pages.cached.' . $pageId,
+            ['pages'],
+            3600,
+            false,
+            function () use ($pageId) {
+                return Page::find($pageId);
+            },
+        );
     }
 
     /**
@@ -64,7 +52,7 @@ class PageRenderService implements IPageRenderService
     {
         $json = $this->renderPageJSON($request, $route, $page, $schema);
         if (is_array($json)) {
-            return view(config('larapress.pages.page-defaults.blade'), [
+            return view(config('larapress.pages.page_settings.blade'), [
                 'config' => $json
             ]);
         }
@@ -81,7 +69,7 @@ class PageRenderService implements IPageRenderService
     public function renderPageJSON(Request $request, Route $route, Page $page, $schema)
     {
         $jwtToken = null;
-        /** @var  IProfileUser|ICRUDUser */
+        /** @var  IProfileUser|Model */
         $user = Auth::user();
         if (!$this->checkUserAccessToPage($user, $page)) {
             Session::put('endpoint', $request->path());
@@ -95,21 +83,12 @@ class PageRenderService implements IPageRenderService
         }
 
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
-        [$channels, $permissions] = $this->collectPageChannelsAndPermissionsForUser($user);
-        [$currentCart, $balance] = is_null($user) ? [null, null] : $this->collectPageUserECommerce($user, $request);
+        [$channels] = $this->collectPageChannelsAndPermissionsForUser($user);
         if (!is_null($user)) {
-            $jwtToken = auth()->guard('api')->tokenById($user->id);
-            $user['roles'] = [$user->getUserHighestRole()];
-            $user['permissions'] = $permissions;
-            $user['current_cart'] = $currentCart;
-            // make sure user profile ise loaded if exists
-            $user->makeVisible('profile');
-            // make sure support user is loaded
-            $support = $user->supportUserProfile;
-            $user['support'] = isset($support['data']['values']) ? $support['data']['values'] : null;
-            $user['notifications'] = $user->unseen_notifications;
-            $user['phones'] = $user->phones;
-            $user['balance'] = $balance;
+            /** @var JWTGuard */
+            $jwtGuard = auth()->guard('api');
+            $jwtToken = $jwtGuard->tokenById($user->id);
+            $user = $this->getUserDetails($user);
         }
 
         $this->reportPageEvents($user, $request, $route, $page);
@@ -118,7 +97,7 @@ class PageRenderService implements IPageRenderService
         $langs = config('larapress.pages.languages');
         $lang = $langs[0];
 
-        $schema = isset($page->options['schema']) ? $page->options['schema'] : config('larapress.pages.page-defaults.schema');
+        $schema = isset($page->options['schema']) ? $page->options['schema'] : config('larapress.pages.page_settings.schema');
         if (!is_null($schema)) {
             $schema = PageSchema::find($schema);
         }
@@ -129,6 +108,7 @@ class PageRenderService implements IPageRenderService
                 break;
             }
         }
+
         return [
             'user' => $user,
             'tokens' => [
@@ -146,13 +126,71 @@ class PageRenderService implements IPageRenderService
             'sources' => $sources,
             'channels' => $channels,
             'metas' => [
-                'description' => isset($page->options['metas']['description']) ? $page->options['metas']['description'] : config('larapress.pages.page-defaults.description', ''),
-                'author' => isset($page->options['metas']['author']) ? $page->options['metas']['author'] : config('larapress.pages.page-defaults.author', ''),
-                'extra' => isset($page->options['metas']['extra']) ? $page->options['metas']['extra'] : config('larapress.pages.page-defaults.extra-metas', []),
+                'description' => isset($page->options['metas']['description']) ? $page->options['metas']['description'] : config('larapress.pages.page_settings.description', ''),
+                'author' => isset($page->options['metas']['author']) ? $page->options['metas']['author'] : config('larapress.pages.page_settings.author', ''),
+                'extra' => isset($page->options['metas']['extra']) ? $page->options['metas']['extra'] : config('larapress.pages.page_settings.extra-metas', []),
             ]
         ];
     }
 
+    public function getUserDetails(IProfileUser $user)
+    {
+        return Helpers::getCachedValue(
+            'larapress.pages.user.' . $user->id,
+            [
+                'user.page:' . $user->id,
+                'user.wallet:' . $user->id,
+                'purchasing-cart:' . $user->id,
+                'purchased-cart:' . $user->id,
+            ],
+            86400,
+            false,
+            function () use ($user) {
+                if (!is_null($user)) {
+                    [$currentCart, $balance] = $this->collectPageUserECommerce($user);
+                    $user['roles'] = [$user->getUserHighestRole()];
+                    $user['permissions'] = $user->getPermissions();
+                    $user['current_cart'] = $currentCart;
+                    // make sure user profile ise loaded if exists
+                    /** @var Model $user */
+                    $user->makeVisible('profile');
+                    // make sure support user is loaded
+                    $support = $user->supportUserProfile;
+                    $user['support'] = isset($support['data']['values']) ? $support['data']['values'] : null;
+                    $user['notifications'] = $user->unseen_notifications;
+                    $user['phones'] = $user->phones;
+                    $user['balance'] = $balance;
+
+                    return $user;
+                }
+            },
+        );
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @param [type] $sources
+     * @return \Illuminate\Http\Response|string
+     */
+    public function renderRepositories(Request $request, $sources)
+    {
+        /** @var IFormRepository */
+        $srcRepo = app(IFormRepository::class);
+        return $srcRepo->getFormDataSources(Auth::user(), $request, null, $sources);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param null|IProfileUser $user
+     * @param Request $request
+     * @param Route $route
+     * @param Page $page
+     *
+     * @return void
+     */
     protected function reportPageEvents($user, Request $request, Route $route, Page $page)
     {
         /** @var IDomainRepository */
@@ -174,7 +212,7 @@ class PageRenderService implements IPageRenderService
     /**
      * Undocumented function
      *
-     * @param [type] $user
+     * @param null|IProfileUser $user
      * @param Page $page
      * @return void
      */
@@ -242,12 +280,12 @@ class PageRenderService implements IPageRenderService
         $userPermissions = [];
         if (!is_null($user)) {
             $userPermissions = [];
-            if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super-role'), config('larapress.profiles.security.roles.affiliate')))) {
+            if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super_role'), config('larapress.profiles.security.roles.affiliate')))) {
                 $permissions = $user->getPermissions();
-                $roleFolder = $user->hasRole(config('larapress.profiles.security.roles.affiliate')) ? ".".$user->id : '';
+                $roleFolder = $user->hasRole(config('larapress.profiles.security.roles.affiliate')) ? "." . $user->id : '';
                 foreach ($permissions as $permission) {
                     if (!in_array('crud.' . $permission[1], $channels)) {
-                        $channels[] = ['name' => 'crud.' . $permission[1] .$roleFolder, 'access' => 'private']; // attach first part if permission string as name.verb
+                        $channels[] = ['name' => 'crud.' . $permission[1] . $roleFolder, 'access' => 'private']; // attach first part if permission string as name.verb
                         $userPermissions[] = $permission[1];
                     }
                 }
@@ -266,7 +304,7 @@ class PageRenderService implements IPageRenderService
      * @param Request $request
      * @return void
      */
-    protected function collectPageUserECommerce(IProfileUser $user, Request $request)
+    protected function collectPageUserECommerce(IProfileUser $user)
     {
         if (!is_null($user)) {
             /** @var IWalletService */
