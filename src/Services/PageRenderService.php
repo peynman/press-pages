@@ -83,7 +83,7 @@ class PageRenderService implements IPageRenderService
         }
 
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
-        [$channels] = $this->collectPageChannelsAndPermissionsForUser($user);
+        $channels = $this->collectPageChannelsAndPermissionsForUser($user);
         if (!is_null($user)) {
             /** @var JWTGuard */
             $jwtGuard = auth()->guard('api');
@@ -277,24 +277,20 @@ class PageRenderService implements IPageRenderService
     protected function collectPageChannelsAndPermissionsForUser($user)
     {
         $channels = [];
-        $userPermissions = [];
         if (!is_null($user)) {
-            $userPermissions = [];
             if ($user->hasRole(array_merge(config('larapress.profiles.security.roles.super_role'), config('larapress.profiles.security.roles.affiliate')))) {
                 $permissions = $user->getPermissions();
                 $roleFolder = $user->hasRole(config('larapress.profiles.security.roles.affiliate')) ? "." . $user->id : '';
                 foreach ($permissions as $permission) {
-                    if (!in_array('crud.' . $permission[1], $channels)) {
-                        $channels[] = ['name' => 'crud.' . $permission[1] . $roleFolder, 'access' => 'private']; // attach first part if permission string as name.verb
-                        $userPermissions[] = $permission[1];
+                    if (!in_array('crud.' . $permission['name'], $channels)) {
+                        $channels[] = ['name' => 'crud.' . $permission['name'] . $roleFolder, 'access' => 'private']; // attach first part if permission string as name.verb
                     }
                 }
             }
-            $userPermissions = $userPermissions;
         }
         $channels[] = ['name' => 'website', 'access' => 'presence', 'auto' => true];
 
-        return [$channels, $userPermissions];
+        return $channels;
     }
 
     /**

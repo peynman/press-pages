@@ -33,11 +33,4 @@ interface IPageRenderService
      * @return Page
      */
     public function findPage($pageId);
-
-    /**
-     * @param Request $request
-     * @param array $sources
-     * @return \Illuminate\Http\Response|string
-     */
-    public function renderRepositories(Request $request, $sources);
 }

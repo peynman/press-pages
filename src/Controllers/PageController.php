@@ -13,21 +13,6 @@ use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
  */
 class PageController extends CRUDController
 {
-    public static function registerRoutes() {
-        self::registerCrudRoutes(
-            config('larapress.pages.routes.pages.name'),
-            self::class,
-            config('larapress.pages.routes.pages.provider'),
-            [
-                'edit.update_roles' => [
-                    'methods' => ['POST'],
-                    'uses' => '\\'.self::class.'@updateRoles',
-                    'url' => config('larapress.pages.routes.pages.name').'/update-roles',
-                ]
-            ]
-        );
-    }
-
     /**
      * Update roles that can access a page
      *

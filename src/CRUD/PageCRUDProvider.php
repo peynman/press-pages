@@ -10,7 +10,6 @@ use Larapress\CRUD\Extend\Helpers;
 use Larapress\CRUD\Services\CRUD\Traits\CRUDProviderTrait;
 use Larapress\CRUD\Services\CRUD\ICRUDProvider;
 use Larapress\CRUD\Services\CRUD\ICRUDVerb;
-use Larapress\CRUD\Services\RBAC\IPermissionsMetadata;
 use Larapress\Pages\Models\Page;
 use Larapress\Pages\Services\PageVisitReport;
 
@@ -22,19 +21,12 @@ class PageCRUDProvider implements ICRUDProvider
     public $model_in_config = 'larapress.pages.routes.pages.model';
     public $compositions_in_config = 'larapress.pages.routes.pages.compositions';
 
-    public $verbs = [
-        ICRUDVerb::VIEW,
-        ICRUDVerb::CREATE,
-        ICRUDVerb::EDIT,
-        ICRUDVerb::DELETE,
-        ICRUDVerb::REPORTS,
-    ];
     public $createValidations = [
         'name' => 'required|string|unique:pages,name',
         'slug' => 'required|string',
-        'options' => 'required|json',
+        'options' => 'required|json_object',
         'options.title' => 'required|string',
-        'body' => 'nullable|json',
+        'body' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
@@ -43,9 +35,9 @@ class PageCRUDProvider implements ICRUDProvider
     public $updateValidations = [
         'name' => 'required|string|unique:pages,name',
         'slug' => 'required|string',
-        'options' => 'required|json',
+        'options' => 'required|json_object',
         'options.title' => 'required|string',
-        'body' => 'nullable|json',
+        'body' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
@@ -74,6 +66,27 @@ class PageCRUDProvider implements ICRUDProvider
         'updated_from' => 'after:updated_at',
         'updated_to' => 'before:updated_at',
     ];
+
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public function getPermissionVerbs(): array
+    {
+        return [
+            ICRUDVerb::VIEW,
+            ICRUDVerb::CREATE,
+            ICRUDVerb::EDIT,
+            ICRUDVerb::DELETE,
+            ICRUDVerb::REPORTS,
+            ICRUDVerb::EDIT.'.roles' => [
+                'methods' => ['POST'],
+                'uses' => '\\'.self::class.'@updateRoles',
+                'url' => config('larapress.pages.routes.pages.name').'/update-roles',
+            ]
+        ];
+    }
 
     /**
      * Undocumented function

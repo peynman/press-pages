@@ -2,7 +2,7 @@
 
 return [
     /** middlewares for page routes */
-    'middleware' => [
+    'middlewares' => [
         'api',
         'web',
     ],
@@ -59,16 +59,6 @@ return [
         ],
     ],
 
-    /** safe sources for client to ask with "ServerSources" page property */
-    'safe-sources' => [
-        \Larapress\CRUD\Repository\IPermissionsRepository::class,
-        \Larapress\CRUD\Repository\IRoleRepository::class,
-        \Larapress\Profiles\Repository\Domain\IDomainRepository::class,
-        \Larapress\Profiles\Repository\Filter\IFilterRepository::class,
-        \Larapress\Profiles\Repository\Form\IFormRepository::class,
-        \Larapress\Profiles\Repository\User\IUserRepository::class,
-    ],
-
     // crud resources in package
     'routes' => [
         'pages' => [
@@ -87,10 +77,4 @@ return [
         \Larapress\Pages\CRUD\PageCRUDProvider::class,
         \Larapress\Pages\CRUD\PageSchemaCRUDProvider::class,
     ],
-
-    'controllers' => [
-        \Larapress\Pages\Controllers\PageController::class,
-        \Larapress\Pages\Controllers\PageSchemaController::class,
-    ],
-
 ];

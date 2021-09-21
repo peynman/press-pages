@@ -7,8 +7,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Larapress\Pages\Services\IPageRenderService;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Schema;
 use Larapress\Pages\Models\Page;
-use Larapress\Pages\Services\RepositoryRequest;
 
 /**
  * Page Rendering
@@ -24,17 +24,17 @@ class PageRenderController extends Controller
      */
     public static function registerPublicWebRoutes()
     {
-        Route::post('/repos',  '\\' . self::class . '@renderRepository')
-            ->name(config('larapress.pages.routes.pages.name') . '.any.repos');
-
         /** @var Page[] */
         if (config('larapress.pages.enabled')) {
-            $pages = Page::all();
-            foreach ($pages as $page) {
-                Route::match(['get'], $page->slug, [
-                    'uses' => '\\' . self::class . '@renderPage',
-                    'page_id' => $page->id,
-                ])->name('page.any.render.' . $page->id);
+            if (Schema::hasTable('pages')) {
+                $pages = Page::all();
+                foreach ($pages as $page) {
+                    Route::match(['get'], $page->slug, [
+                        'uses' => '\\' . self::class . '@renderPage',
+                        'page_id' => $page->id,
+                    ])
+                        ->name(config('larapress.pages.routes.pages.name') . '.any.render.' . $page->id);
+                }
             }
         }
     }
@@ -59,21 +59,5 @@ class PageRenderController extends Controller
         }
 
         return $service->renderPageHTML($request, $route, $page, null);
-    }
-
-
-    /**
-     * Render Repository
-     *
-     * Render a list of repositories
-     *
-     * @param Request $request
-     * @param String $slug
-     *
-     * @return Response
-     */
-    public function renderRepository(IPageRenderService $service, RepositoryRequest $request)
-    {
-        return $service->renderRepositories($request, $request->getSources());
     }
 }
