@@ -15,7 +15,7 @@ return [
     'enabled' => env('PAGE_RENDERING', false),
 
     // page rendering default settings
-    'page_settings' => [
+    'render' => [
         'blade' => 'larapress-pages::vue.app',
         /** default title to use when a page does not have a title */
         'title' => 'Larapress Pages: no title',
@@ -57,6 +57,12 @@ return [
             'title' => 'Kurdic',
             'direction' => 'rtl',
         ],
+    ],
+
+    // page visit reporting
+    'reports' => [
+        'group' => 'pages',
+        'pages' => 1,
     ],
 
     // crud resources in package

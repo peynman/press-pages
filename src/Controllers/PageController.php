@@ -7,8 +7,6 @@ use Larapress\Pages\Services\IPageService;
 use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
 
 /**
- * Standard CRUD controller for Page resource.
- *
  * @group Page Management
  */
 class PageController extends CRUDController
@@ -20,6 +18,7 @@ class PageController extends CRUDController
      *
      * @param IPageService $service
      * @param UpdateRolesRequest $request
+     *
      * @return Response
      */
     public function updateRoles(IPageService $service, UpdateRolesRequest $request) {

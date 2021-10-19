@@ -55,9 +55,9 @@ class PageRenderController extends Controller
         $page = Page::find($route->getAction('page_id'));
 
         if ($request->wantsJson()) {
-            return $service->renderPageJSON($request, $route, $page, null);
+            return $service->renderPageJSON($request, $route, $page);
         }
 
-        return $service->renderPageHTML($request, $route, $page, null);
+        return $service->renderPageHTML($request, $route, $page);
     }
 }

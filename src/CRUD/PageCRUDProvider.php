@@ -10,8 +10,9 @@ use Larapress\CRUD\Extend\Helpers;
 use Larapress\CRUD\Services\CRUD\Traits\CRUDProviderTrait;
 use Larapress\CRUD\Services\CRUD\ICRUDProvider;
 use Larapress\CRUD\Services\CRUD\ICRUDVerb;
+use Larapress\Pages\Controllers\PageController;
 use Larapress\Pages\Models\Page;
-use Larapress\Pages\Services\PageVisitReport;
+use Larapress\Pages\Services\Pages\Reports\PageVisitReport;
 
 class PageCRUDProvider implements ICRUDProvider
 {
@@ -80,10 +81,9 @@ class PageCRUDProvider implements ICRUDProvider
             ICRUDVerb::CREATE,
             ICRUDVerb::EDIT,
             ICRUDVerb::DELETE,
-            ICRUDVerb::REPORTS,
             ICRUDVerb::EDIT.'.roles' => [
                 'methods' => ['POST'],
-                'uses' => '\\'.self::class.'@updateRoles',
+                'uses' => '\\'.PageController::class.'@updateRoles',
                 'url' => config('larapress.pages.routes.pages.name').'/update-roles',
             ]
         ];
@@ -102,12 +102,14 @@ class PageCRUDProvider implements ICRUDProvider
     }
 
     /**
+     * Undocumented function
      *
+     * @return array
      */
     public function getReportSources(): array
     {
         return [
-            new PageVisitReport(),
+            PageVisitReport::NAME => PageVisitReport::class,
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Larapress\Pages\Services\UpdateRoles;
+namespace Larapress\Pages\Services\Pages\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
@@ -32,19 +32,34 @@ class UpdateRolesRequest extends FormRequest
     {
         return [
             'mode' => 'required|in:add,remove,sync',
-            'roles.*.id' => 'required|exists:roles,id',
+            'roles.*' => 'required|exists:roles,id',
             'pages.*' => 'required|exists:pages,id',
         ];
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
     public function getRoleIds() {
-        return Collection::make($this->get('roles'))->pluck('id');
+        return $this->get('roles', []);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
     public function getPageIds() {
-        return $this->get('pages');
+        return $this->get('pages', []);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
     public function getMode() {
         return $this->get('mode');
     }

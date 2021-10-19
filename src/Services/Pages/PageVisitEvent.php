@@ -6,6 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Larapress\ECommerce\IECommerceUser;
+use Larapress\Profiles\IProfileUser;
 
 class PageVisitEvent implements ShouldQueue
 {
@@ -48,5 +49,20 @@ class PageVisitEvent implements ShouldQueue
         $this->ip = $ip;
         $this->filters = $filters;
         $this->timestamp = $timestamp;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return IProfileUser|null
+     */
+    public function getUser(): IProfileUser|null
+    {
+        if (!is_null($this->userId)) {
+            $class = config('larapress.crud.user.model');
+            return call_user_func([$class, 'find'], $this->userId);
+        }
+
+        return null;
     }
 }
