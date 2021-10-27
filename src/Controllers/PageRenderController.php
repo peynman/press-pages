@@ -5,7 +5,7 @@ namespace Larapress\Pages\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
-use Larapress\Pages\Services\IPageRenderService;
+use Larapress\Pages\Services\Pages\IPageRenderService;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Schema;
 use Larapress\Pages\Models\Page;

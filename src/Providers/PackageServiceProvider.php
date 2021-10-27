@@ -8,12 +8,10 @@ use Larapress\Pages\Commands\ExportPagesToJSON;
 use Larapress\Pages\Commands\ImportPagesFromJSON;
 use Larapress\Pages\Repository\IPageRepository;
 use Larapress\Pages\Repository\PageRepository;
-use Larapress\Pages\Services\IPageRenderService;
-use Larapress\Pages\Services\IPageService;
-use Larapress\Pages\Services\PageRenderService;
-use Larapress\Pages\Services\PageService;
-use Larapress\Profiles\Repository\Filter\FilterRepository;
-use Larapress\Profiles\Repository\Filter\IFilterRepository;
+use Larapress\Pages\Services\Pages\IPageRenderService;
+use Larapress\Pages\Services\Pages\IPageService;
+use Larapress\Pages\Services\Pages\PageRenderService;
+use Larapress\Pages\Services\Pages\PageService;
 
 class PackageServiceProvider extends ServiceProvider
 {
@@ -25,7 +23,6 @@ class PackageServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(IPageRenderService::class, PageRenderService::class);
-        $this->app->bind(IFilterRepository::class, FilterRepository::class);
         $this->app->bind(IPageRepository::class, PageRepository::class);
         $this->app->bind(IPageService::class, PageService::class);
 

@@ -17,9 +17,8 @@ class CreatePagesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('author_id', false, true);
             $table->string('name');
-            $table->string('slug')->nullable();
+            $table->string('slug');
             $table->json('body')->nullable();
-            $table->json('options')->nullable();
             $table->integer('zorder', false, true)->default(100);
             $table->integer('flags', false, true)->default(0);
             $table->timestamp('publish_at')->nullable();

@@ -1,10 +1,9 @@
 <?php
 
-namespace Larapress\Pages\Services;
+namespace Larapress\Pages\Services\Pages;
 
 use Illuminate\Support\Facades\DB;
-use Larapress\Pages\Models\Page;
-use Larapress\Pages\Services\UpdateRoles\UpdateRolesRequest;
+use Larapress\Pages\Services\Pages\Requests\UpdateRolesRequest;
 
 class PageService implements IPageService {
     /**

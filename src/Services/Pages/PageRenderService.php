@@ -1,8 +1,7 @@
 <?php
 
-namespace Larapress\Pages\Services;
+namespace Larapress\Pages\Services\Pages;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Larapress\Pages\Models\Page;
@@ -14,12 +13,12 @@ use Larapress\Profiles\Flags\UserFlags;
 use Larapress\Pages\Models\PageSchema;
 use Larapress\Profiles\IProfileUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Larapress\CRUD\Extend\Helpers;
 use Larapress\CRUD\Services\RepoSources\IRepositorySources;
 
 class PageRenderService implements IPageRenderService
 {
-
     /**
      * @param int $pageId
      *
@@ -48,13 +47,9 @@ class PageRenderService implements IPageRenderService
     public function renderPageHTML(Request $request, Route $route, Page $page)
     {
         $json = $this->renderPageJSON($request, $route, $page);
-        if (is_array($json)) {
-            return view(config('larapress.pages.render.blade'), [
-                'config' => $json
-            ]);
-        }
-
-        return $json;
+        return view(config('larapress.pages.render.blade'), [
+            'config' => $json
+        ]);
     }
 
     /**
@@ -65,7 +60,6 @@ class PageRenderService implements IPageRenderService
      */
     public function renderPageJSON(Request $request, Route $route, Page $page)
     {
-        $jwtToken = null;
         /** @var  IProfileUser|Model */
         $user = Auth::user();
         if (!$this->checkUserAccessToPage($user, $page)) {
@@ -82,22 +76,43 @@ class PageRenderService implements IPageRenderService
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
         $channels = $this->collectPageChannelsAndPermissionsForUser($user);
 
-        $this->reportPageVisit($user, $request, $route, $page);
-
         $locale = app()->getLocale();
-        $langs = config('larapress.pages.languages');
+        $langs = Collection::make(config('larapress.pages.languages'));
+        $locale = $langs->first(function ($lang) use($locale) {
+            return $lang['id'] === $locale;
+        });
 
-        $schema = isset($page->options['schema']) ? $page->options['schema'] : config('larapress.pages.render.schema');
+        $author = config('larapress.pages.render.author');
+        $desc = config('larapress.pages.render.description');
+        $metas = config('larapress.pages.render.extra-metas');
+        $schema = isset($page->options['schemaId']) ? $page->options['schemaId'] : config('larapress.pages.render.schema');
+
+        if (isset($page->options['metas']) && is_array($page->options['metas'])) {
+            $metas = array_merge($metas, $page->options['metas']);
+        }
+        if (isset($page->options['author']) && !is_null($page->options['author'])) {
+            $author = $page->options['author'];
+        }
+        if (isset($page->options['description']) && !is_null($page->options['description'])) {
+            $author = $page->options['description'];
+        }
+
         if (!is_null($schema)) {
             $schema = PageSchema::find($schema);
         }
 
+        $this->reportPageVisit($user, $request, $route, $page);
         return [
             'page' => $page->toArray(),
             'schema' => $schema?->toArray() ?? [],
+            'metas' => [
+                'author' => $author,
+                'description' => $desc,
+                'extra' => $metas,
+            ],
             'user' => $user?->toArray(),
             'langs' => $langs,
-            'locale' => $locale,
+            'language' => $locale,
             'sources' => $sources,
             'channels' => $channels,
         ];
@@ -194,7 +209,6 @@ class PageRenderService implements IPageRenderService
 
         return $channels;
     }
-
 
     /**
      * Undocumented function

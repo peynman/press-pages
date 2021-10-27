@@ -25,8 +25,6 @@ class PageCRUDProvider implements ICRUDProvider
     public $createValidations = [
         'name' => 'required|string|unique:pages,name',
         'slug' => 'required|string',
-        'options' => 'required|json_object',
-        'options.title' => 'required|string',
         'body' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
@@ -140,6 +138,9 @@ class PageCRUDProvider implements ICRUDProvider
         if (!Str::startsWith($args['slug'], '/')) {
             $args['slug'] = '/' . $args['slug'];
         }
+        if (!isset($args['zorder'])) {
+            $args['zorder'] = 0;
+        }
 
         return $args;
     }
@@ -157,6 +158,9 @@ class PageCRUDProvider implements ICRUDProvider
             if (!Str::startsWith($args['slug'], '/')) {
                 $args['slug'] = '/' . $args['slug'];
             }
+        }
+        if (!isset($args['zorder'])) {
+            $args['zorder'] = 0;
         }
 
         return $args;

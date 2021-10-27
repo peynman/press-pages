@@ -13,13 +13,10 @@
     @if (!is_null(auth()->user()))
         <meta name="jwt-token" content="{{ auth()->guard('api')->tokenById(auth()->user()->id) }}">
     @endif
-
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/vendor/larapress-pages/css/app.css') }}">
-    <title>{{ $config['title'] }}</title>
+    @yield("scripts")
 </head>
 <body>
-    <div id="App"></div>
+    @yield("content")
     <script>
         window.PageConfig = {!! json_encode($config) !!}
         window.SessionData = {!! json_encode(session()->all()) !!}
@@ -33,13 +30,6 @@
             };
         </script>
         <script src="{!! config('larapress.pages.echo.web_path') !!}/socket.io/socket.io.js"></script>
-    @endif
-    @if(env('APP_ENV') === 'production')
-    <script src="{{ mix('js/manifest.js', '/vendor/larapress-pages') }}"></script>
-    <script src="{{ mix('js/vendor.bundle.js', '/vendor/larapress-pages') }}"></script>
-    <script src="{{ mix('js/app.bundle.js', '/vendor/larapress-pages') }}"></script>
-    @else
-    <script src="{{ asset('/vendor/larapress-pages/js/app.js') }}"></script>
     @endif
 </body>
 </html>

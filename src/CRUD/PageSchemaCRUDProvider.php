@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Larapress\CRUD\Services\CRUD\Traits\CRUDProviderTrait;
 use Larapress\CRUD\Services\CRUD\ICRUDProvider;
 use Larapress\CRUD\Services\CRUD\ICRUDVerb;
-use Larapress\CRUD\Services\RBAC\IPermissionsMetadata;
 use Larapress\Pages\Models\PageSchema;
 
 class PageSchemaCRUDProvider implements ICRUDProvider
@@ -28,12 +27,12 @@ class PageSchemaCRUDProvider implements ICRUDProvider
     ];
     public $createValidations = [
         'name' => 'required|string|unique:page_schemas,name',
-        'schema' => 'nullable',
+        'schema' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
     ];
     public $updateValidations = [
         'name' => 'nullable|string|unique:page_schemas,name',
-        'schema' => 'nullable',
+        'schema' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
     ];
     public $validSortColumns = [

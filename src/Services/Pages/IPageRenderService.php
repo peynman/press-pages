@@ -1,6 +1,6 @@
 <?php
 
-namespace Larapress\Pages\Services;
+namespace Larapress\Pages\Services\Pages;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;

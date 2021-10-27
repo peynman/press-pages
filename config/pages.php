@@ -73,7 +73,7 @@ return [
             'provider' => \Larapress\Pages\CRUD\PageCRUDProvider::class,
         ],
         'page_schemas' => [
-            'name' => 'page_schemas',
+            'name' => 'page-schemas',
             'model' => \Larapress\Pages\Models\PageSchema::class,
             'provider' => \Larapress\Pages\CRUD\PageSchemaCRUDProvider::class,
         ],

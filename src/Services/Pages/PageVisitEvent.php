@@ -1,6 +1,6 @@
 <?php
 
-namespace Larapress\Pages\Services;
+namespace Larapress\Pages\Services\Pages;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
