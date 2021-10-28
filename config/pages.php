@@ -13,6 +13,8 @@ return [
     // enable/disable page rendering,
     // if this is false, the controller wont load page routes
     'enabled' => env('PAGE_RENDERING', false),
+    // enable/disable wildcard page rendering
+    'wildcard' => env('PAGE_RENDERING', false),
 
     // page rendering default settings
     'render' => [
