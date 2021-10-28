@@ -83,7 +83,7 @@ class PageRenderService implements IPageRenderService
 
         $locale = app()->getLocale();
         $langs = Collection::make(config('larapress.pages.languages'));
-        $locale = $langs->first(function ($lang) use($locale) {
+        $locale = $langs->first(function ($lang) use ($locale) {
             return $lang['id'] === $locale;
         });
 
@@ -120,6 +120,55 @@ class PageRenderService implements IPageRenderService
             'langs' => $langs,
             'language' => $locale,
             'sources' => $sources,
+            'channels' => $channels,
+        ];
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public function getDefaultConfig()
+    {
+        /** @var  IProfileUser|Model */
+        $user = Auth::user();
+
+        $jwtToken = null;
+        if (!is_null($user)) {
+            $jwtToken = auth()->guard('api')->tokenById($user->id);
+        }
+
+        $channels = $this->collectPageChannelsAndPermissionsForUser($user);
+
+        $locale = app()->getLocale();
+        $langs = Collection::make(config('larapress.pages.languages'));
+        $locale = $langs->first(function ($lang) use ($locale) {
+            return $lang['id'] === $locale;
+        });
+
+        $author = config('larapress.pages.render.author');
+        $desc = config('larapress.pages.render.description');
+        $metas = config('larapress.pages.render.extra-metas');
+        $schema = config('larapress.pages.render.schema');
+
+        if (!is_null($schema)) {
+            $schema = PageSchema::find($schema);
+        }
+
+        return [
+            'token' => $jwtToken,
+            'page' => null,
+            'schema' => $schema?->toArray() ?? [],
+            'metas' => [
+                'author' => $author,
+                'description' => $desc,
+                'extra' => $metas,
+            ],
+            'user' => $user?->toArray(),
+            'langs' => $langs,
+            'language' => $locale,
+            'sources' => [],
             'channels' => $channels,
         ];
     }

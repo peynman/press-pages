@@ -34,6 +34,14 @@ interface IPageRenderService
      */
     public function findPage($pageId);
 
+
+    /**
+     * Undocumented function
+     *
+     * @return array
+     */
+    public function getDefaultConfig();
+
     /**
      * Undocumented function
      *
