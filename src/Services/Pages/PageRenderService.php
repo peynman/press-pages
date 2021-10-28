@@ -73,6 +73,11 @@ class PageRenderService implements IPageRenderService
             }
         }
 
+        $jwtToken = null;
+        if (!is_null($user)) {
+            $jwtToken = auth()->guard('api')->tokenById($user->id);
+        }
+
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
         $channels = $this->collectPageChannelsAndPermissionsForUser($user);
 
@@ -103,6 +108,7 @@ class PageRenderService implements IPageRenderService
 
         $this->reportPageVisit($user, $request, $route, $page);
         return [
+            'token' => $jwtToken,
             'page' => $page->toArray(),
             'schema' => $schema?->toArray() ?? [],
             'metas' => [

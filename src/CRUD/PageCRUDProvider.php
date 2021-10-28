@@ -26,6 +26,7 @@ class PageCRUDProvider implements ICRUDProvider
         'name' => 'required|string|unique:pages,name',
         'slug' => 'required|string',
         'body' => 'nullable|json_object',
+        'body.title' => 'required|string',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
@@ -34,8 +35,7 @@ class PageCRUDProvider implements ICRUDProvider
     public $updateValidations = [
         'name' => 'required|string|unique:pages,name',
         'slug' => 'required|string',
-        'options' => 'required|json_object',
-        'options.title' => 'required|string',
+        'body.title' => 'required|string',
         'body' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',

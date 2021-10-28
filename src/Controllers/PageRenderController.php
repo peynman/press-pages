@@ -7,6 +7,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Larapress\Pages\Services\Pages\IPageRenderService;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Larapress\Pages\Models\Page;
 
@@ -26,14 +28,18 @@ class PageRenderController extends Controller
     {
         /** @var Page[] */
         if (config('larapress.pages.enabled')) {
-            if (Schema::hasTable('pages')) {
-                $pages = Page::all();
-                foreach ($pages as $page) {
-                    Route::match(['get'], $page->slug, [
-                        'uses' => '\\' . self::class . '@renderPage',
-                        'page_id' => $page->id,
-                    ])
-                        ->name(config('larapress.pages.routes.pages.name') . '.any.render.' . $page->id);
+            $argv = $_SERVER['argv'];
+            if (!app()->runningInConsole() || (count($argv) === 2 && $argv[2] === "route:cache")) {
+                $exists = DB::select("SHOW TABLES LIKE 'pages';");
+                if (count($exists)) {
+                    $pages = Page::all();
+                    foreach ($pages as $page) {
+                        Route::match(['get'], $page->slug, [
+                            'uses' => '\\' . self::class . '@renderPage',
+                            'page_id' => $page->id,
+                        ])
+                            ->name(config('larapress.pages.routes.pages.name') . '.any.render.' . $page->id);
+                    }
                 }
             }
         }

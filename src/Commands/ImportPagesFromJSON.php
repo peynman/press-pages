@@ -43,7 +43,7 @@ class ImportPagesFromJSON extends Command
         $import = function ($filename) {
             $content = file_get_contents($filename);
             $pageData = json_decode($content, true);
-            $page = Page::updateOrCreate([
+            $page = Page::withTrashed()->updateOrCreate([
                 'name' => $pageData['name'],
                 'author_id' => isset($pageData['author_id']) ? $pageData['author_id'] : 1,
                 'slug' => $pageData['slug'],
@@ -52,6 +52,9 @@ class ImportPagesFromJSON extends Command
                 'body' => $pageData['body'],
                 'options' => $pageData['options'],
                 'flags' => isset($pageData['flags']) ? $pageData['flags'] : 0,
+                'created_at' => $pageData['created_at'],
+                'updated_at' => $pageData['updated_at'],
+                'deleted_at' => $pageData['deleted_at'],
             ]);
             $this->info("Page created with slug: " . $page->slug);
         };
