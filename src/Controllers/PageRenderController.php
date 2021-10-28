@@ -29,7 +29,7 @@ class PageRenderController extends Controller
         /** @var Page[] */
         if (config('larapress.pages.enabled')) {
             $argv = $_SERVER['argv'];
-            if (!app()->runningInConsole() || (count($argv) === 2 && is_array($argv) && $argv[2] === "route:cache")) {
+            if (!app()->runningInConsole() || (is_array($argv) && count($argv) === 2 && $argv[1] === "route:cache")) {
                 $exists = DB::select("SHOW TABLES LIKE 'pages';");
                 if (count($exists)) {
                     $pages = Page::all();
