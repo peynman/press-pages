@@ -3,7 +3,7 @@
 namespace Larapress\Pages\Services\Pages\Reports;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Larapress\Pages\Services\PageVisitEvent;
+use Larapress\Pages\Services\Pages\PageVisitEvent;
 use Larapress\Reports\Services\Reports\IMetricsService;
 
 class PageVisitListener implements ShouldQueue

@@ -13,6 +13,7 @@ use Larapress\CRUD\Services\CRUD\ICRUDVerb;
 use Larapress\Pages\Controllers\PageController;
 use Larapress\Pages\Models\Page;
 use Larapress\Pages\Services\Pages\Reports\PageVisitReport;
+use Larapress\Reports\Services\Reports\ReportsVerb;
 
 class PageCRUDProvider implements ICRUDProvider
 {
@@ -27,6 +28,7 @@ class PageCRUDProvider implements ICRUDProvider
         'slug' => 'required|string',
         'body' => 'nullable|json_object',
         'body.title' => 'required|string',
+        'options' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
@@ -37,6 +39,7 @@ class PageCRUDProvider implements ICRUDProvider
         'slug' => 'required|string',
         'body.title' => 'required|string',
         'body' => 'nullable|json_object',
+        'options' => 'nullable|json_object',
         'flags' => 'nullable|numeric',
         'publish_at' => 'nullable|datetime_zoned',
         'unpublish_at' => 'nullable|datetime_zoned',
@@ -83,7 +86,8 @@ class PageCRUDProvider implements ICRUDProvider
                 'methods' => ['POST'],
                 'uses' => '\\'.PageController::class.'@updateRoles',
                 'url' => config('larapress.pages.routes.pages.name').'/update-roles',
-            ]
+            ],
+            ReportsVerb::REPORTS => ReportsVerb::controllerVerb(config($this->name_in_config)),
         ];
     }
 

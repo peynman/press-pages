@@ -13,8 +13,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Larapress\Pages\Services\PageVisitEvent' => [
-            'Larapress\Pages\Services\PageVisitReport',
+        'Larapress\Pages\Services\Pages\PageVisitEvent' => [
+            'Larapress\Pages\Services\Pages\Reports\PageVisitListener',
         ],
     ];
 

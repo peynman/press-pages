@@ -5,6 +5,7 @@ return [
     'middlewares' => [
         'api',
         'web',
+        Larapress\CRUD\Middleware\JWTAuthenticate::class,
     ],
 
     /** a prefix for pages url routes /<prefix>/<page url> */
