@@ -7,6 +7,8 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Larapress\ECommerce\IECommerceUser;
 use Larapress\Profiles\IProfileUser;
+use Illuminate\Http\Request;
+use Larapress\CRUD\Extend\MobileDetect;
 
 class PageVisitEvent implements ShouldQueue
 {
@@ -18,6 +20,14 @@ class PageVisitEvent implements ShouldQueue
     public $domainId;
     /** @var string */
     public $ip;
+    /** @var string */
+    public $agent;
+    /** @var string */
+    public $client;
+    /** @var string */
+    public $path;
+    /** @var string */
+    public $isMobile;
     /** @var array */
     public $filters;
     /** @var int */
@@ -32,11 +42,11 @@ class PageVisitEvent implements ShouldQueue
      *
      * @param null|IECommerceUser $user
      * @param null|Domain $domain
-     * @param $ip
+     * @param Request $request
      * @param $timestamp
      * @param $filters
      */
-    public function __construct($user, $page_id, $domain, $ip, $timestamp, $filters = [])
+    public function __construct($user, $page_id, $domain, $request, $timestamp, $filters = [])
     {
         $this->userId = is_null($user) ? $user : $user->id;
         $this->domainId = is_numeric($domain) || is_null($domain) ? $domain : $domain->id;
@@ -46,7 +56,12 @@ class PageVisitEvent implements ShouldQueue
             }
         }
         $this->page_id = $page_id;
-        $this->ip = $ip;
+        $this->ip = $request->getClientIp();
+        $this->agent = $request->userAgent();
+        $this->isMobile = (new MobileDetect())->isMobile($request->userAgent(), $request->headers->all());
+        $this->client =  $request->header(config('larapress.profiles.security.device_client_header'), 'web');
+        $this->path = $request->getBaseUrl();
+
         $this->filters = $filters;
         $this->timestamp = $timestamp;
     }
@@ -64,5 +79,50 @@ class PageVisitEvent implements ShouldQueue
         }
 
         return null;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public function getUserIp() {
+        return $this->ip;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public function getUserAgent() {
+        return $this->agent;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public function isMobileVisit() {
+        return $this->isMobile;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public function getDeviceClient() {
+        return $this->client;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return string
+     */
+    public function getRequestPath() {
+        return $this->path;
     }
 }

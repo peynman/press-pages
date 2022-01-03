@@ -38,9 +38,10 @@ interface IPageRenderService
     /**
      * Undocumented function
      *
+     * @param Request $request
      * @return array
      */
-    public function getDefaultConfig();
+    public function getDefaultConfig(Request $request): array;
 
     /**
      * Undocumented function

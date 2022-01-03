@@ -26,7 +26,14 @@ class PageVisitListener implements ShouldQueue
                 config('larapress.pages.reports.group'),
                 'pages.'.$event->page_id.'.visit',
                 1,
-                $event->filters ?? [],
+                array_merge($event->filters ?? [], [
+                    'page' => $event->page_id,
+                    'path' => $event->getRequestPath(),
+                    'ip' => $event->getUserIp(),
+                    'agent' => $event->getUserAgent(),
+                    'mobile' => $event->isMobileVisit(),
+                    'client' => $event->getDeviceClient(),
+                ]),
                 $event->timestamp,
             );
         }

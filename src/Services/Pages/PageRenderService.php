@@ -127,9 +127,10 @@ class PageRenderService implements IPageRenderService
     /**
      * Undocumented function
      *
+     * @param Request $request
      * @return array
      */
-    public function getDefaultConfig()
+    public function getDefaultConfig(Request $request): array
     {
         /** @var  IProfileUser|Model */
         $user = Auth::user();
@@ -155,6 +156,8 @@ class PageRenderService implements IPageRenderService
         if (!is_null($schema)) {
             $schema = PageSchema::find($schema);
         }
+
+        $this->reportPageVisit($user, $request, null, null);
 
         return [
             'token' => $jwtToken,
@@ -183,7 +186,7 @@ class PageRenderService implements IPageRenderService
      *
      * @return void
      */
-    public function reportPageVisit($user, Request $request, Route $route, Page $page)
+    public function reportPageVisit($user, Request $request, $route, $page)
     {
         /** @var IDomainRepository */
         $domainRepo = app(IDomainRepository::class);
@@ -191,13 +194,21 @@ class PageRenderService implements IPageRenderService
 
         if (isset($page->options['report_visits']) && $page->options['report_visits']) {
             $filters = [];
-            $pageFilterName = isset($page->options['report_filter']) ? $page->options['report_filter'] : null;
-            $pageParameterName = isset($page->options['report_parameter']) ? $page->options['report_parameter'] : null;
-            if (!is_null($pageFilterName) && !is_null($pageParameterName)) {
-                $filters[$pageFilterName] = $route->parameter($pageParameterName);
+            if (!is_null($route) && !is_null($page)) {
+                $pageFilterName = isset($page->options['report_filter']) ? $page->options['report_filter'] : null;
+                $pageParameterName = isset($page->options['report_parameter']) ? $page->options['report_parameter'] : null;
+                if (!is_null($pageFilterName) && !is_null($pageParameterName)) {
+                    $filters[$pageFilterName] = $route->parameter($pageParameterName);
+                }
             }
-
-            PageVisitEvent::dispatch($user, $page->id, $domain, $request->ip(), time(), $filters);
+            PageVisitEvent::dispatch(
+                $user,
+                $page?->id ?? null,
+                $domain,
+                $request,
+                time(),
+                $filters
+            );
         }
     }
 
