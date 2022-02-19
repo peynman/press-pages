@@ -18,15 +18,5 @@
         window.PageConfig = {!! json_encode($config) !!}
         window.SessionData = {!! json_encode(session()->all()) !!}
     </script>
-    @if(!env('PUSHER_OFF'))
-        <script>
-            window.echoConfig = {
-                protocol: window.location.protocol.startsWith('https') ? 'https':'http',
-                host: window.location.hostname,
-                port: {!! config('larapress.pages.echo.port') !!},
-            };
-        </script>
-        <script src="{!! config('larapress.pages.echo.web_path') !!}/socket.io/socket.io.js"></script>
-    @endif
 </body>
 </html>
