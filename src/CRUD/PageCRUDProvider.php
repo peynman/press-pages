@@ -124,7 +124,7 @@ class PageCRUDProvider implements ICRUDProvider
      */
     public function getUpdateRules(Request $request): array
     {
-        $this->updateValidations['name'] .= ',' . $request->route('id');
+        $this->updateValidations['name'] .= ',' . $request->route('id') . ',id,deleted_at,NULL';
         return $this->updateValidations;
     }
 

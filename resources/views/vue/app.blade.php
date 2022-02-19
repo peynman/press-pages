@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ $config['language']['id'] }}" dir="{{ $config['language']['direction'] }}">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <meta name="description" content="{{ $config['metas']['description'] }}">
     <meta name="author" content="{{ $config['metas']['author'] }}">
     @foreach ($config['metas']['extra'] as $meta)
