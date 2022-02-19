@@ -13,10 +13,10 @@
     @yield("scripts")
 </head>
 <body>
-    @yield("content")
     <script>
         window.PageConfig = {!! json_encode($config) !!}
         window.SessionData = {!! json_encode(session()->all()) !!}
     </script>
+    @yield("content")
 </body>
 </html>
