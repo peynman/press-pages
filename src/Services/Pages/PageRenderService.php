@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Larapress\CRUD\Extend\Helpers;
 use Larapress\CRUD\Services\RepoSources\IRepositorySources;
+use Tymon\JWTAuth\JWTGuard;
 
 class PageRenderService implements IPageRenderService
 {
@@ -75,7 +76,11 @@ class PageRenderService implements IPageRenderService
 
         $jwtToken = null;
         if (!is_null($user)) {
-            $jwtToken = auth()->guard('api')->tokenById($user->id);
+            /** @var JWTGuard */
+            $jwtGuard = auth()->guard('api');
+            if ($jwtGuard instanceof JWTGuard) {
+                $jwtToken = $jwtGuard->tokenById($user->id);
+            }
         }
 
         $sources = $this->collectPageSourcesForUser($user, $request, $route, $page);
@@ -87,26 +92,23 @@ class PageRenderService implements IPageRenderService
             return $lang['id'] === $locale;
         });
 
-        $author = config('larapress.pages.render.author');
-        $desc = config('larapress.pages.render.description');
-        $metas = config('larapress.pages.render.extra-metas');
-        $schema = isset($page->options['schemaId']) ? $page->options['schemaId'] : config('larapress.pages.render.schema');
+
+        $routeName = $route->getName();
+        $renderMeta = config('larapress.pages.render.'.$routeName, []);
+        $author = $page->options['author'] ?? $renderMeta['author'] ?? null;
+        $desc = $page->options['description'] ?? $renderMeta['description'] ?? null;
+        $schema = $page->options['schemaId'] ?? $renderMeta['schema'] ?? null;
+        $metas = $renderMeta['metas'] ?? [];
 
         if (isset($page->options['metas']) && is_array($page->options['metas'])) {
             $metas = array_merge($metas, $page->options['metas']);
         }
-        if (isset($page->options['author']) && !is_null($page->options['author'])) {
-            $author = $page->options['author'];
-        }
-        if (isset($page->options['description']) && !is_null($page->options['description'])) {
-            $author = $page->options['description'];
-        }
-
         if (!is_null($schema)) {
             $schema = PageSchema::find($schema);
         }
 
         $this->reportPageVisit($user, $request, $route, $page);
+
         return [
             'token' => $jwtToken,
             'page' => $page->toArray(),
@@ -137,7 +139,11 @@ class PageRenderService implements IPageRenderService
 
         $jwtToken = null;
         if (!is_null($user)) {
-            $jwtToken = auth()->guard('api')->tokenById($user->id);
+            /** @var JWTGuard */
+            $jwtGuard = auth()->guard('api');
+            if ($jwtGuard instanceof JWTGuard) {
+                $jwtToken = $jwtGuard->tokenById($user->id);
+            }
         }
 
         $channels = $this->collectPageChannelsAndPermissionsForUser($user);
@@ -188,11 +194,11 @@ class PageRenderService implements IPageRenderService
      */
     public function reportPageVisit($user, Request $request, $route, $page)
     {
-        /** @var IDomainRepository */
-        $domainRepo = app(IDomainRepository::class);
-        $domain = $domainRepo->getRequestDomain($request);
-
         if (isset($page->options['report_visits']) && $page->options['report_visits']) {
+            /** @var IDomainRepository */
+            $domainRepo = app(IDomainRepository::class);
+            $domain = $domainRepo->getRequestDomain($request);
+
             $filters = [];
             if (!is_null($route) && !is_null($page)) {
                 $pageFilterName = isset($page->options['report_filter']) ? $page->options['report_filter'] : null;
