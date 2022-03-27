@@ -19,7 +19,23 @@ return [
 
     // page rendering default settings
     'render' => [
-        'blade' => 'larapress-pages::vue.app',
+        'default_blade' => 'larapress-pages::vue.app',
+        'routes' => [
+            'frontend.admin' => [
+                'blade' => 'larapress-pages::vue.app',
+                'match' => '/admin/{wildcard}',
+                'where' => [
+                    'wildcard' => '.*',
+                ],
+            ],
+            'frontend.website' => [
+                'blade' => 'larapress-pages::vue.app',
+                'match' => '/{wildcard}',
+                'where' => [
+                    'wildcard' => '.*',
+                ],
+            ],
+        ],
         /** default title to use when a page does not have a title */
         'title' => 'Larapress Pages: no title',
         'descrtiption' => 'Larapress Pages: no description',
