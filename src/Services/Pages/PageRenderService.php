@@ -48,7 +48,6 @@ class PageRenderService implements IPageRenderService
     public function renderPageHTML(Request $request, Route $route, Page $page)
     {
         $json = $this->renderPageJSON($request, $route, $page);
-        dd($json);
         return view($json['view'], [
             'config' => $json
         ]);
