@@ -100,7 +100,7 @@ class PageRenderService implements IPageRenderService
         $desc = $page->options['description'] ?? $renderMeta['description'] ?? null;
         $schema = $page->options['schemaId'] ?? $renderMeta['schema'] ?? null;
         $metas = $renderMeta['metas'] ?? [];
-        $view = $renderMeta['view'] ?? null;
+        $view = $renderMeta['blade'] ?? null;
 
         if (isset($page->options['metas']) && is_array($page->options['metas'])) {
             $metas = array_merge($metas, $page->options['metas']);
@@ -170,6 +170,7 @@ class PageRenderService implements IPageRenderService
         $desc = $defaultMeta['description'] ?? null;
         $metas = $defaultMeta['metas'] ?? [];
         $schema = $defaultMeta['schema'] ?? null;
+        $view = $defaultMeta['blade'] ?? null;
 
         if (!is_null($schema)) {
             $schema = PageSchema::find($schema);
@@ -177,6 +178,7 @@ class PageRenderService implements IPageRenderService
 
         return [
             'token' => $jwtToken,
+            'view' => $view,
             'page' => null,
             'schema' => $schema?->toArray() ?? [],
             'metas' => [
