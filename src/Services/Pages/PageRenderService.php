@@ -94,7 +94,8 @@ class PageRenderService implements IPageRenderService
 
 
         $routeName = $route->getName();
-        $renderMeta = config('larapress.pages.render.'.$routeName, []);
+        $renderMeta = config('larapress.pages.render.' . $routeName, []);
+        $title = $renderMeta['title'] ?? null;
         $author = $page->options['author'] ?? $renderMeta['author'] ?? null;
         $desc = $page->options['description'] ?? $renderMeta['description'] ?? null;
         $schema = $page->options['schemaId'] ?? $renderMeta['schema'] ?? null;
@@ -114,6 +115,7 @@ class PageRenderService implements IPageRenderService
             'page' => $page->toArray(),
             'schema' => $schema?->toArray() ?? [],
             'metas' => [
+                'title' => $title,
                 'author' => $author,
                 'description' => $desc,
                 'extra' => $metas,
@@ -154,22 +156,29 @@ class PageRenderService implements IPageRenderService
             return $lang['id'] === $locale;
         });
 
-        $author = config('larapress.pages.render.author');
-        $desc = config('larapress.pages.render.description');
-        $metas = config('larapress.pages.render.extra-metas');
-        $schema = config('larapress.pages.render.schema');
+        $defaultMeta = current(array_filter(
+            array_values(config('larapress.pages.render', [])),
+            function ($r) {
+                return $r['default'] ?? false;
+            }
+        ));
+
+        $title = $defaultMeta['title'] ?? null;
+        $author = $defaultMeta['author'] ?? null;
+        $desc = $defaultMeta['description'] ?? null;
+        $metas = $defaultMeta['metas'] ?? [];
+        $schema = $defaultMeta['schema'] ?? null;
 
         if (!is_null($schema)) {
             $schema = PageSchema::find($schema);
         }
-
-        $this->reportPageVisit($user, $request, null, null);
 
         return [
             'token' => $jwtToken,
             'page' => null,
             'schema' => $schema?->toArray() ?? [],
             'metas' => [
+                'title' => $title,
                 'author' => $author,
                 'description' => $desc,
                 'extra' => $metas,

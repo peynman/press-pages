@@ -17,31 +17,32 @@ return [
     // enable/disable wildcard page rendering
     'wildcard' => env('PAGE_RENDERING', false),
 
-    // page rendering default settings
+    // page rendering settings
     'render' => [
-        'default_blade' => 'larapress-pages::vue.app',
-        'routes' => [
-            'frontend.admin' => [
-                'blade' => 'larapress-pages::vue.app',
-                'match' => '/admin/{wildcard}',
-                'where' => [
-                    'wildcard' => '.*',
-                ],
-            ],
-            'frontend.website' => [
-                'blade' => 'larapress-pages::vue.app',
-                'match' => '/{wildcard}',
-                'where' => [
-                    'wildcard' => '.*',
-                ],
+        [
+            'name' => 'frontend.admin',
+            'priority' => 1000,
+            'blade' => 'larapress-pages::vue.app',
+            'match' => '/admin/{wildcard}',
+            'where' => [
+                'wildcard' => '.*',
             ],
         ],
-        /** default title to use when a page does not have a title */
-        'title' => 'Larapress Pages: no title',
-        'descrtiption' => 'Larapress Pages: no description',
-        'author' => 'Larapress Pages: no author',
-        'extra-metas' => [],
-        'schema' => null,
+        [
+            'default' => true,
+            'name' => 'frontend.website',
+            'priority' => 100,
+            'blade' => 'larapress-pages::vue.app',
+            'match' => '/{wildcard}',
+            'where' => [
+                'wildcard' => '.*',
+            ],
+            'title' => 'Larapress Pages: no title',
+            'descrtiption' => 'Larapress Pages: no description',
+            'author' => 'Larapress Pages: no author',
+            'extra_metas' => [],
+            'schema' => null,
+        ],
     ],
 
     /** Laravel echo, to connect on client side */
