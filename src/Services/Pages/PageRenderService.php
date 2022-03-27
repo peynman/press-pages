@@ -48,7 +48,7 @@ class PageRenderService implements IPageRenderService
     public function renderPageHTML(Request $request, Route $route, Page $page)
     {
         $json = $this->renderPageJSON($request, $route, $page);
-        return view(config('larapress.pages.render.default_blade'), [
+        return view($json['view'], [
             'config' => $json
         ]);
     }
@@ -100,6 +100,7 @@ class PageRenderService implements IPageRenderService
         $desc = $page->options['description'] ?? $renderMeta['description'] ?? null;
         $schema = $page->options['schemaId'] ?? $renderMeta['schema'] ?? null;
         $metas = $renderMeta['metas'] ?? [];
+        $view = $renderMeta['view'] ?? null;
 
         if (isset($page->options['metas']) && is_array($page->options['metas'])) {
             $metas = array_merge($metas, $page->options['metas']);
@@ -112,6 +113,7 @@ class PageRenderService implements IPageRenderService
 
         return [
             'token' => $jwtToken,
+            'view' => $view,
             'page' => $page->toArray(),
             'schema' => $schema?->toArray() ?? [],
             'metas' => [
