@@ -19,19 +19,7 @@ return [
 
     // page rendering settings
     'render' => [
-        [
-            'name' => 'frontend.admin',
-            'priority' => 1000,
-            'blade' => 'larapress-pages::vue.app',
-            'match' => '/admin/{wildcard}',
-            'where' => [
-                'wildcard' => '.*',
-            ],
-        ],
-        [
-            'default' => true,
-            'name' => 'frontend.website',
-            'priority' => 100,
+        'default' => [
             'blade' => 'larapress-pages::vue.app',
             'match' => '/{wildcard}',
             'where' => [
@@ -43,6 +31,19 @@ return [
             'extra_metas' => [],
             'schema' => null,
         ],
+        // extra wildcard routes to render default config with
+        // can be used to render admin app, native mobile apps in different blade files
+        'wildcards' => [
+            [
+                'name' => 'frontend.admin',
+                'priority' => 1000,
+                'blade' => 'larapress-pages::vue.app',
+                'match' => '/admin/{wildcard}',
+                'where' => [
+                    'wildcard' => '.*',
+                ],
+            ],
+        ]
     ],
 
     /** Laravel echo, to connect on client side */

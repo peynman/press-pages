@@ -11,16 +11,16 @@ Route::middleware(config('larapress.pages.middlewares'))
         PageRenderController::registerPublicWebRoutes();
 
         if (config('larapress.pages.wildcard')) {
-            $wildcardRoutes = config('larapress.pages.render', []);
+            $wildcardRoutes = config('larapress.pages.render.wildcards', []);
             usort($wildcardRoutes, function ($a, $b) {
                 return $a['priority'] - $b['priority'];
             });
-            foreach ($wildcardRoutes as $routeName => $routeMeta) {
+            foreach ($wildcardRoutes as $routeMeta) {
                 $route = Route::get($routeMeta['match'], function (IPageRenderService $service, Request $request) use($routeMeta) {
                     return view($routeMeta['blade'], [
                         'config' => $service->getDefaultConfig($request),
                     ]);
-                })->name($routeName);
+                })->name($routeMeta['name']);
                 $whereConds = $routeMeta['where'] ?? null;
                 if (!is_null($whereConds)) {
                     foreach ($whereConds as $where => $cond) {

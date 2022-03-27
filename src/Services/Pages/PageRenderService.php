@@ -48,6 +48,7 @@ class PageRenderService implements IPageRenderService
     public function renderPageHTML(Request $request, Route $route, Page $page)
     {
         $json = $this->renderPageJSON($request, $route, $page);
+        dd($json);
         return view($json['view'], [
             'config' => $json
         ]);
@@ -92,15 +93,17 @@ class PageRenderService implements IPageRenderService
             return $lang['id'] === $locale;
         });
 
-
-        $routeName = $route->getName();
-        $renderMeta = config('larapress.pages.render.' . $routeName, []);
+        $renderMeta = config('larapress.pages.render.default');
         $title = $renderMeta['title'] ?? null;
         $author = $page->options['author'] ?? $renderMeta['author'] ?? null;
         $desc = $page->options['description'] ?? $renderMeta['description'] ?? null;
         $schema = $page->options['schemaId'] ?? $renderMeta['schema'] ?? null;
         $metas = $renderMeta['metas'] ?? [];
-        $view = $renderMeta['blade'] ?? null;
+        $view = $page->options['blade'] ?? $renderMeta['blade'] ?? null;
+
+        if (is_null($view)) {
+            throw new \Exception("Page(".$page->id.") has no view");
+        }
 
         if (isset($page->options['metas']) && is_array($page->options['metas'])) {
             $metas = array_merge($metas, $page->options['metas']);
@@ -158,12 +161,7 @@ class PageRenderService implements IPageRenderService
             return $lang['id'] === $locale;
         });
 
-        $defaultMeta = current(array_filter(
-            array_values(config('larapress.pages.render', [])),
-            function ($r) {
-                return $r['default'] ?? false;
-            }
-        ));
+        $defaultMeta = config('larapress.pages.render.default');
 
         $title = $defaultMeta['title'] ?? null;
         $author = $defaultMeta['author'] ?? null;
