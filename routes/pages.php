@@ -28,5 +28,12 @@ Route::middleware(config('larapress.pages.middlewares'))
                     }
                 }
             }
+
+            $defaultWildcard = config('larapress.pages.render.default');
+            Route::get($defaultWildcard['match'], function (IPageRenderService $service, Request $request) use($defaultWildcard) {
+                return view($defaultWildcard['blade'], [
+                    'config' => $service->getDefaultConfig($request),
+                ]);
+            });
         }
     });
